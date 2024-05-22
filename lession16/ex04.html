@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .input-value,
+        .output-value {
+            font-weight: bold;
+            font-size: 1.6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Bài tập 4: </h1>
+    <p>Kiểm tra 2 số cùng dấu hay không và hiển thị kết quả ra màn hình
+    </p>
+    <br>
+
+    <script>
+        var a = prompt('Nhập số a')
+        var b = prompt('Nhập số b')
+
+        a = Number(a)
+        b = Number(b)
+
+        a = isNaN(a) ? 0 : a
+        b = isNaN(b) ? 0 : b
+
+
+        document.write(`
+        <h2>Input: </h2>
+        <ul class="input-list">
+            <li class="input-item">A : <span class="input-value">${a}</span></li>
+            <li class="input-item">B : <span class="input-value">${b}</span></li>
+        </ul>
+        `)
+
+        //---------------- 
+        //exercise - logic  - Begin
+        //---------------- 
+        var mutilpleAB = a * b;
+        var result
+        if (a === 0 || b === 0) {
+            result = 'Có một Input không hợp lệ: có giá trị bằng 0'
+        } else if (mutilpleAB < 0) {
+            result = 'Hai số ngược dấu'
+        } else {
+            result = 'Hai số cùng dấu'
+        }
+        //---------------- 
+        //exercise - logic  - End
+        //---------------- 
+
+        document.write(`
+        <h2>Output: </h2>
+        <ul class="output-list">
+            <li class="output-item">Kết quả : <span class="output-value">${result}</span></li>
+        </ul>
+        `)
+
+
+    </script>
+</body>
+
+</html>

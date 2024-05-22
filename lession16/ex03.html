@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .input-value,
+        .output-value {
+            font-weight: bold;
+            font-size: 1.6rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Bài tập 3: </h1>
+    <p>Học viên tìm hiểu về câu lệnh rẽ nhánh và giải bài tập sau: <br>
+        Tìm số lớn nhất trong 3 số và hiển thị kết quả
+    </p>
+    <br>
+
+
+    <script>
+        var a = prompt('Nhập số a')
+        var b = prompt('Nhập số b')
+        var c = prompt('Nhập số c')
+
+        a = Number(a)
+        b = Number(b)
+        c = Number(c)
+
+        a = isNaN(a) ? 0 : a
+        b = isNaN(b) ? 0 : b
+        c = isNaN(c) ? 0 : c
+
+
+        document.write(`
+        <h2>Input: </h2>
+        <ul class="input-list">
+            <li class="input-item">A : <span class="input-value">${a}</span></li>
+            <li class="input-item">B : <span class="input-value">${b}</span></li>
+            <li class="input-item">C : <span class="input-value">${c}</span></li>
+        </ul>
+        `)
+
+        //---------------- 
+        //exercise - logic  - begin
+        //---------------- 
+        var max = a;
+        if (max < b) {
+            max = b;
+        }
+        if (max < c) {
+            max = c;
+        }
+        //---------------- 
+        //exercise - logic  - End
+        //---------------- 
+
+        document.write(`
+        <h2>Output: </h2>
+        <ul class="output-list">
+            <li class="output-item">Max Number : <span class="output-value">${max}</span></li>
+        </ul>
+        `)
+    </script>
+</body>
+
+</html>

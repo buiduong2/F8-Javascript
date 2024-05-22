@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .input-value,
+        .output-value {
+            font-weight: bold;
+            font-size: 1.6rem;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Bài tập 1: </h1>
+    <br>
+
+    <script>
+        var a = prompt('Nhập số a')
+        var b = prompt('Nhập số b')
+
+        a = Number(a)
+        b = Number(b)
+
+        a = isNaN(a) ? 0 : a
+        b = isNaN(b) ? 0 : b
+
+        document.write(`
+        <h2>Input: </h2>
+        <ul class="input-list">
+            <li class="input-item">A : <span class="input-value">${a}</span></li>
+            <li class="input-item">B : <span class="input-value">${b}</span></li>
+        </ul>
+        `)
+
+        //---------------- 
+        //exercise - logic  - begin
+        //---------------- 
+        b = a + b;
+        a = b - a;
+        b = b - a;
+        //---------------- 
+        //exercise - logic  - End
+        //---------------- 
+
+        document.write(`
+        <h2>Output: </h2>
+        <ul class="output-list">
+            <li class="output-item">A : <span class="output-value">${a}</span></li>
+            <li class="output-item">B : <span class="output-value">${b}</span></li>
+        </ul>
+        `)
+
+
+    </script>
+</body>
+
+</html>
