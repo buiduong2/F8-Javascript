@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
     <style>
+        body {
+            padding: 20px;
+        }
+
         .row {
             display: flex;
             flex-wrap: wrap;
@@ -16,12 +19,118 @@
             width: 20%;
             box-sizing: border-box;
         }
+
+        .col-6 {
+            width: 50%;
+        }
+
+
+        @media screen and (max-width: 600px) {
+            .col-12-sx {
+                width: 100%;
+            }
+        }
+
+
+        input {
+            width: 300px;
+            padding: 5px;
+        }
     </style>
 </head>
 
 <body>
 
+    <div class="row">
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 1: Tính tiền taxi</h2>
+
+                <input type="number" name="distance" id="" placeholder="Hãy điền vào số Km đã đi" min="0"
+                    oninput="printResult(event,'#ex01-rs',caculateTaxiBill)">
+
+                <p class="Result">Kết quả: <b id="ex01-rs">0</b> VNĐ</p>
+
+            </div>
+        </div>
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 2: Tính tiền điện</h2>
+
+                <input type="number" name="distance" id="" placeholder="Hãy điền vào số điện đã tiêu thụ" min="0"
+                    oninput="printResult(event,'#ex02-rs',caculateElectricityBill)">
+
+                <p class="Result">Kết quả: <b id="ex02-rs">0</b> VNĐ</p>
+            </div>
+        </div>
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 3: Tính giá trị biểu thức</h2>
+
+                <input type="number" name="distance" id="" placeholder="Nhập vào một số" min="0"
+                    oninput="printResult(event,'#ex03-rs',sequentialSum)">
+
+                <p class="Result">Kết quả: <b id="ex03-rs">0</b> </p>
+            </div>
+        </div>
+
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 4: Viết hàm kiểm tra số nguyên tố</h2>
+
+                <input type="number" name="distance" id="" placeholder="Nhập vào một số" min="0"
+                    oninput="printResult(event,'#ex04-rs',(n) => isPrime(n) ?  n +' Là số nguyên tố' : n+ ' Không phải số nguyên tố')" />
+
+                <p class="Result">Kết quả: <b id="ex04-rs">0</b> </p>
+            </div>
+        </div>
+
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 5: Vẽ tam giác số</h2>
+
+                <input type="number" name="distance" id="" placeholder="Nhập vào một số" min="0"  max="10"
+                    oninput="printResult(event,'#ex05-rs',drawTriangular)" />
+
+                <p class="Result">Kết quả: <br>
+                <pre id="ex05-rs">0</pre>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 6: Vẽ bàn cờ vua</h2>
+
+                <input type="button" name="distance" id="" value="CLick để vẽ" min="0"
+                    onclick="printResult(event,'#ex06-rs',drawChessBoard)" />
+
+                <p class="Result">Kết quả: <br>
+                <pre id="ex06-rs" style="font-size: 20px;">0</pre>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 7: Vẽ bảng cửu chương</h2>
+            </div>
+        </div>
+    </div>
+
+    <script src="./ex01.js"></script>
+    <script src="./ex02.js"></script>
+    <script src="./ex03.js"></script>
+    <script src="./ex04.js"></script>
+    <script src="./ex05.js"></script>
     <script src="./ex06.js"></script>
+    <script src="./ex07.js"></script>
+    <script>
+        function printResult(event, idEle, handler) {
+            var el = document.querySelector(idEle);
+            el.innerText = handler(event.target.value)
+        }
+    </script>
 </body>
 
 </html>

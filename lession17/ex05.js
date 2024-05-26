@@ -1,12 +1,13 @@
 function drawTriangular(numOfRow) {
 	var count = 1
+	var s = ''
 	for (var i = 0; i < numOfRow; i++) {
 		for (var j = 0; j <= i; j++) {
-			document.write(count + ' ')
+			s += count + ' '
 			count++
 		}
-		document.write('<br>')
+		s += '\n'
 	}
-}
 
-drawTriangular(5)
+	return s
+}
