@@ -1,4 +1,7 @@
 function drawTriangular(numOfRow) {
+	if (numOfRow < 0) {
+		return 0
+	}
 	var count = 1
 	var s = ''
 	for (var i = 0; i < numOfRow; i++) {
