@@ -14,6 +14,5 @@ function getFibonaciN(n) {
 		return 1
 	}
 
-	var temp = getFibonaciN(n - 1) + getFibonaciN(n - 2)
-	return temp
+	return getFibonaciN(n - 1) + getFibonaciN(n - 2)
 }
