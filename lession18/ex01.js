@@ -1,18 +1,11 @@
 function getNFibonnacies(n) {
-	var arr = []
-
-	getFibonaciN(n - 1,arr)
-
-	var result = '1, 1'
-	for (var i = 2; i < arr.length; i++) {
-		if (arr[i]) {
-			result += ', ' + i
-		}
+	if (n <= 0) {
+		return ''
 	}
 
-	return result
+	return getNFibonnacies(n - 1) + ' ' + getFibonaciN(n - 1)
 }
-function getFibonaciN(n, arr) {
+function getFibonaciN(n) {
 	if (n === 0) {
 		return 1
 	}
@@ -21,7 +14,6 @@ function getFibonaciN(n, arr) {
 		return 1
 	}
 
-	var temp = getFibonaciN(n - 1, arr) + getFibonaciN(n - 2, arr)
-	arr[temp] = true
+	var temp = getFibonaciN(n - 1) + getFibonaciN(n - 2)
 	return temp
 }
