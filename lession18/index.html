@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-1-5 {
+            width: 20%;
+            box-sizing: border-box;
+        }
+
+        .col-6 {
+            width: 50%;
+        }
+
+
+        @media screen and (max-width: 600px) {
+            .col-12-sx {
+                width: 100%;
+            }
+        }
+
+
+        input {
+            width: 300px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="row">
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 1: N số fibonaci</h2>
+
+                <p>
+                    Hiển thị N số Fibonaci đầu tiên
+                    <br>
+
+                    Ví dụ: Gán n = 10 sẽ hiển thị danh sách 10 số fibonaci
+
+                    <br>
+                    Yêu cầu: Không dùng vòng lặp
+                </p>
+
+                <input type="number" name="distance" id="" placeholder="Hãy điền vào số Km đã đi" min="0"
+                    oninput="printResult(event,'#ex01-rs',getNFibonnacies)">
+
+                <p class="Result">Kết quả: <b id="ex01-rs">0</b></p>
+
+            </div>
+        </div>
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 2: Đảo ngược số</h2>
+
+                <p>
+                    Viết hàm đảo ngược số nguyên với tham số là số cần đảo ngược
+                    <br>
+                    Ví dụ: Khi gọi hàm và truyền đối số 12345 sẽ trả về kết quả 54321
+                </p>
+
+                <input type="number" name="distance" id="" placeholder="Hãy điền vào số điện đã tiêu thụ" min="0"
+                    oninput="printResult(event,'#ex02-rs',reverseNumber)">
+
+                <p class="Result">Kết quả: <b id="ex02-rs">0</b></p>
+            </div>
+        </div>
+        <div class="col-6 col-12-sx">
+            <div class="box">
+                <h2>Bài 3: Viết hàm chuyển số thành chữ</h2>
+
+                <p>
+                    Ví dụ: Số 4298 sẽ chuyển thành: Bốn ngàn hai trăm chín tám
+                    <br>
+                    Ràng buộc: Số cần chuyển đổi có giá trị từ 0 đến 9999
+                </p>
+                <input type="number" name="distance" id="" placeholder="Nhập vào một số" min="0"
+                    oninput="printResult(event,'#ex03-rs',convertNumberToText)">
+
+                <p class="Result">Kết quả: <b id="ex03-rs">0</b> </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./ex01.js"></script>
+    <script src="./ex02.js"></script>
+    <script src="./ex03.js"></script>
+    <script>
+        function printResult(event, idEle, handler) {
+            var el = document.querySelector(idEle);
+            el.innerText = handler(Number(event.target.value))
+        }
+    </script>
+</body>
+
+</html>
