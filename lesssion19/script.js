@@ -1,4 +1,4 @@
-var str = ` Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi vitae magnam unde, inventore optio repudiandae ipsa
+var str = `Lorem ipsum dolorsit, amet consectetur adipisicing elit. Quasi vitae magnam unde, inventore optio repudiandae ipsa
 qui! Soluta provident nulla eligendi dolorem, excepturi eum dolor saepe omnis at,`
 hightLightText(str)
 
@@ -8,10 +8,6 @@ function hightLightText(str) {
 	setInterval(() => {
 		left = indexOfCharacter(str, left)
 		right = indexOfNonCharacter(str, left)
-		if (left === str.length) {
-			console.log(hightLight(str, left, right))
-		}
-
 		document.querySelector('body').innerHTML = hightLight(str, left, right)
 
 		if (right === -1) {
@@ -38,19 +34,35 @@ function hightLightText(str) {
 		}
 	}
 
+	/**
+	 * Remove Mutilple space or break line. get index of Non character like a,b,c ...etc
+	 * @param str : searchString
+	 * @param left : index at which to begin searching
+	 * @returns index . -1 if don't exist
+	 */
 	function indexOfCharacter(str, left) {
-		while ((str[left] === ' ' || str[left] === '\n') && left < str.length) {
+		while (!isCharacter(str[left]) && left < str.length) {
 			left++
 		}
 
 		return left === str.length ? indexOfCharacter(str, 0) : left
 	}
 
+	/**
+	 * get index of non character. like space or break like sometimes like tab
+	 * @param str : searchString
+	 * @param left : index at which to begin searching
+	 * @returns index . -1 if don't exist
+	 */
 	function indexOfNonCharacter(str, left) {
-		while (str[left] !== ' ' && str[left] !== '\n' && left < str.length) {
+		while (isCharacter(str[left]) && left < str.length) {
 			left++
 		}
 
 		return left === str.length ? -1 : left
+	}
+
+	function isCharacter(character) {
+		return character !== ' ' && character !== '\n' && character !== '\t'
 	}
 }
