@@ -3,8 +3,8 @@ function avgPrime(arr) {
 	var sum = 0
 
 	for (var i = 0; i < arr.length; i++) {
-		if (primies.includes(arr[i]) || isPrime(arr[i])) {
-			primies.push(arr[i])
+		if (includes(primies, arr[i]) || isPrime(arr[i])) {
+			primies[primies.length] = arr[i]
 			sum += arr[i]
 		}
 	}
@@ -29,4 +29,13 @@ function isPrime(n) {
 	}
 
 	return true
+}
+
+function includes(arr, value) {
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i] === value) {
+			return true
+		}
+	}
+	return false
 }

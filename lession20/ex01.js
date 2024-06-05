@@ -10,14 +10,14 @@ function findMinMax(arr) {
 			min = i
 			minIndexs = [i]
 		} else if (arr[min] === arr[i]) {
-			minIndexs.push(i)
+			minIndexs[minIndexs.length] = i
 		}
 
 		if (arr[max] < arr[i]) {
 			max = i
 			maxIndexs = [i]
 		} else if (arr[max] === arr[i]) {
-			maxIndexs.push(i)
+			maxIndexs[maxIndexs.length] = i
 		}
 	}
 
