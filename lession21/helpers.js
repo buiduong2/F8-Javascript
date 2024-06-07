@@ -37,28 +37,33 @@ function randomIndex(arr) {
 	return Math.round(Math.random() * (arr.length - 1))
 }
 
-function printArray(arr) {
-	return '[ ' + printArrayInner(arr) + ' ]'
+function printArray(arr, level) {
+	return `[ ${printArrayInner(arr, level)} ]`
 
-	function printArrayInner(arr) {
+	function printArrayInner(arr, level) {
 		var indexOfArray = arr.findIndex(function (value) {
 			return Array.isArray(value)
 		})
 		if (indexOfArray !== -1) {
-			var result =
-				arrayToString(arr.slice(0, indexOfArray)) +
-				' [ ' +
-				printArrayInner(arr[indexOfArray])
+			var result = ''
+			if (indexOfArray !== 0) {
+				result = `${arrayToString(arr.slice(0, indexOfArray), level)}, `
+			}
+
+			result += `[ ${printArrayInner(arr[indexOfArray], level + 1)} ] ,`
 			if (indexOfArray !== arr.length) {
-				result += ' ] ' + printArrayInner(arr.slice(indexOfArray + 1))
+				result += printArrayInner(arr.slice(indexOfArray + 1), level)
 			}
 
 			return result
 		}
-		return arrayToString(arr)
+		return arrayToString(arr, level)
 	}
 
-	function arrayToString(arr) {
+	function arrayToString(arr, level) {
+		if (arr.length == 0) {
+			return ''
+		}
 		var result = ''
 		for (var i = 0; i < arr.length; i++) {
 			var type = typeof arr[i]
@@ -67,7 +72,7 @@ function printArray(arr) {
 			${i === arr.length - 1 ? ' ' : ', '}
 			`
 		}
-		return result
+		return `<span class="level-${level}"> ${result} </span>`
 	}
 }
 
