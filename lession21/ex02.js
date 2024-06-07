@@ -4,30 +4,30 @@ function flat(arr) {
 	}
 
 	var result = []
-	var next = arr
+	var current = arr
 	var indexStack = []
 	var arrStack = []
 
 	do {
-		if (Array.isArray(next)) {
-			if (next.length === 0) {
-				next = undefined
+		if (Array.isArray(current)) {
+			if (current.length === 0) {
+				current = undefined
 				continue
 			}
-			arrStack.push(next)
+			arrStack.push(current)
 			indexStack.push(0)
-			next = next[0]
+			current = current[0]
 		} else {
-			if (next !== undefined) {
-				result.push(next)
+			if (current !== undefined) {
+				result.push(current)
 			}
-			indexStack[indexStack.length - 1]++
-			if (peek(indexStack) > peek(arrStack).length - 1) {
+			if (peek(indexStack) === peek(arrStack).length - 1) {
 				indexStack.pop()
 				arrStack.pop()
-				next = undefined
+				current = undefined
 			} else {
-				next = peek(arrStack)[peek(indexStack)]
+				indexStack[indexStack.length - 1]++
+				current = peek(arrStack)[peek(indexStack)]
 			}
 		}
 	} while (arrStack.length !== 0 && indexStack.length !== 0)
@@ -45,4 +45,3 @@ function peek(arr) {
 }
 
 // console.log(flat([0, 1, [2, 3], [4, 5, [6, 7]], [8, [9, 10, [11, [], 12]]]]))
-console.log(flat([1, 2, [3], [4], [5, 6], [7, 8, [9, [10, [11, [12]]]]]]))

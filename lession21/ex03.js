@@ -27,15 +27,15 @@ function groupByType(arr) {
 	}
 }
 
-console.log(
-	groupByType(
-		flat([
-			['a', 1, true],
-			['b', 2, false],
-			function () {},
-			{ a: 1 },
-			NaN,
-			{ b: 2 }
-		])
-	)
-)
+// console.log(
+// 	groupByType(
+// 		flat([
+// 			['a', 1, true],
+// 			['b', 2, false],
+// 			function () {},
+// 			{ a: 1 },
+// 			NaN,
+// 			{ b: 2 }
+// 		])
+// 	)
+// )

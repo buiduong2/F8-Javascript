@@ -3,7 +3,8 @@ var arr2 = [5, 2, 6, 7, 1, 1, 3, 3, 3]
 
 getIntersect(arr1, arr2)
 function getIntersect(arr1, arr2) {
-	var frequencies = [] //[ [number, arr1-value-count, arr2-value-count], [...] ]
+	//[ [value-1, arr1-value-1-count, arr2-value-1-count], [value-2, arr1-value-2-count, arr2-value-2-count] , ... ]
+	var frequencies = []
 	var arrIndex = 0
 
 	arrIndex++
@@ -39,7 +40,7 @@ function getIntersect(arr1, arr2) {
  * @param {number} arrIndex :
  */
 function setFrequency(arr, value, arrIndex) {
-	var index = insertIndexAscendingArray(arr, value)
+	var index = indexInsertAscendingArray(arr, value)
 
 	var isNewValue = arr[index] && arr[index][0] !== value
 	if (isNewValue) {
@@ -56,7 +57,7 @@ function setFrequency(arr, value, arrIndex) {
 	}
 }
 
-function insertIndexAscendingArray(arr, value) {
+function indexInsertAscendingArray(arr, value) {
 	var index = 0
 	while (index < arr.length && arr[index][0] < value) {
 		index++
