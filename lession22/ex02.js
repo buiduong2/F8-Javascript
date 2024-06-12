@@ -1,35 +1,44 @@
-export function mergeTwoSortedArray(arr1, arr2) {
-	var mergeArr = []
+getMedian([1, 3], [2])
+
+export function getMedian(arr1, arr2) {
+	var sumLength = arr1.length + arr2.length
+	if (sumLength === 0) {
+		return 0
+	}
+
+	var mid = Math.floor(sumLength / 2) //MidRight or center
+	var prev
+	var cur
 
 	var i = 0
 	var j = 0
-	while (i < arr1.length && j < arr2.length) {
+
+	while (i + j <= mid && i < arr1.length && j < arr2.length) {
+		prev = cur
 		if (arr1[i] < arr2[j]) {
-			mergeArr.push(arr1[i])
+			cur = arr1[i]
 			i++
 		} else {
-			mergeArr.push(arr2[j])
+			cur = arr2[j]
 			j++
 		}
 	}
 
-	if (i < arr1.length) {
-		mergeArr = mergeArr.concat(arr1.slice(i))
-	} else if (j < arr2.length) {
-		mergeArr = mergeArr.concat(arr2.slice(j))
+	while (i + j <= mid && i < arr1.length) {
+		prev = cur
+		cur = arr1[i]
+		i++
 	}
 
-	return mergeArr
-}
-export function getMedian(arr1, arr2) {
-	var arr = mergeTwoSortedArray(arr1, arr2)
+	while (i + j <= mid && j < arr2.length) {
+		prev = cur
+		cur = arr2[j]
+		j++
+	}
 
-	if (arr.length % 2 !== 0) {
-		var mid = Math.floor(arr.length / 2)
-		return arr[mid]
+	if (sumLength % 2 === 0) {
+		return (prev + cur) / 2
 	} else {
-		var left = arr.length / 2 - 1
-		var right = left + 1
-		return (arr[left] + arr[right]) / 2
+		return cur
 	}
 }

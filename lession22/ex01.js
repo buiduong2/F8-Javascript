@@ -1,37 +1,25 @@
-console.log(getMinSymmetryPrime(13))
 export function getMinSymmetryPrime(n) {
 	if (n < 0) {
 		return 2
 	}
-
-	if (isSymmetry(n) && isPrime(n)) {
-		return n
-	}
-
 	if (n < 10) {
 		var result = [2, 3, 5, 7, 11]
 		return result.find(function (num) {
-			return n < num
+			return n <= num
 		})
 	}
-	var result
 	var digits = toDigists(n)
-	do {
+
+	var result = getGreaterNearestSymmmetry(digits)
+
+	while (!isPrime(result)) {
+		digits = increase1UnitFromIndex(digits, digits.length - 1)
 		result = getGreaterNearestSymmmetry(digits)
-	} while (!isPrime(result))
+	}
 	return result
 }
 
 export function getGreaterNearestSymmmetry(digits) {
-	var number = Number(digits.join(''))
-	if (isSymmetry(number)) {
-		if (number % 10 === 9) {
-			digits = toDigists(number + 1)
-		} else {
-			digits[digits.length - 1]++
-		}
-	}
-
 	var length = digits.length
 	var left = 0
 	var right = length - 1
@@ -40,7 +28,7 @@ export function getGreaterNearestSymmmetry(digits) {
 		if (digits[left] > digits[right]) {
 			digits[right] = digits[left]
 		} else if (digits[left] < digits[right]) {
-			increase1UnitFromIndex(digits, right)
+			increase1UnitFromIndex(digits, right - 1)
 			left = 0
 			right = length - 1
 			continue
@@ -51,13 +39,25 @@ export function getGreaterNearestSymmmetry(digits) {
 	return Number(digits.join(''))
 }
 
-export function increase1UnitFromIndex(digits, start) {
-	var length = digits.length
-	digits[start - 1]++
-	while (start < length) {
-		digits[start] = 0
-		start++
+export function increase1UnitFromIndex(digits, right) {
+	while (right >= 0 && digits[right] === 9) {
+		right--
 	}
+
+	if (right === -1) {
+		right = 1
+		digits.unshift(1)
+	} else {
+		digits[right]++
+		right++
+	}
+
+	while (right <= digits.length - 1) {
+		digits[right] = 0
+		right++
+	}
+
+	return digits
 }
 
 export function toDigists(n) {
@@ -90,17 +90,4 @@ export function isPrime(n) {
 	return true
 }
 
-export function isSymmetry(n) {
-	var strN = n + ''
 
-	var left = 0
-	var right = strN.length - 1
-	while (left < right) {
-		if (strN[left] != strN[right]) {
-			return false
-		}
-		left++
-		right--
-	}
-	return true
-}
