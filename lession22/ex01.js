@@ -2,16 +2,9 @@ export function getMinSymmetryPrime(n) {
 	if (n < 0) {
 		return 2
 	}
-	if (n < 10) {
-		var result = [2, 3, 5, 7, 11]
-		return result.find(function (num) {
-			return n <= num
-		})
-	}
-	var digits = toDigists(n)
 
+	var digits = String(n).split('')
 	var result = getGreaterNearestSymmmetry(digits)
-
 	while (!isPrime(result)) {
 		digits = increase1UnitFromIndex(digits, digits.length - 1)
 		result = getGreaterNearestSymmmetry(digits)
@@ -60,16 +53,6 @@ export function increase1UnitFromIndex(digits, right) {
 	return digits
 }
 
-export function toDigists(n) {
-	var arr = []
-
-	while (n !== 0) {
-		arr.unshift(n % 10)
-		n = Math.floor(n / 10)
-	}
-
-	return arr
-}
 
 export function isPrime(n) {
 	if (n < 2) {
@@ -89,5 +72,3 @@ export function isPrime(n) {
 	}
 	return true
 }
-
-
