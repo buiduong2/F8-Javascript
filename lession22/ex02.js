@@ -1,5 +1,3 @@
-getMedian([1, 3], [2])
-
 export function getMedian(arr1, arr2) {
 	var sumLength = arr1.length + arr2.length
 	if (sumLength === 0) {

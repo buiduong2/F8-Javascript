@@ -1,4 +1,4 @@
-function getMinMissingPositiveIntegers(arr) {
+export function getMinMissingPositiveIntegers(arr) {
 	arr.sort(function (a, b) {
 		return a - b
 	})
@@ -19,7 +19,3 @@ function getMinMissingPositiveIntegers(arr) {
 	}
 	return result
 }
-
-console.log(getMinMissingPositiveIntegers([1, 2, 0]))
-console.log(getMinMissingPositiveIntegers([3, 4, -1, 1]))
-console.log(getMinMissingPositiveIntegers([7, 8, 9, 11, 12]))
