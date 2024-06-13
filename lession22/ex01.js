@@ -3,7 +3,7 @@ export function getMinSymmetryPrime(n) {
 		return 2
 	}
 
-	var digits = String(n).split('')
+	var digits = String(n).split('').map(Number)
 	var result = getGreaterNearestSymmmetry(digits)
 	while (!isPrime(result)) {
 		digits = increase1UnitFromIndex(digits, digits.length - 1)
@@ -13,9 +13,8 @@ export function getMinSymmetryPrime(n) {
 }
 
 export function getGreaterNearestSymmmetry(digits) {
-	var length = digits.length
 	var left = 0
-	var right = length - 1
+	var right = digits.length - 1
 
 	while (left < right) {
 		if (digits[left] > digits[right]) {
@@ -23,7 +22,7 @@ export function getGreaterNearestSymmmetry(digits) {
 		} else if (digits[left] < digits[right]) {
 			increase1UnitFromIndex(digits, right - 1)
 			left = 0
-			right = length - 1
+			right = digits.length - 1
 			continue
 		}
 		left++
@@ -52,7 +51,6 @@ export function increase1UnitFromIndex(digits, right) {
 
 	return digits
 }
-
 
 export function isPrime(n) {
 	if (n < 2) {
