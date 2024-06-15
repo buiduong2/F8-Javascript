@@ -1,10 +1,10 @@
-import { getError as getErrorMessage, errors } from './ex01.js'
+import { getError as getErrorMessage, errors } from './src/ex01.js'
 
 //Update Errors Rule
 delete errors.name.min
 delete errors.email.unique
 delete errors.password.same
-errors.name['min-5'] = 'Họ tên phải từ 5 ký tự'
+errors.name['min-5'] = 'Họ tên phải từ ${0} ký tự'
 errors.email['unique-email-data'] = 'Email đã có người sử dụng'
 errors.password['same-password'] = 'Mật khẩu phải khớp với mật khẩu nhập lại'
 
@@ -47,30 +47,42 @@ function User(name, password, email) {
 
 export function handleRegister(name, password, email) {
 	var user = new User(name, password, email)
-	var fields = getErrorField(user)
-	var isValid = fields.length === 0
-	if (!isValid) {
-		return fields.map(getErrorMessage).join('\n')
+	var validateInfos = validate(user)
+	if (validateInfos) {
+		return { type: 'Error', data: validateInfos }
 	} else {
+		user.role = 'User'
 		data.push(user)
+		return { type: 'Accept', data: data }
 	}
-	return data
 }
 
 export function handleLogin(email, password) {
 	var loginInfo = { email: email, password: password }
-	var fields = getErrorField(loginInfo)
-	var isValid = fields.length === 0
-	if (!isValid) {
-		return fields.map(getErrorMessage).join('\n')
+	var validateInfos = validate(loginInfo)
+	if (validateInfos.length !== 0) {
+		return { type: 'Error', data: validateInfos }
+	}
+	var userData = getUserByEmailAndPassword(email, password)
+	if (userData) {
+		return { type: 'Aceept', data: userData }
 	} else {
-		var userData = getUserByEmailAndPassword(email, password)
-		if (userData) {
-			return userData
-		} else {
-			return 'Thông tin đăng nhập không chính xác'
+		return {
+			type: 'UnAccept',
+			data: 'Thông tin đăng nhập không chính xác'
 		}
 	}
+}
+
+function validate(obj) {
+	var fields = getErrorField(obj)
+	var errorMsgs = fields.map(function (field) {
+		return getErrorMessage(field.field)
+	})
+	errorMsgs = errorMsgs.map(function (errorMsg, index) {
+		return resolveMessage(errorMsg, fields[index].options)
+	})
+	return errorMsgs
 }
 
 /**
@@ -92,7 +104,10 @@ function getErrorField(userInfo) {
 				var validator = validators[validatorName]
 				var isValid = validator.bind(userInfo)(value, ...options)
 				if (!isValid) {
-					errorFields.push(`${key}.${ruleNames[index]}`)
+					errorFields.push({
+						options: options,
+						field: isValid
+					})
 					break
 				}
 			}
@@ -100,6 +115,25 @@ function getErrorField(userInfo) {
 	}
 
 	return errorFields
+}
+
+function resolveMessage(msg, options) {
+	if (!options.length) {
+		return msg
+	}
+	if (msg.includes('${')) {
+		while (msg.includes('${')) {
+			var indexStart = msg.indexOf('${')
+			var indexEnd = msg.indexOf('}', indexStart)
+			var optionIndex = msg.slice(indexStart + 2, indexEnd)
+			msg =
+				msg.slice(0, indexStart) +
+				options[optionIndex] +
+				msg.slice(indexEnd + 1)
+		}
+	}
+
+	return msg
 }
 
 function getCollection(name) {
