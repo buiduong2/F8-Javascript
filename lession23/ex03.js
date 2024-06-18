@@ -94,7 +94,7 @@ function createUser(name, password, email) {
 export function handleRegister(name, password, email) {
 	var user = { name: name, password: password, email: email }
 	var validateInfos = validate(user, registerRules)
-	if (validateInfos.isValid) {
+	if (validateInfos.isInValid) {
 		return { type: 'Error', data: validateInfos.errorMsgs }
 	} else {
 		var user = createUser(name, password, email)
@@ -110,7 +110,7 @@ export function handleRegister(name, password, email) {
 export function handleLogin(email, password) {
 	var loginInfo = { email: email, password: password }
 	var validateInfo = validate(loginInfo, loginRules)
-	if (validateInfo.isValid) {
+	if (validateInfo.isInValid) {
 		return { type: 'Error', data: validateInfo.errorMsgs }
 	}
 	var userData = getUserByEmailAndPassword(email, password)
@@ -127,7 +127,7 @@ export function handleLogin(email, password) {
  *
  * @param {Object} obj đối tượng cần xác thực
  * @param {ValidationRule} errors : các định nghĩa rule tương ứng
- * @returns {ValidationInfo: {isValid: boolean, errorMsgs: string[]}} : trả về thông tin validate gồm hợp lệ hay ko.
+ * @returns {ValidationInfo: {isInValid: boolean, errorMsgs: string[]}} : trả về thông tin validate gồm hợp lệ hay ko.
  *  và các tin nhắn tương ứng
  */
 function validate(obj, errors) {
@@ -139,7 +139,7 @@ function validate(obj, errors) {
 		return resolveMessage(errorMsg, fields[index].options)
 	})
 	return {
-		isValid: errorMsgs.length !== 0,
+		isInValid: errorMsgs.length !== 0,
 		errorMsgs: errorMsgs
 	}
 }
