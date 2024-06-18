@@ -36,7 +36,7 @@ export var loginRules = {
  */
 export var validators = {
 	required: function (value) {
-		return !!value.trim()
+		return value && !!value.trim()
 	},
 	min: function (value, size) {
 		if (typeof value === 'string') {
