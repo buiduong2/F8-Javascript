@@ -62,7 +62,8 @@ export function transformToHierarchedCategory(categories) {
 		var categoryId = categories[i].id
 		map[categoryId] = { ...categories[i] }
 	}
-	for (var id in map) {
+	for (var i = 0; i < categories.length; i++) {
+		var id = categories[i].id
 		var parentId = map[id].parent
 		delete map[id].parent
 		if (parentId in map) {
