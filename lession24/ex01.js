@@ -1,11 +1,10 @@
-function sum(...args) {
+export function sum(...args) {
 	var result = 0
 	for (var i = 0; i < args.length; i++) {
-		var num = Number(args[i])
-		if (!isNaN(num)) {
-			result += num
+		if (!isFinite(args[i]) || Array.isArray(args[i])) {
+			return `${args[i]}  is not a valid number`
 		} else {
-			return `${args[i]}  is not a number'`
+			result += Number(args[i])
 		}
 	}
 	return result

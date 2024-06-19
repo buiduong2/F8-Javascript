@@ -18,3 +18,5 @@ Array.prototype.reduce2 = function (callback, initial) {
 
 	return prev
 }
+
+export default {}

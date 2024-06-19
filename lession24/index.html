@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        #ex3 ul {
+            display: flex;
+        }
+
+        #ex3 li {
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="ex1"></div>
+        <div id="ex2"></div>
+        <div id="ex3"></div>
+        <div id="ex4"></div>
+    </div>
+
+    <script type="module" id="script03">
+        import { transformToHierarchedCategory } from "./ex03.js"
+        (function ex03() {
+            var input = [
+                {
+                    id: 1,
+                    name: "Chuyên mục 1",
+                    parent: 0,
+                },
+                {
+                    id: 2,
+                    name: "Chuyên mục 2",
+                    parent: 0,
+                },
+                {
+                    id: 3,
+                    name: "Chuyên mục 3",
+                    parent: 0,
+                },
+                {
+                    id: 4,
+                    name: "Chuyên mục 2.1",
+                    parent: 2,
+                },
+                {
+                    id: 5,
+                    name: "Chuyên mục 2.2",
+                    parent: 2,
+                },
+                {
+                    id: 6,
+                    name: "Chuyên mục 2.3",
+                    parent: 2,
+                },
+                {
+                    id: 7,
+                    name: "Chuyên mục 3.1",
+                    parent: 3,
+                },
+                {
+                    id: 8,
+                    name: "Chuyên mục 3.2",
+                    parent: 3,
+                },
+                {
+                    id: 9,
+                    name: "Chuyên mục 3.3",
+                    parent: 3,
+                },
+                {
+                    id: 10,
+                    name: "Chuyên mục 2.2.1",
+                    parent: 5,
+                },
+                {
+                    id: 11,
+                    name: "Chuyên mục 2.2.2",
+                    parent: 5,
+                },
+            ];
+
+            var output = transformToHierarchedCategory(input)
+
+
+
+            document.querySelector("#ex3").innerHTML = `
+                <h2>Bài 3: </h2>
+                <p> Chuyển đổi mảng 1 chiều thành dạng lồng (nested).</p>
+                <b>kết quả</b>
+                <ul >
+                    <li>Input:
+                        <br>
+                        <pre>${JSON.stringify(input,undefined, 4)}</pre>
+                        <br>
+                    </li>
+                    <li>
+                        OutPut:
+                        <br>
+                        <pre> ${JSON.stringify(output,undefined, 4)} </pre>
+                    </li>
+                </ul>`
+        })();
+
+    </script>
+
+    <script type="module" id="script01">
+
+        import { sum } from "./ex01.js"
+        (function ex01() {
+            var inputs = [-1, 4, 8]
+
+            var output = sum(...inputs)
+
+            document.querySelector("#ex1").innerHTML = `
+                <h2>Bài 1: </h2>
+                <p> Viết 1 hàm tính tổng giá trị biểu thức, tham số truyền vào ở dạng Rest Parameter.</p>
+                <b>kết quả</b>
+                <ul>
+                   <li>Input: ${inputs}  <br> OutPut: ${output}  </li>
+                </ul>`
+        })();
+
+    </script>
+    <script type="module" id="script02">
+        import ex02 from "./ex02.js"
+
+        (function ex02() {
+            var inputs = [12000, "12000000"]
+            var outputs = inputs.map(function (input) {
+                return input.getCurrency("d")
+            });
+
+
+
+            var printResultItem = outputs.map(function (output, index) {
+                return `<li>Input: ${inputs[index]} <br> OutPut: ${outputs[index]}  </li>`
+            }).join("")
+
+
+            document.querySelector("#ex2").innerHTML = `
+                <h2>Bài 2:</h2>
+                <p> Viết 1 phương thức Prototype có tên là getCurrency có đối số truyền vào là đơn vị tiền tệ cần hiển thị</p>
+                <b>kết quả</b>
+                <ul>
+                    ${printResultItem}
+                </ul>`
+        })();
+
+    </script>
+
+
+    <script type="module">
+
+
+        import ex04 from "./ex04.js"
+
+        (function ex02() {
+            var inputs = [1, 2, 3, 4]
+            var outputs = inputs.reduce2(function (prev, curr) {
+                return prev + curr
+            });
+
+
+            document.querySelector("#ex4").innerHTML = `
+                <h2>Bài 4:</h2>
+                <p> Viết lại vòng lặp reduce() trong Array bằng cách sử dụng Prototype trong Javascript</p>
+                <b>kết quả</b>
+                <ul stlye="display="flex">
+                  <li>Input: ${inputs}  </li>
+                  <li> OutPut: ${outputs}</li>
+                </ul>
+                `
+        })();
+
+    </script>
+</body>
+
+</html>

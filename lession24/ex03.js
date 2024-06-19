@@ -55,12 +55,12 @@ var categories = [
 		parent: 5
 	}
 ]
-function transformToNestedArray(categories) {
+export function transformToHierarchedCategory(categories) {
 	var map = {}
 	var result = []
 	for (var i = 0; i < categories.length; i++) {
 		var categoryId = categories[i].id
-		map[categoryId] = categories[i]
+		map[categoryId] = { ...categories[i] }
 	}
 	for (var id in map) {
 		var parentId = map[id].parent
@@ -74,6 +74,7 @@ function transformToNestedArray(categories) {
 			result.push(map[id])
 		}
 	}
+
 	return result
 }
-console.log(transformToNestedArray(categories))
+console.log(transformToHierarchedCategory(categories))
