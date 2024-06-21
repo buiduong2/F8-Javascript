@@ -1,38 +1,27 @@
 function flat(arr) {
-	if (arr.length === 0) {
-		return []
-	}
+	var stackIndex = [0]
+	var stackArr = [arr]
+	var flatedArr = []
 
-	var result = []
-	var current = arr
-	var indexStack = []
-	var arrStack = []
-
-	do {
-		if (Array.isArray(current)) {
-			if (current.length === 0) {
-				current = undefined
-				continue
-			}
-			arrStack.push(current)
-			indexStack.push(0)
-			current = current[0]
-		} else {
-			if (current !== undefined) {
-				result.push(current)
-			}
-			if (peek(indexStack) === peek(arrStack).length - 1) {
-				indexStack.pop()
-				arrStack.pop()
-				current = undefined
+	while (stackArr.length !== 0) {
+		var i = stackIndex[stackIndex.length - 1]
+		arr = stackArr[stackArr.length - 1]
+		while (i < arr.length) {
+			if (Array.isArray(arr[i]) && stackArr.length <= n) {
+				stackArr.push(arr[i])
+				stackIndex[stackIndex.length - 1] = i + 1
+				stackIndex.push(0)
+				arr = arr[i]
+				i = 0
 			} else {
-				indexStack[indexStack.length - 1]++
-				current = peek(arrStack)[peek(indexStack)]
+				flatedArr.push(arr[i])
+				i++
 			}
 		}
-	} while (arrStack.length !== 0 && indexStack.length !== 0)
-
-	return result
+		stackArr.pop()
+		stackIndex.pop()
+	}
+	return flatedArr
 }
 
 /**
