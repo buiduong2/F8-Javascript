@@ -1,7 +1,12 @@
 Array.prototype.reduce2 = function (callback, initial) {
 	if (this.length === 0) {
-		return initial
+		throw new TypeError("arr's length === 0")
 	}
+
+	if (typeof callback !== 'function') {
+		throw new TypeError('Callback must be a function')
+	}
+	
 	var i
 	var prev
 

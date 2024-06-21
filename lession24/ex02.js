@@ -2,29 +2,33 @@ Object.prototype.getCurrency = function getCurrency(currency) {
 	if (!isFinite(Number(this)) || Array.isArray(this)) {
 		return 'Error'
 	}
-	var strNum = String(this)
+	var arrNums = String(Number(this)).split('')
 	var isNegative = false
-	if (strNum[0] === '-') {
+	if (arrNums[0] === '-') {
 		isNegative = true
-		strNum = strNum.substring(1)
+		arrNums.shift()
 	}
 
-	var startIndex = strNum.lastIndexOf('.')
+	var startIndex = arrNums.lastIndexOf('.')
 	if (startIndex === -1) {
-		startIndex = strNum.length - 3
+		startIndex = arrNums.length - 3
 	} else {
 		startIndex = startIndex - 3
 	}
 
 	for (var i = startIndex; i >= 1; i -= 3) {
-		strNum = strNum.substring(0, i) + ',' + strNum.substring(i)
+		arrNums.splice(i, 0, ',')
 	}
 
 	if (isNegative) {
-		strNum = '-' + strNum
+		arrNums.unshift('-')
 	}
 
-	return strNum + ' ' + currency
+	return arrNums.join('') + ' ' + currency
 }
+
+var num = -1234
+
+console.log(num.getCurrency('d'))
 
 export default {}
