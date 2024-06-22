@@ -59,31 +59,24 @@ createOptions('#select')
 function createOptions(selector) {
 	var selectEl = document.querySelector(selector)
 	var items = [{ id: -1, name: 'Chọn Chuyên mục' }].concat(categories)
-	selectEl.innerHTML = getCategoryOptionsHTML(items)
+	selectEl.innerHTML = getCategoryOptionsHTML(items, '')
 }
 
-function getCategoryOptionHTML(category, childLevel) {
-	var prefix = ''
-	while (childLevel && childLevel > 0) {
-		prefix += '--|'
-		childLevel--
-	}
-
+function getCategoryOptionHTML(category, prefix) {
 	return `<option value="${category.id}">${prefix}${category.name}</option>`
 }
 
-function getCategoryOptionsHTML(categories, childLevel) {
-	childLevel = childLevel ?? 0
-
+function getCategoryOptionsHTML(categories, prefix) {
+	prefix = prefix ?? ''
 	return categories
 		.map(category => {
 			if (category.children?.length > 0) {
 				return (
-					getCategoryOptionHTML(category, childLevel) +
-					getCategoryOptionsHTML(category.children, childLevel + 1)
+					getCategoryOptionHTML(category, prefix) +
+					getCategoryOptionsHTML(category.children, prefix + '--|')
 				)
 			} else {
-				return getCategoryOptionHTML(category, childLevel)
+				return getCategoryOptionHTML(category, prefix)
 			}
 		})
 		.join('')
