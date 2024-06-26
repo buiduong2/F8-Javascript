@@ -1,0 +1,270 @@
+.modal {
+  position: fixed;
+  inset: 0;
+}
+.modal .overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.modal .modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+}
+.modal .modal-content .modal-header {
+  position: relative;
+  text-align: center;
+}
+.modal .modal-content .modal-header .modal-close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 30px;
+  padding: 10px;
+  vertical-align: middle;
+}
+.modal .modal-content .modal-body {
+  padding: 24px;
+}
+
+.modal-form .modal-content {
+  width: 500px;
+}
+.modal-form .modal-content .modal-header img {
+  height: 28px;
+  margin: 24px;
+}
+.modal-form .modal-content .modal-header .tab-list {
+  display: flex;
+}
+.modal-form .modal-content .modal-header .tab-list .tab-item {
+  flex-grow: 1;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #808080;
+  background-color: #eee;
+  line-height: 1.5;
+  height: 48px;
+}
+.modal-form .modal-content .modal-header .tab-list .tab-item.active {
+  background-color: rgb(26, 121, 0);
+  color: white;
+}
+
+.form {
+  line-height: 1.4;
+  font-size: 1.4rem;
+  color: rgb(34, 34, 34);
+}
+.form .input-wrapper {
+  position: relative;
+}
+.form .input-wrapper .form-input {
+  padding-inline: 16px;
+  height: 44px;
+  border-radius: 4px;
+  border: 0.5px solid rgb(238, 238, 238);
+  width: 100%;
+}
+.form .input-wrapper .form-input.error {
+  border-color: rgb(205, 48, 56);
+}
+.form .input-wrapper .form-input::placeholder {
+  font-weight: 600;
+  opacity: 0.6;
+}
+.form .input-wrapper .form-input-icon {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  right: 16px;
+  display: none;
+  background-color: rgba(0, 0, 0, 0);
+  color: #808080;
+}
+.form .input-wrapper .form-input-icon.active {
+  display: block;
+}
+.form .form-messsage {
+  font-style: italic;
+  display: none;
+}
+.form .form-messsage.error {
+  color: rgb(205, 48, 56);
+  display: block;
+}
+.form .form-group {
+  margin-bottom: 20px;
+}
+.form .form-action-list {
+  display: flex;
+}
+.form .form-action-list .action-item {
+  height: 44px;
+  width: 100%;
+  background-color: rgb(26, 121, 0);
+  color: white;
+  font-weight: 600;
+  font-size: 1.4rem;
+  border-radius: 4px;
+}
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Roboto", sans-serif;
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.4rem;
+}
+
+button, input {
+  outline: none;
+  border: none;
+}
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+/*# sourceMappingURL=index.css.map */
