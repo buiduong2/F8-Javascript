@@ -26,6 +26,16 @@ var tabContent = getTabContent([formLogin, formRegister])
 var tabAction = getTabAction()
 var tab = getTab(tabAction, tabContent)
 
+formRegister.onsubmit = function (data, form) {
+	form.msgEl.innerText = 'Đăng kí Thành công\n' + JSON.stringify(data)
+	form.msgEl.classList.add('success')
+}
+
+formLogin.onsubmit = function (data, form) {
+	form.msgEl.innerText = 'Lỗi TEST TEST\n'
+	form.msgEl.classList.add('error')
+}
+
 var hierarchy = {
 	ref: modal,
 	children: [

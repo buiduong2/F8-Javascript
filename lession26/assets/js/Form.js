@@ -2,9 +2,14 @@ import { TabContentItem } from './Tab.js'
 import { Component } from './Component.js'
 
 /**Form BEGIN */
-export function Form(el, formGroups) {
+export function Form(el, formGroups,onsubmitSuccess) {
 	TabContentItem.call(this, el)
 	this.formGroups = formGroups
+	this.buttonEl = el.querySelector('button[type="submit"]')
+	this.msgEl = el.querySelector('.form-message')
+	this.PENDING_ICON = `<i class="fa-solid fa-spinner"></i>`
+	this.BTN_DEFAULT_TITLE = this.buttonEl.innerText
+	this.onsubmit = onsubmitSuccess;
 }
 
 Form.prototype = Object.create(TabContentItem.prototype)
@@ -14,16 +19,42 @@ Form.prototype.mount = function () {
 	var _this = this
 	this.el.onsubmit = function (e) {
 		e.preventDefault()
-		if (_this.validate()) {
-			_this.onsubmit?.(_this.collectData())
+		_this.beginLoading()
+		var isValid = _this.validate()
+		if (isValid) {
+			setTimeout(function () {
+				_this.onsubmit?.(_this.collectData(), _this)
+				_this.endLoading()
+			}, 500)
+		} else {
+			_this.endLoading()
 		}
 	}
 }
 
+Form.prototype.destroy = function () {
+	TabContentItem.prototype.destroy.call(this)
+	this.msgEl.classList.remove('success')
+	this.msgEl.classList.remove('error')
+	this.buttonEl.innerHTML = this.BTN_DEFAULT_TITLE
+}
+
+Form.prototype.beginLoading = function () {
+	this.buttonEl.innerHTML = this.PENDING_ICON
+}
+
+Form.prototype.endLoading = function () {
+	this.buttonEl.innerHTML = this.BTN_DEFAULT_TITLE
+}
+
 Form.prototype.validate = function () {
-	return this.formGroups.every(function (group) {
-		return group.validate()
-	})
+	return this.formGroups
+		.map(function (group) {
+			return group.validate()
+		})
+		.every(function (isInValid) {
+			return isInValid
+		})
 }
 
 Form.prototype.collectData = function () {
@@ -66,6 +97,7 @@ FormGroup.prototype.validate = function () {
 		)
 		if (message) {
 			this.showError(message)
+			return false
 		} else {
 			this.clearError()
 		}

@@ -45,6 +45,19 @@
   font-size: 1.4rem;
   color: rgb(34, 34, 34);
 }
+.form .form-message {
+  text-align: center;
+  font-size: 1.6rem;
+  display: none;
+}
+.form .form-message.success {
+  display: block;
+  color: green;
+}
+.form .form-message.error {
+  display: block;
+  color: red;
+}
 .form .input-wrapper {
   position: relative;
 }
@@ -96,6 +109,14 @@
   font-weight: 600;
   font-size: 1.4rem;
   border-radius: 4px;
+}
+.form .form-action-list .action-item i {
+  animation: rotate infinite 1s forwards linear;
+}
+@keyframes rotate {
+  100% {
+    rotate: 360deg;
+  }
 }
 
 .tab-list {
