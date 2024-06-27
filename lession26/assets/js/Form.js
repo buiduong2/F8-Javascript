@@ -2,14 +2,14 @@ import { TabContentItem } from './Tab.js'
 import { Component } from './Component.js'
 
 /**Form BEGIN */
-export function Form(el, formGroups,onsubmitSuccess) {
+export function Form(el, formGroups, onsubmitSuccess) {
 	TabContentItem.call(this, el)
 	this.formGroups = formGroups
 	this.buttonEl = el.querySelector('button[type="submit"]')
 	this.msgEl = el.querySelector('.form-message')
 	this.PENDING_ICON = `<i class="fa-solid fa-spinner"></i>`
 	this.BTN_DEFAULT_TITLE = this.buttonEl.innerText
-	this.onsubmit = onsubmitSuccess;
+	this.onsubmit = onsubmitSuccess
 }
 
 Form.prototype = Object.create(TabContentItem.prototype)
@@ -23,7 +23,10 @@ Form.prototype.mount = function () {
 		var isValid = _this.validate()
 		if (isValid) {
 			setTimeout(function () {
-				_this.onsubmit?.(_this.collectData(), _this)
+				var isSuccess = _this.onsubmit?.(_this.collectData(), _this)
+				if (isSuccess) {
+					_this.clearInput();
+				}
 				_this.endLoading()
 			}, 500)
 		} else {
@@ -66,6 +69,12 @@ Form.prototype.collectData = function () {
 			res[inputEl.name] = inputEl.value
 			return res
 		}, {})
+}
+
+Form.prototype.clearInput = function () {
+	this.formGroups.forEach(function (group) {
+		group.destroy()
+	})
 }
 
 /**Form END */

@@ -29,11 +29,13 @@ var tab = getTab(tabAction, tabContent)
 formRegister.onsubmit = function (data, form) {
 	form.msgEl.innerText = 'Đăng kí Thành công\n' + JSON.stringify(data)
 	form.msgEl.classList.add('success')
+	return true
 }
 
 formLogin.onsubmit = function (data, form) {
 	form.msgEl.innerText = 'Lỗi TEST TEST\n'
 	form.msgEl.classList.add('error')
+	return false
 }
 
 var hierarchy = {
