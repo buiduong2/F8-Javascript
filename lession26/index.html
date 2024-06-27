@@ -17,35 +17,37 @@
 
 <body>
 
+    <button class="modal-open-btn"> Đăng nhập</button>
+
     <div class="modal modal-form">
-        <div class="overlay"></div>
+        <div class="modal-overlay"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <img src="./assets/img/logo.png" alt="Logo Dan tri" class="logo-img">
                 <button class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
 
                 <div class="tab-list">
-                    <button class="tab-item active">
+                    <button class="tab-item active" data-id="1">
                         Đăng nhập
                     </button>
-                    <button class="tab-item">
+                    <button class="tab-item" data-id="2">
                         Đăng ký
                     </button>
                 </div>
             </div>
-            <div class="modal-body">
-                <!--                 
-                <form action="" class="tab-content form">
+            <div class="modal-body tab-content-list">
+
+                <form action="" class="tab-content active form" data-id="1" novalidate>
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <div class="input-wrapper"> <input class="form-input error" type="email" name="email"
+                        <div class="input-wrapper"> <input class="form-input" type="email" name="email"
                                 placeholder="Email"></div>
-                        <p class="form-messsage error">Vui lòng nhập thông tin</p>
+                        <p class="form-messsage">Vui lòng nhập thông tin</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
+                        <label class="form-label" for="email">Password</label>
                         <div class="input-wrapper">
-                            <input class="form-input" type="passowrd" name="password" placeholder="Mật khẩu">
+                            <input class="form-input" type="password" name="password" placeholder="Mật khẩu">
                             <button class="form-input-icon active">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -53,29 +55,29 @@
                                 <i class="fa-regular fa-eye-slash"></i>
                             </button>
                         </div>
-                        <p class="form-messsage error">Vui lòng nhập thông tin</p>
+                        <p class="form-messsage">Vui lòng nhập thông tin</p>
                     </div>
 
                     <div class="form-action-list">
                         <button type="submit " class="action-item">Đăng nhập</button>
                     </div>
                 </form>
-                 -->
-                <form action="" class="tab-content form">
+
+                <form action="" class="tab-content form" data-id="2" novalidate>
                     <div class="form-group">
                         <label for="email" class="form-label">Họ và tên</label>
-                        <div class="input-wrapper"> <input class="form-input error" type="text" name="email"
+                        <div class="input-wrapper"> <input class="form-input" type="text" name="fullname"
                                 placeholder="Họ và tên"></div>
-                        <p class="form-messsage error">Vui lòng nhập thông tin</p>
+                        <p class="form-messsage">Vui lòng nhập thông tin</p>
                     </div>
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <div class="input-wrapper"> <input class="form-input error" type="email" name="email"
+                        <div class="input-wrapper"> <input class="form-input" type="email" name="email"
                                 placeholder="Email"></div>
-                        <p class="form-messsage error">Vui lòng nhập thông tin</p>
+                        <p class="form-messsage">Vui lòng nhập thông tin</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
+                        <label class="form-label" for="email">Password</label>
                         <div class="input-wrapper">
                             <input class="form-input" type="passowrd" name="password" placeholder="Mật khẩu">
                             <button class="form-input-icon active">
@@ -85,7 +87,7 @@
                                 <i class="fa-regular fa-eye-slash "></i>
                             </button>
                         </div>
-                        <p class="form-messsage error">Vui lòng nhập thông tin</p>
+                        <p class="form-messsage">Vui lòng nhập thông tin</p>
                     </div>
 
                     <div class="form-action-list">
@@ -93,10 +95,12 @@
                     </div>
                 </form>
             </div>
-
-
-
         </div>
+
+        <script src="./assets/js/Modal.js" type="module"></script>
+        <script src="./assets/js/Tab.js" type="module"></script>
+        <script src="./assets/js/TabAction.js" type="module"></script>
+        <script src="./assets/js/index.js" type="module"></script>
     </div>
 </body>
 

@@ -2,10 +2,11 @@
   position: fixed;
   inset: 0;
 }
-.modal .overlay {
+.modal .modal-overlay {
   position: absolute;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 .modal .modal-content {
   position: absolute;
@@ -38,22 +39,6 @@
   height: 28px;
   margin: 24px;
 }
-.modal-form .modal-content .modal-header .tab-list {
-  display: flex;
-}
-.modal-form .modal-content .modal-header .tab-list .tab-item {
-  flex-grow: 1;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #808080;
-  background-color: #eee;
-  line-height: 1.5;
-  height: 48px;
-}
-.modal-form .modal-content .modal-header .tab-list .tab-item.active {
-  background-color: rgb(26, 121, 0);
-  color: white;
-}
 
 .form {
   line-height: 1.4;
@@ -69,9 +54,6 @@
   border-radius: 4px;
   border: 0.5px solid rgb(238, 238, 238);
   width: 100%;
-}
-.form .input-wrapper .form-input.error {
-  border-color: rgb(205, 48, 56);
 }
 .form .input-wrapper .form-input::placeholder {
   font-weight: 600;
@@ -93,12 +75,15 @@
   font-style: italic;
   display: none;
 }
-.form .form-messsage.error {
+.form .form-group {
+  margin-bottom: 20px;
+}
+.form .form-group.error .form-messsage {
   color: rgb(205, 48, 56);
   display: block;
 }
-.form .form-group {
-  margin-bottom: 20px;
+.form .form-group.error .form-input {
+  border-color: rgb(205, 48, 56);
 }
 .form .form-action-list {
   display: flex;
@@ -111,6 +96,30 @@
   font-weight: 600;
   font-size: 1.4rem;
   border-radius: 4px;
+}
+
+.tab-list {
+  display: flex;
+}
+.tab-list .tab-item {
+  flex-grow: 1;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #808080;
+  background-color: #eee;
+  line-height: 1.5;
+  height: 48px;
+}
+.tab-list .tab-item.active {
+  background-color: rgb(26, 121, 0);
+  color: white;
+}
+
+.tab-content-list .tab-content {
+  display: none;
+}
+.tab-content-list .tab-content.active {
+  display: block;
 }
 
 html,
@@ -257,9 +266,14 @@ body {
   font-size: 1.4rem;
 }
 
-button, input {
+button,
+input {
   outline: none;
   border: none;
+}
+
+button {
+  cursor: pointer;
 }
 
 /* http://meyerweb.com/eric/tools/css/reset/ 

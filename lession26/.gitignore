@@ -1,2 +1,8 @@
 assets/scss
 assets/css/*.css.map
+assets/ts
+.gitignore
+node_modules
+package-lock.json
+package.json
+tsconfig.json
