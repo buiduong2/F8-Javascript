@@ -1,6 +1,7 @@
 import { TabContentItem } from './Tab.js'
 import { Component } from './Component.js'
 
+/**Form BEGIN */
 export function Form(el, formGroups) {
 	TabContentItem.call(this, el)
 	this.formGroups = formGroups
@@ -36,6 +37,9 @@ Form.prototype.collectData = function () {
 		}, {})
 }
 
+/**Form END */
+
+/**FormGroup BEGIN */
 export function FormGroup(el, contraints) {
 	Component.call(this, el)
 	this.inputEl = el.querySelector('input')
@@ -94,7 +98,9 @@ FormGroup.prototype.destroy = function () {
 	this.clearError()
 	this.inputEl.value = ''
 }
+/**FormGroup END */
 
+/**FormPasswordGroup BEGIN */
 export function FormPasswordGroup(el, constraints) {
 	FormGroup.call(this, el, constraints)
 	this.showPasswordBtnEl = el.querySelector('button')
@@ -138,3 +144,4 @@ FormPasswordGroup.prototype.changeIsShowPassword = function () {
 		this.showPasswordIconEl.classList.replace('fa-eye-slash', 'fa-eye')
 	}
 }
+/**FormPasswordGroup END */

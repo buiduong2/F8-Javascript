@@ -1,5 +1,6 @@
 import { Component } from './Component.js'
 
+/**Tab BEGIN */
 export function Tab(el, tabAction, tabContent) {
 	Component.call(this, el)
 	this.tabAction = tabAction
@@ -11,7 +12,9 @@ Tab.prototype.onTabActionItemChange = function (tabActionItem) {
 	var tabId = tabActionItem.id
 	this.tabContent.changeTabContentItem(tabId)
 }
+/**Tab END */
 
+/**TabAction BEGIN */
 export function TabAction(el, tabActionItems) {
 	Component.call(this, el)
 	this.tabActionItems = tabActionItems
@@ -34,7 +37,9 @@ TabAction.prototype.destroy = function () {
 	Component.prototype.destroy.call(this)
 	this.onTabActionItemClick(this.tabActionItems[0])
 }
+/**TabAction END */
 
+/**TabActionItem BEGIN */
 export function TabActionItem(el) {
 	Component.call(this, el)
 	this.id = Number(el.dataset.id)
@@ -58,7 +63,10 @@ TabActionItem.prototype.mount = function () {
 		_this.emit('onTabActionItemClick', _this)
 	}
 }
+/**TabActionItem END */
 
+
+/**TabContent BEGIN */
 export function TabContent(el, tabContentItems) {
 	Component.call(this, el)
 	this.tabContentItem = tabContentItems
@@ -78,7 +86,9 @@ TabContent.prototype.changeTabContentItem = function (tabId) {
 		next.active()
 	}
 }
+/**TabContent END */
 
+/**TabContentItem BEGIN */
 export function TabContentItem(el) {
 	Component.call(this, el)
 	this.id = Number(el.dataset.id)
@@ -94,3 +104,5 @@ TabContentItem.prototype.removeActive = function () {
 	this.el.classList.remove('active')
 	this.destroy()
 }
+
+/**TabContentItem END */

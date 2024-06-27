@@ -1,5 +1,6 @@
 import { Component } from './Component.js'
 
+/**Modal BEGIN */
 export function Modal(el, flagOpen) {
 	Component.call(this, el)
 	this.overlayEl = document.querySelector('.modal-overlay')
@@ -36,3 +37,4 @@ Modal.prototype.changeOpenFlag = function (value) {
 		this.destroy()
 	}
 }
+/**Modal END */

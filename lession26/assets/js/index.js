@@ -1,8 +1,8 @@
 import { Form, FormGroup, FormPasswordGroup } from './Form.js'
 import { Modal } from './Modal.js'
 import { Tab, TabAction, TabActionItem, TabContent } from './Tab.js'
-
 import { Validation } from './Validation.js'
+
 var formLoginContraints = {
 	email: [{ rule: 'required' }, { rule: 'email' }],
 	password: [
@@ -26,12 +26,6 @@ var tabContent = getTabContent([formLogin, formRegister])
 var tabAction = getTabAction()
 var tab = getTab(tabAction, tabContent)
 
-formLogin.mount()
-formRegister.mount()
-modal.mount()
-tabContent.mount()
-tabAction.mount()
-tab.mount()
 var hierarchy = {
 	ref: modal,
 	children: [
@@ -68,41 +62,31 @@ var hierarchy = {
 makeRelation(hierarchy)
 hierarchy.ref.mount()
 function makeRelation(hierarchy, parent) {
-	var _a
 	var current = hierarchy.ref
 	var children = hierarchy.children
+
 	current.parent = parent
-	current.chidren =
-		(_a = hierarchy.children) === null || _a === void 0
-			? void 0
-			: _a.map(function (child) {
-					return child.ref
-			  })
-	children === null || children === void 0
-		? void 0
-		: children.forEach(function (child) {
-				makeRelation(child, current)
-		  })
+	current.chidren = children?.map(function (child) {
+		return child.ref
+	})
+	hierarchy.children?.forEach(function (child) {
+		makeRelation(child, current)
+	})
 }
 function getForm(selector, formConstraint) {
 	var formEl = document.querySelector(selector)
 	var formGroups = []
-	formEl === null || formEl === void 0
-		? void 0
-		: formEl.querySelectorAll('.form-group').forEach(node => {
-				var name = node.querySelector('input').name
-				var formGroup
-				if (name === 'password') {
-					formGroup = new FormPasswordGroup(
-						node,
-						formConstraint[name]
-					)
-				} else {
-					formGroup = new FormGroup(node, formConstraint[name])
-				}
-				formGroup.validation = validation
-				formGroups.push(formGroup)
-		  })
+	formEl.querySelectorAll('.form-group').forEach(function (node) {
+		var name = node.querySelector('input').name
+		var formGroup
+		if (name === 'password') {
+			formGroup = new FormPasswordGroup(node, formConstraint[name])
+		} else {
+			formGroup = new FormGroup(node, formConstraint[name])
+		}
+		formGroup.validation = validation
+		formGroups.push(formGroup)
+	})
 	return new Form(formEl, formGroups)
 }
 function getTabContent(tabContentItems) {
