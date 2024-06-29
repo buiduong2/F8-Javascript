@@ -1,0 +1,80 @@
+html {
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #8758ff;
+}
+
+.todo {
+  margin: 50px auto 0;
+  width: 500px;
+  padding: 30px;
+  background-color: #1a1a40;
+  border-radius: 5px;
+}
+.todo .todo-header {
+  margin-bottom: 32px;
+}
+.todo .todo-header .title {
+  text-align: center;
+  font-size: 28px;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.todo .todo-header .todo-form {
+  margin-block: 8px;
+  display: flex;
+}
+.todo .todo-header .todo-form .todo-input {
+  flex-grow: 1;
+  padding: 8px 16px;
+  border: 1px solid #8758ff;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 16px;
+  color: white;
+}
+.todo .todo-header .todo-form button {
+  padding: 8px 16px;
+  background-color: #8758ff;
+  color: white;
+  cursor: pointer;
+}
+.todo .todo-list .todo-item {
+  display: flex;
+  margin-bottom: 16px;
+  display: flex;
+  background-color: #8758ff;
+  border-radius: 5px;
+}
+.todo .todo-list .todo-item input.todo-item-content {
+  font-size: 16px;
+  flex-grow: 1;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  cursor: pointer;
+  box-sizing: content-box;
+}
+.todo .todo-list .todo-item input.todo-item-content:focus {
+  cursor: text;
+  background-color: #1a1a40;
+  border: 1px solid #8758ff;
+}
+.todo .todo-list .todo-item .todo-item-action {
+  display: flex;
+  margin-right: 5px;
+}
+.todo .todo-list .todo-item .todo-item-action .btn {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  font-size: 16px;
+}
+.todo .todo-list .todo-item .todo-item-action .btn.todo--save {
+  margin-inline: 10px;
+  display: none;
+}
+
+/*# sourceMappingURL=index.css.map */
