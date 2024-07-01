@@ -16,6 +16,25 @@
 
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/index.css">
+
+    <style>
+        .dragplace-holder.dragging {
+            position: fixed;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: all linear 300ms;
+            border-radius: 5px;
+        }
+
+        .todo-item {
+            transition: all linear 300ms;
+            z-index: 99;
+        }
+
+        .todo-item.dragging {
+            transition: none !important;
+            background-color: tomato !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,33 +43,18 @@
             <h1 class="title">Get Thing Done!</h1>
 
             <form class="todo-form">
-                <input type="text" class="todo-input" placeholder="What is the task to day ?">
+                <input type="text" class="todo-input" placeholder="What is the task to day ?" tabindex="1">
                 <button type="submit">Add Task</button>
             </form>
         </header>
 
         <ul class="todo-list">
-            <li class="todo-item">
-                <input type="text" class="todo-item-content" value="123123123">
-
-                <div class="todo-item-action">
-                    <button class="btn todo--edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="btn todo--delete"><i class="fa-solid fa-trash"></i></button>
-                    <button class="btn todo--save"> <i class="fa-solid fa-check"></i></button>
-                </div>
-            </li>
-
-            <li class="todo-item">
-                <input type="text" class="todo-item-content" value="123123123">
-
-                <div class="todo-item-action">
-                    <button class="btn todo--edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="btn todo--delete"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </li>
         </ul>
 
     </main>
+    <div class="dragplace-holder"></div>
+
+    <script src="./assets/js/index.js" type="module"></script>
 </body>
 
 </html>
