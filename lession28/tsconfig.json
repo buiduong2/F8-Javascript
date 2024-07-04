@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "ES2022",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./assets/js/",
+        // "lib": [
+        //     "ES2021.String",
+        //     "dom"
+        // ]
+    },
+    "include": [
+        "assets/ts/*"
+    ],
+    "exclude": [
+        "assets/js/**",
+        "assets/ts/type.ts"
+    ]
+}
