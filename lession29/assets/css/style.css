@@ -73,6 +73,7 @@
     border-radius: 5px;
     font-size: 10px;
     left: 0;
+    transform: translateX(-50%);
     visibility: hidden;
 }
 
