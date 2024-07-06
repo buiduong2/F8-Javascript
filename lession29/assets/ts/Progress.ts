@@ -7,9 +7,11 @@ export class Progress {
     durationTimeEl: HTMLElement;
     duration: number;
     current: number;
+    state: AudioProgressState;
+    isChangingCurrent: boolean;
 
 
-    constructor(el: HTMLElement, duration: number, current: number = 0) {
+    constructor(el: HTMLElement, duration: number, current: number = 0, state: AudioProgressState) {
         this.progressBarEl = el;
         this.progressEl = el.querySelector(".progress") as HTMLElement;
         this.progressThumbEl = el.querySelector(".progress-thumb") as HTMLElement;
@@ -18,6 +20,8 @@ export class Progress {
         this.progressPointEl = document.querySelector(".progress-point") as HTMLElement;
         this.duration = duration;
         this.current = current
+        this.state = state;
+        this.isChangingCurrent = false;
         this.moute();
     }
 
@@ -62,8 +66,15 @@ export class Progress {
 
     addChangeCurrentBehavior() {
         var _this = this;
+        var hasBeenDragged = false;
+        var hasBeenClick = false;
         var handler = function (e: MouseEvent) {
             e.preventDefault();
+            if (e.type === 'mousemove') {
+                hasBeenDragged = true
+            } else if (e.type === 'mousedown') {
+                hasBeenClick = true;
+            }
             _this.current = _this.getCurrentTime(e);
             _this.setCurrentProgressBar(_this.current);
             _this.setCurrentProgressPoint(_this.current);
@@ -75,10 +86,23 @@ export class Progress {
             document.removeEventListener("mousemove", handler);
             document.removeEventListener("mouseup", removeHandler);
         }
+
         this.progressBarEl.addEventListener("mousedown", function (e) {
+            _this.isChangingCurrent = true
             handler(e)
             document.addEventListener("mousemove", handler)
             document.addEventListener("mouseup", removeHandler);
+        })
+
+        document.addEventListener("mouseup", function (e) {
+            if (hasBeenDragged) {
+                _this.changeSate("AfterDragChange");
+            } else if (hasBeenClick) {
+                _this.changeSate("AfterStepChange");
+            }
+            hasBeenDragged = false
+            hasBeenClick = false
+            _this.isChangingCurrent = false;
         })
     }
 
@@ -88,6 +112,10 @@ export class Progress {
             var second = _this.getCurrentTime(e);
             _this.setCurrentProgressPoint(second);
         })
+    }
+
+    changeSate(state: State): void {
+        this.state.getHandler(state)(this.current);
     }
 
     getCurrentTime(e: MouseEvent): number {
@@ -104,6 +132,7 @@ export class Progress {
     }
 
     changeCurrentTime(currentTime: number) {
+        if (this.isChangingCurrent) return;
         this.current = currentTime;
         this.setCurrentProgressBar(this.current);
     }
@@ -120,3 +149,38 @@ export class Progress {
     }
 
 }
+
+
+export class AudioProgressState {
+    handleAfterStepChange: HandleState;
+    handleBeforeChange: HandleState;
+    handleAfterDragChange: HandleState;
+
+    constructor(el: HTMLAudioElement) {
+        this.handleAfterStepChange = function (number: number) {
+            el.currentTime = number;
+        }
+        this.handleBeforeChange = function (number: number) {
+
+        }
+        this.handleAfterDragChange = function (number: number) {
+            el.currentTime = number;
+        }
+    }
+
+    getHandler(state: State): HandleState {
+        switch (state) {
+            case "AfterStepChange":
+                return this.handleAfterStepChange
+            case "BeforeChange":
+                return this.handleBeforeChange
+            case "AfterDragChange":
+                return this.handleAfterDragChange
+            default:
+                throw new Error("Operation not supported");
+        }
+    }
+}
+
+type State = "AfterStepChange" | "BeforeChange" | "AfterDragChange"
+type HandleState = (current: number) => void;

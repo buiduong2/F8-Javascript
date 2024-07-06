@@ -1,5 +1,16 @@
-import { Progress } from "./Progress.js";
+import { AudioWrapper } from "./AudioWrapper.js";
+import { Progress, AudioProgressState } from "./Progress.js";
 
-var progressEl = document.querySelector(".progress-bar") as HTMLElement;
-var progress = new Progress(progressEl, 200, 50);
+window.addEventListener("load", function () {
+    var progressEl = document.querySelector(".progress-bar") as HTMLElement;
+    var audioEl = document.querySelector("audio") as HTMLAudioElement;
 
+    var audio = new AudioWrapper(audioEl);
+
+    var progressState = new AudioProgressState(audioEl);
+
+    var progress = new Progress(progressEl, audioEl.duration, audioEl.currentTime, progressState);
+
+    audio.onTimeUpdate = progress.changeCurrentTime.bind(progress);
+
+})
