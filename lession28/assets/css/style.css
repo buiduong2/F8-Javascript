@@ -17,6 +17,7 @@ img {
 
 .carousel-inner {
     display: flex;
+    transition: translate 250ms ease-in-out;
 }
 
 .carousel-inner .item {
