@@ -1,0 +1,103 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 50px;
+    font-size: 18px;
+}
+
+.col-1 {
+    --col-width: 1;
+}
+
+.col-2 {
+    --col-width: 2;
+}
+
+.col-3 {
+    --col-width: 3;
+}
+
+.col-4 {
+    --col-width: 4;
+}
+
+.col-5 {
+    --col-width: 5;
+}
+
+.col-6 {
+    --col-width: 6;
+}
+
+
+.col-7 {
+    --col-width: 7;
+}
+
+.col-8 {
+    --col-width: 8;
+}
+
+.col-9 {
+    --col-width: 9;
+}
+
+.col-10 {
+    --col-width: 10;
+}
+
+.col-11 {
+    --col-width: 11;
+}
+
+.col-12 {
+    --col-width: 12;
+}
+
+
+th[class*="col"] {
+    width: calc(var(--col-width) /12 * 100%);
+}
+
+
+
+
+
+
+.section-product {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+}
+
+table.product-list {
+    width: 100%;
+}
+
+table.product-list,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px 10px;
+}
+
+button,
+input {
+    font-size: 15px;
+    padding: 2px;
+}
+
+
+
+.product-id,
+.product-price,
+.product-total-price {
+    text-align: center;
+}
