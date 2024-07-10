@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+    <div id="root">
+        <div class="section-product">
+            <h2 class="section-title">DANH SÁCH SẢN PHẨM</h2>
+            <table class="product-list" border="1">
+                <thead>
+                    <tr>
+                        <th class="product-id col-1">STT</th>
+                        <th class="product-name col-5">Tên sản phẩm</th>
+                        <th class="product-price col-1">Giá </th>
+                        <th class="product-action col-2">Thêm vào giỏ</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td class="product-id">1</td>
+                        <td class="product-name">Sản phẩm 1</td>
+                        <td class="product-price">1000</td>
+                        <td class="product-action">
+                            <input type="number" value="1">
+                            <button>Thêm vào giỏ</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="section-cart">
+            <h2 class="section-title">GIỎ HÀNG</h2>
+            <table class="product-list" border="1">
+                <thead>
+                    <tr>
+                        <th class="product-id col-1">STT</th>
+                        <th class="product-name col-5">Tên sản phẩm</th>
+                        <th class="product-price col-1">Giá </th>
+                        <th class="product-price col-1">Số lượng</th>
+                        <th class="product-total-price col-2">Thành tiền</th>
+                        <th class="product-action col-1">Xóa</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td class="product-id">1</td>
+                        <td class="product-name">Sản phẩm 1</td>
+                        <td class="product-price">1000 </td>
+                        <td class="product-quantity">2</td>
+                        <td class="product-total-price">2000</td>
+                        <td class="product-action">
+                            <button>Xóa</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">
+                            Tổng
+                        </td>
+
+                        <td class="product-quantity ">
+                            2
+                        </td>
+                        <td class="product-total-price" colspan="2">
+                            2000
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
