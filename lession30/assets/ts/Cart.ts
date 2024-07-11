@@ -12,6 +12,7 @@ export class Cart {
     cartItems: CartItem[]
     totalPrice: number;
     totalQuantity: number;
+    static LOCAL_STORAGE_KEY: string = "SHOPEE_CART";
 
 
     constructor(el: HTMLElement, productDatas: ProductData[]) {
@@ -29,6 +30,11 @@ export class Cart {
         this.moute();
     }
     moute() {
+        var _this = this;
+        var oldItems: CartItemData[] = JSON.parse(window.localStorage.getItem(Cart.LOCAL_STORAGE_KEY) ?? "[]");
+        oldItems.forEach(function (item) {
+            _this.addToCart(item.id, item.quantity);
+        })
         this.updateTotalInfo();
         this.updateCartItemIndex();
         this.btnRemoveCartEl.addEventListener("click", this.removeAllCartItem.bind(this))
@@ -93,6 +99,7 @@ export class Cart {
     }
 
     updateTotalInfo(): void {
+        this.saveLocalStorage();
         this.updateTotalPrice();
         this.updateTotalQuantity();
         if (this.totalQuantity === 0) {
@@ -122,6 +129,7 @@ export class Cart {
     }
 
     onCartItemUpdate() {
+        this.saveLocalStorage();
         this.updateTotalPrice();
         this.updateTotalQuantity();
     }
@@ -129,6 +137,19 @@ export class Cart {
     findCartItemById(id: number): CartItem | undefined {
         return this.cartItems.find(function (item) {
             return item.id === id
+        })
+    }
+
+    saveLocalStorage() {
+        window.localStorage.setItem(Cart.LOCAL_STORAGE_KEY, JSON.stringify(this.getItemData()));
+    }
+
+    getItemData(): CartItemData[] {
+        return this.cartItems.map(function (item) {
+            return {
+                id: item.id,
+                quantity: item.getQuantity(),
+            }
         })
     }
 
@@ -251,4 +272,9 @@ export class CartItem {
             </td>
         `
     }
+}
+
+type CartItemData = {
+    id: number,
+    quantity: number,
 }

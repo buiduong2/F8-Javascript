@@ -30,9 +30,3 @@ var products: ProductData[] = [{
 var cart = new Cart(cartEl, products);
 
 var productList = new ProductList(products, productListEl, cart);
-
-type Product = {
-    id: number,
-    name: string,
-    price: number
-}

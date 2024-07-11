@@ -14,6 +14,12 @@ export class Cart {
         this.moute();
     }
     moute() {
+        var _a;
+        var _this = this;
+        var oldItems = JSON.parse((_a = window.localStorage.getItem(Cart.LOCAL_STORAGE_KEY)) !== null && _a !== void 0 ? _a : "[]");
+        oldItems.forEach(function (item) {
+            _this.addToCart(item.id, item.quantity);
+        });
         this.updateTotalInfo();
         this.updateCartItemIndex();
         this.btnRemoveCartEl.addEventListener("click", this.removeAllCartItem.bind(this));
@@ -63,6 +69,7 @@ export class Cart {
         });
     }
     updateTotalInfo() {
+        this.saveLocalStorage();
         this.updateTotalPrice();
         this.updateTotalQuantity();
         if (this.totalQuantity === 0) {
@@ -89,12 +96,24 @@ export class Cart {
         this.totalQuantityEl.innerText = String(this.totalQuantity);
     }
     onCartItemUpdate() {
+        this.saveLocalStorage();
         this.updateTotalPrice();
         this.updateTotalQuantity();
     }
     findCartItemById(id) {
         return this.cartItems.find(function (item) {
             return item.id === id;
+        });
+    }
+    saveLocalStorage() {
+        window.localStorage.setItem(Cart.LOCAL_STORAGE_KEY, JSON.stringify(this.getItemData()));
+    }
+    getItemData() {
+        return this.cartItems.map(function (item) {
+            return {
+                id: item.id,
+                quantity: item.getQuantity(),
+            };
         });
     }
     static getInnerHTML() {
@@ -107,6 +126,7 @@ export class Cart {
         `;
     }
 }
+Cart.LOCAL_STORAGE_KEY = "SHOPEE_CART";
 export class CartItem {
     constructor(productData, quantity, notifyChangeQuantity, notiffyRemove) {
         this.id = productData.id;

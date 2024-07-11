@@ -1,6 +1,4 @@
-import { F8 } from "./utils.js";
 import { Cart } from "./Cart.js";
-import type { Options } from "./utils.js";
 
 export class ProductList {
 
