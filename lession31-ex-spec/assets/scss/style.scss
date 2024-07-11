@@ -19,6 +19,7 @@ a {
 
 .header {
     position: fixed;
+    z-index: 99;
     top: 0;
     left: 0;
     right: 0;
@@ -69,9 +70,9 @@ a {
 .side-bar {
     .side-bar-wrapper {
 
-
         .side-bar {
             position: fixed;
+            z-index: 99;
             top: 50%;
             right: 20px;
             transform: translateY(-50%);
@@ -80,12 +81,16 @@ a {
             display: flex;
             flex-direction: column;
 
-            .side-bar-item {
-                font-size: 10px;
-                padding: 10px;
 
-                &:hover {
-                    scale: 1.5;
+            .side-bar-item {
+                font-size: 5px;
+                padding: 10px;
+                transition: scale ease 250ms;
+                cursor: pointer;
+                
+                &.active i,
+                &:hover i {
+                    scale: 2;
                 }
             }
         }
@@ -93,6 +98,14 @@ a {
 }
 
 #fullPage {
+    max-height: 100vh;
+    overflow: hidden;
+
+    .fullPage-inner {
+        height: 100%;
+        transition: transform ease-in-out 700ms;
+    }
+
     .section {
         background-color: orangered;
         height: 100vh;
