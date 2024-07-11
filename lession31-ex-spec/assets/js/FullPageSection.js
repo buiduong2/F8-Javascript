@@ -1,22 +1,23 @@
+import { Slide } from "./Slide.js";
 import { debounce } from "./utils.js";
-export class FullPage {
+export class FullPage extends Slide {
     constructor() {
-        this.el = document.getElementById("fullPage");
-        this.innerEl = FullPage.createInnerElement(this.el);
+        var el = document.getElementById("fullPage");
+        var currentIndex = 0;
+        var btnSlideEls = Array.from(document.querySelectorAll(".side-bar .side-bar-item"));
+        var innerEl = FullPage.createInnerElement(el);
+        super(btnSlideEls, innerEl, currentIndex);
+        this.el = el;
         this.el.append(this.innerEl);
         this.scrollSpeed = parseFloat(window.getComputedStyle(this.innerEl).transitionDuration) * 1000;
-        this.btnSlideEls = Array.from(document.querySelectorAll(".side-bar .side-bar-item"));
-        this.currentIndex = 0;
         this.moute();
     }
     moute() {
         var _this = this;
-        var debouncedChangeSlide = debounce(this.changeSlide.bind(this), this.scrollSpeed);
-        this.btnSlideEls.forEach(function (btn, index) {
-            btn.addEventListener("click", function () {
-                _this.changeSlide(index);
-            });
+        Array.from(this.innerEl.children).forEach(function (child, index) {
+            child.setAttribute("tabindex", String(index));
         });
+        var debouncedChangeSlide = debounce(this.changeSlide.bind(this), this.scrollSpeed);
         this.el.addEventListener("wheel", function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -52,6 +53,9 @@ export class FullPage {
             document.addEventListener("mouseup", handlerRemoveDrag);
         });
     }
+    setInnerStyleWhenSlideChange(index) {
+        this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
+    }
     static createInnerElement(parent) {
         var innerEl = document.createElement("div");
         innerEl.classList.add("fullPage-inner");
@@ -59,35 +63,5 @@ export class FullPage {
             innerEl.append(node);
         });
         return innerEl;
-    }
-    changeSlide(index) {
-        var totalEle = this.innerEl.childElementCount;
-        if (index > totalEle - 1) {
-            index = totalEle - 1;
-        }
-        else if (index < 0) {
-            index = 0;
-        }
-        this.setStateAfterChangeSlide(index);
-        this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
-    }
-    computeChangeSlide(moveSpace) {
-        var viewHeight = window.innerHeight;
-        if (moveSpace < 0 && Math.abs(moveSpace) > (viewHeight / 4)) {
-            return -1;
-        }
-        else if (moveSpace > 0 && Math.abs(moveSpace) > (viewHeight / 4)) {
-            return 1;
-        }
-        else {
-            return 0;
-        }
-    }
-    setStateAfterChangeSlide(index) {
-        this.btnSlideEls[this.currentIndex].classList.remove('active');
-        this.innerEl.children[this.currentIndex].classList.remove("active");
-        this.currentIndex = index;
-        this.btnSlideEls[this.currentIndex].classList.add('active');
-        this.innerEl.children[this.currentIndex].classList.add("active");
     }
 }

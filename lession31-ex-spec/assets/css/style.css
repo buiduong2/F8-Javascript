@@ -55,44 +55,23 @@ a {
   background-color: white;
 }
 
-.side-bar .side-bar-wrapper .side-bar {
-  position: fixed;
-  z-index: 99;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  color: white;
-  display: flex;
-  flex-direction: column;
-}
-.side-bar .side-bar-wrapper .side-bar .side-bar-item {
-  font-size: 5px;
-  padding: 10px;
-  transition: scale ease 250ms;
-  cursor: pointer;
-}
-.side-bar .side-bar-wrapper .side-bar .side-bar-item.active i, .side-bar .side-bar-wrapper .side-bar .side-bar-item:hover i {
-  scale: 2;
-}
-
-#fullPage {
-  max-height: 100vh;
-  overflow: hidden;
-}
-#fullPage .fullPage-inner {
-  height: 100%;
-  transition: transform ease-in-out 700ms;
-}
 #fullPage .section {
   background-color: orangered;
-  height: 100vh;
+}
+#fullPage .section h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-#fullPage .section h1 {
+  height: 100%;
   color: white;
   font-size: 160px;
+}
+#fullPage .section .slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  color: white;
 }
 #fullPage .section:nth-child(2) {
   background-color: yellow;

@@ -1,33 +1,33 @@
+import { Slide } from "./Slide.js";
 import { debounce } from "./utils.js";
 
-export class FullPage {
-    el: HTMLElement;
-    innerEl: HTMLElement;
-    currentIndex: number;
-    scrollSpeed: number;
-    btnSlideEls: HTMLElement[];
+export class FullPage extends Slide {
 
-    constructor(el: HTMLElement) {
+    el: HTMLElement;
+    scrollSpeed: number;
+
+    constructor() {
+        var el = document.getElementById("fullPage") as HTMLElement;
+        var currentIndex = 0;
+        var btnSlideEls = Array.from(document.querySelectorAll(".side-bar .side-bar-item")) as HTMLElement[];
+        var innerEl = FullPage.createInnerElement(el);
+        super(btnSlideEls, innerEl, currentIndex);
+
         this.el = el;
-        this.innerEl = FullPage.createInnerElement(el);
         this.el.append(this.innerEl);
         this.scrollSpeed = parseFloat(window.getComputedStyle(this.innerEl).transitionDuration) * 1000;
-        this.btnSlideEls = Array.from(document.querySelectorAll(".side-bar .side-bar-item"));
 
-        this.currentIndex = 0;
         this.moute();
     }
 
     moute() {
         var _this = this;
+        Array.from(this.innerEl.children).forEach(function (child, index) {
+            child.setAttribute("tabindex", String(index));
+        })
 
         var debouncedChangeSlide = debounce(this.changeSlide.bind(this), this.scrollSpeed);
 
-        this.btnSlideEls.forEach(function (btn, index) {
-            btn.addEventListener("click", function () {
-                _this.changeSlide(index);
-            })
-        })
         this.el.addEventListener("wheel", function (e: WheelEvent) {
             e.preventDefault()
             e.stopPropagation();
@@ -47,14 +47,14 @@ export class FullPage {
         })
 
         this.innerEl.addEventListener("mousedown", function (e) {
-            _this.innerEl.style.transition = "none"
+            _this.innerEl.classList.add("dragging")
             var initialClientY = e.clientY;
             var handlerDrag = function (e2: MouseEvent) {
                 _this.innerEl.style.transform = `translateY(calc(${-_this.currentIndex * 100}vh - ${initialClientY - e2.clientY}px))`;
             }
 
             var handlerRemoveDrag = function (e2: MouseEvent) {
-                _this.innerEl.style.transition = ""
+                _this.innerEl.classList.remove("dragging");
                 var step = _this.computeChangeSlide(initialClientY - e2.clientY);
                 _this.changeSlide(_this.currentIndex + step);
                 document.removeEventListener("mousemove", handlerDrag);
@@ -67,6 +67,10 @@ export class FullPage {
         })
     }
 
+    setInnerStyleWhenSlideChange(index: number): void {
+        this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
+    }
+
     static createInnerElement(parent: HTMLElement): HTMLElement {
         var innerEl = document.createElement("div");
         innerEl.classList.add("fullPage-inner")
@@ -77,33 +81,4 @@ export class FullPage {
         return innerEl;
     }
 
-    changeSlide(index: number) {
-        var totalEle = this.innerEl.childElementCount;
-        if (index > totalEle - 1) {
-            index = totalEle - 1;
-        } else if (index < 0) {
-            index = 0;
-        }
-        this.setStateAfterChangeSlide(index);
-        this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
-    }
-
-    computeChangeSlide(moveSpace: number): number {
-        var viewHeight = window.innerHeight;
-
-        if (moveSpace < 0 && Math.abs(moveSpace) > (viewHeight / 4)) {
-            return -1;
-        } else if (moveSpace > 0 && Math.abs(moveSpace) > (viewHeight / 4)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    setStateAfterChangeSlide(index: number) {
-        this.btnSlideEls[this.currentIndex].classList.remove('active')
-        this.currentIndex = index;
-        this.btnSlideEls[this.currentIndex].classList.add('active');
-
-    }
 }
