@@ -1,0 +1,96 @@
+#fullPage {
+  max-height: 100vh;
+  overflow: hidden;
+}
+#fullPage .fullPage-inner {
+  height: 100%;
+  transition: transform ease-in-out 700ms;
+}
+#fullPage .fullPage-inner.dragging {
+  transition: none;
+}
+#fullPage .section {
+  height: 100vh;
+}
+#fullPage .section .slide-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+#fullPage .section .slide-wrapper .slide-inner {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transition: transform 700ms ease;
+}
+#fullPage .section .slide-wrapper .slide-inner.dragging {
+  transition: none;
+}
+#fullPage .section .slide-wrapper .slide-inner .slide {
+  flex-shrink: 0;
+  height: 100%;
+  width: 100%;
+}
+#fullPage .section .slide-wrapper .slide-bar {
+  display: flex;
+  color: white;
+  position: absolute;
+  bottom: 10px;
+  z-index: 99;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#fullPage .section .slide-wrapper .slide-bar .slide-bar-item {
+  transition: scale ease 250ms;
+  cursor: pointer;
+  font-size: 5px;
+  padding: 10px;
+}
+#fullPage .section .slide-wrapper .slide-bar .slide-bar-item.active i, #fullPage .section .slide-wrapper .slide-bar .slide-bar-item:hover i {
+  scale: 2;
+}
+#fullPage .section .slide-wrapper .slide-btn-list .btn {
+  position: absolute;
+  font-size: 100px;
+  opacity: 0.5;
+  background-color: rgba(255, 255, 255, 0);
+  outline: none;
+  border: none;
+  font-weight: 100;
+  top: 50%;
+  transform: translateY(-50%) scaleY(2);
+  cursor: pointer;
+  color: white;
+  z-index: 99;
+  transition: opacity 150ms ease-in-out;
+}
+#fullPage .section .slide-wrapper .slide-btn-list .btn:hover {
+  opacity: 1;
+}
+#fullPage .section .slide-wrapper .slide-btn-list .btn.btn--next {
+  right: 10%;
+}
+#fullPage .section .slide-wrapper .slide-btn-list .btn.btn--prev {
+  left: 10%;
+}
+
+.side-bar {
+  position: fixed;
+  z-index: 99;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+.side-bar .side-bar-item {
+  font-size: 5px;
+  padding: 10px;
+  transition: scale ease 250ms;
+  cursor: pointer;
+}
+.side-bar .side-bar-item.active i, .side-bar .side-bar-item:hover i {
+  scale: 2;
+}
+
