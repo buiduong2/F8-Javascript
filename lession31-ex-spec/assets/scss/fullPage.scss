@@ -15,6 +15,7 @@
         height: 100vh;
 
 
+
         .slide-wrapper {
 
             position: relative;
@@ -25,6 +26,11 @@
                 display: flex;
                 height: 100%;
                 width: 100%;
+                transition: transform 700ms ease;
+
+                &.dragging {
+                    transition: none;
+                }
 
                 .slide {
                     flex-shrink: 0;
@@ -53,9 +59,36 @@
                         scale: 2;
                     }
                 }
+            }
 
+            .slide-btn-list {
+                .btn {
+                    position: absolute;
+                    font-size: 100px;
+                    opacity: 0.5;
+                    background-color: rgba($color: white, $alpha: 0);
+                    outline: none;
+                    border: none;
+                    font-weight: 100;
+                    top: 50%;
+                    transform: translateY(-50%) scaleY(2);
+                    cursor: pointer;
+                    color: white;
+                    z-index: 99;
+                    transition: opacity 150ms ease-in-out;
 
+                    &:hover {
+                        opacity: 1;
+                    }
 
+                    &.btn--next {
+                        right: 10%;
+                    }
+
+                    &.btn--prev {
+                        left: 10%
+                    }
+                }
             }
         }
 
