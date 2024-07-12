@@ -6,6 +6,7 @@ export abstract class Slide {
     innerEl: HTMLElement;
     currentIndex: number;
     scrollSpeed: number;
+    abstract dragDirection: "x" | "y"
 
     constructor(btnSlideEls: HTMLElement[], innerEL: HTMLElement, currentIndex: number) {
         this.btnSlideEls = btnSlideEls;
@@ -14,7 +15,6 @@ export abstract class Slide {
         this.scrollSpeed = 0;
     }
 
-    abstract getDragDirection(): ("x" | "y");
 
     moute(...args: any) {
         var _this = this;
@@ -25,7 +25,7 @@ export abstract class Slide {
             })
         })
 
-        if (this.getDragDirection() === 'x') {
+        if (_this.dragDirection === 'x') {
             this.addDragBehavior("vw", "clientX", "translateX");
         } else {
             this.addDragBehavior("vh", "clientY", "translateY");
@@ -66,6 +66,8 @@ export abstract class Slide {
                 _this.changeSlide(_this.currentIndex + step);
                 document.removeEventListener("mousemove", handlerDrag);
                 document.removeEventListener("mouseup", handlerRemoveDrag);
+
+                dragManager.clearIntance();
             }
 
             document.addEventListener("mousemove", handlerDrag);
@@ -82,7 +84,7 @@ export abstract class Slide {
             index = 0;
         }
         this.setStateAfterChangeSlide(index);
-        if (this.getDragDirection() === 'y') {
+        if (this.dragDirection === 'y') {
             this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
         } else {
             this.innerEl.style.transform = `translateX(${-index * 100}vw)`;

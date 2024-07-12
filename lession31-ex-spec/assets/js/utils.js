@@ -1,10 +1,19 @@
 export var F8 = {
     createElement(options) {
-        var el = document.createElement(options.tagName);
+        var el = null;
+        if (options.tagName) {
+            el = document.createElement(options.tagName);
+        }
+        else if (options.el) {
+            el = options.el;
+        }
+        else {
+            throw new Error("Error Element does not created");
+        }
         if (options.attrs) {
             Object.assign(el, options.attrs);
         }
-        el.append(...options.children.map(this.render));
+        el.append(...options.children.map(this.render.bind(this)));
         return el;
     },
     render(child) {
@@ -33,6 +42,7 @@ export var dragManager = (function () {
         var mouseMoveHandler = function (e) {
             if (!dragHorizontalIntances.length || !dragVertitalIntances.length) {
                 document.removeEventListener("mousemove", mouseMoveHandler);
+                return;
             }
             if (e.clientX !== dragHorizontalIntances[0].getInitialClient()) {
                 dragVertitalIntances.forEach(function (item) {
@@ -45,8 +55,6 @@ export var dragManager = (function () {
                 });
             }
             document.removeEventListener("mousemove", mouseMoveHandler);
-            dragHorizontalIntances = [];
-            dragVertitalIntances = [];
         };
         document.addEventListener("mousemove", mouseMoveHandler);
     }
@@ -58,8 +66,13 @@ export var dragManager = (function () {
         dragVertitalIntances.push(instance);
         beginListner();
     }
+    function clearIntance() {
+        dragHorizontalIntances = [];
+        dragVertitalIntances = [];
+    }
     return {
         addDragHorizontalIntance,
-        addDragVertitalIntance
+        addDragVertitalIntance,
+        clearIntance
     };
 })();

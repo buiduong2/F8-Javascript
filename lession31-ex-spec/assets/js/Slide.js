@@ -14,7 +14,7 @@ export class Slide {
                 _this.changeSlide(index);
             });
         });
-        if (this.getDragDirection() === 'x') {
+        if (_this.dragDirection === 'x') {
             this.addDragBehavior("vw", "clientX", "translateX");
         }
         else {
@@ -52,6 +52,7 @@ export class Slide {
                 _this.changeSlide(_this.currentIndex + step);
                 document.removeEventListener("mousemove", handlerDrag);
                 document.removeEventListener("mouseup", handlerRemoveDrag);
+                dragManager.clearIntance();
             };
             document.addEventListener("mousemove", handlerDrag);
             document.addEventListener("mouseup", handlerRemoveDrag);
@@ -66,7 +67,7 @@ export class Slide {
             index = 0;
         }
         this.setStateAfterChangeSlide(index);
-        if (this.getDragDirection() === 'y') {
+        if (this.dragDirection === 'y') {
             this.innerEl.style.transform = `translateY(${-index * 100}vh)`;
         }
         else {

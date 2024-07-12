@@ -1,17 +1,45 @@
 import { Slide } from "./Slide.js";
-import { debounce } from "./utils.js";
+import { debounce, F8 } from "./utils.js";
 export class FullPage extends Slide {
     constructor() {
         var el = document.getElementById("fullPage");
         var currentIndex = 0;
-        var btnSlideEls = Array.from(document.querySelectorAll(".side-bar .side-bar-item"));
+        var btnSlideEls = new Array(el.children.length)
+            .fill(null)
+            .map(function () {
+            return document.createElement("li");
+        }).map(function (el) {
+            el.className = "side-bar-item";
+            el.innerHTML = '<a href="#"><i class="fa-solid fa-circle"></i></a>';
+            return el;
+        });
         var innerEl = FullPage.createInnerElement(el);
         el.append(innerEl);
         super(btnSlideEls, innerEl, currentIndex);
         this.el = el;
+        this.dragDirection = "y";
         this.moute();
     }
     moute() {
+        var asideEl = F8.createElement({
+            tagName: "aside",
+            attrs: { className: "side-bar" },
+            children: [
+                {
+                    tagName: "nav",
+                    attrs: { className: "side-bar-wrapper" },
+                    children: [
+                        {
+                            tagName: "ul",
+                            attrs: { className: "side-bar" },
+                            children: this.btnSlideEls
+                        }
+                    ]
+                }
+            ]
+        });
+        this.el.insertAdjacentElement("beforebegin", asideEl);
+        this.btnSlideEls[0].classList.add("active");
         super.moute();
         var _this = this;
         var debouncedChangeSlide = debounce(this.changeSlide.bind(this), this.scrollSpeed);
@@ -33,9 +61,6 @@ export class FullPage extends Slide {
                 debouncedChangeSlide(_this.currentIndex + 1);
             }
         });
-    }
-    getDragDirection() {
-        return "y";
     }
     static createInnerElement(parent) {
         var innerEl = document.createElement("div");
