@@ -1,0 +1,151 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+.player {
+    margin: 50px auto;
+    padding-inline: 50px;
+}
+
+.player-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-btn {
+    padding: 10px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.player-detail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+}
+
+.progress-bar {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.4);
+    height: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.progress-bar:hover {
+    background-color: yellowgreen;
+}
+
+.progress {
+    background-color: red;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+}
+
+.progress-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: blueviolet;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    translate: 50% -50%;
+}
+
+.progress-point {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 10px;
+    left: 0;
+    transform: translateX(-50%);
+    visibility: hidden;
+}
+
+.progress-bar:hover .progress-point {
+    visibility: visible;
+}
+
+.btn-show-lyric {
+    display: block;
+    margin-inline: auto;
+    padding: 5px 20px;
+    background-color: blueviolet;
+    color: white;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-show-lyric:hover {
+    opacity: 0.9;
+}
+
+.lyric-section {
+    position: fixed;
+    background-color: blueviolet;
+    color: white;
+    inset: 0;
+    transform: translateY(100%);
+    transition: transform ease-in-out 300ms;
+    z-index: 999;
+}
+
+.lyric-section.active {
+    transform: translateY(0%);
+}
+
+.lyric-section-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100%;
+    position: relative;
+}
+
+.lyric-section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 25px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.lyric-section .btn-close {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: none;
+    padding: 20px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.lyric-section .section-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    word-spacing: 2px;
+}
