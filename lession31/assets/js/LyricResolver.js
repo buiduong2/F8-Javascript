@@ -1,142 +1,163 @@
-import { lyric } from "./lyricData.js";
+import { lyric as lyricData } from "./lyricData.js";
 export class LyricResolver {
     constructor(auditoEl) {
         this.songData = {
             song: "Let her go",
             singer: "Passenger"
         };
-        this.lyric = [[]];
+        this.lyric = lyricData.data.sentences.map(function (data) {
+            return data.words;
+        });
         this.search = new BinarySearchWord();
-        this.parentEl = document.querySelector(".lyric-section .section-content");
+        this.lyricEl = document.querySelector(".lyric-section .section-content");
         this.audioEl = auditoEl;
+        this.delayChangeLine = parseFloat(window.getComputedStyle(this.lyricEl.children[0]).transitionDuration) * 1000;
         this.moute();
     }
     moute() {
-        this.lyric = this.chunkWords(2, lyric);
-        ;
-        var ite = this.iterator();
-        var _this = this;
-        var next = ite.next();
-        this.audioEl.addEventListener("timeupdate", function () {
-            var curentTime = _this.audioEl.currentTime * 1000;
-            if (next && next[0].getStartTime() < curentTime) {
-                _this.parentEl.innerHTML = _this.getLyricHTML(next);
-                next = ite.next();
+        var sentenceIte = this.sentencesIterator();
+        this.displaySongData();
+        var currentIndex = 0;
+        this.audioEl.addEventListener("timeupdate", () => {
+            var currentTime = this.audioEl.currentTime * 1000;
+            if (sentenceIte.hasNext() && sentenceIte.peekNext()[0].startTime - 1000 < currentTime) {
+                if (currentIndex == 0) {
+                    this.setDisplayLine(sentenceIte.next(), 0);
+                    this.setDisplayLine(sentenceIte.next(), 1);
+                    currentIndex += 2;
+                }
+                else {
+                    this.setDisplayLine(sentenceIte.next(), currentIndex % 2);
+                    currentIndex++;
+                }
+                if (this.isMusicOnlyTime(sentenceIte.peekCur(), sentenceIte.peekNext())) {
+                    setTimeout(() => {
+                        this.displaySongData();
+                        currentIndex = 0;
+                    }, 3000);
+                }
             }
         });
-        this.audioEl.addEventListener("seeked", function () {
-            var index = _this.findIndexByTime(this.currentTime * 1000);
-            var cur = ite.setIndex(Math.max(index - 1, 0));
-            _this.parentEl.innerHTML = _this.getLyricHTML(cur);
-            next = ite.next();
+        this.audioEl.addEventListener("seeked", () => {
+            var currentTime = this.audioEl.currentTime * 1000;
+            var index = this.search.search(this.lyric, currentTime);
+            var cur = sentenceIte.setIndex(index);
+            if (cur[0].startTime >= currentTime) {
+                sentenceIte.setIndex(index - 1);
+            }
+            this.setDisplayLine(sentenceIte.next(), 0);
+            this.setDisplayLine(sentenceIte.next(), 1);
+            currentIndex = 2;
+            this.fillColor(currentTime);
+        });
+        var animationFrameId;
+        var animationFrame = () => {
+            this.fillColor(this.audioEl.currentTime * 1000);
+            animationFrameId = window.requestAnimationFrame(animationFrame);
+        };
+        this.audioEl.addEventListener("play", () => {
+            animationFrame();
+        });
+        this.audioEl.addEventListener("pause", () => {
+            cancelAnimationFrame(animationFrameId);
         });
     }
-    getLyricHTML(wordss) {
-        return wordss.map(function (words) {
-            return "<p>" + words.toTextContent() + "</p>";
-        }).join(" ");
+    fillColor(currentTime) {
+        Array.from(this.lyricEl.querySelectorAll(".word")).forEach((wordEl) => {
+            if (!wordEl.parentElement) {
+                return;
+            }
+            var startTime = Number(wordEl.getAttribute("data-starTime"));
+            var endTime = Number(wordEl.getAttribute("data-endTime"));
+            if (endTime < currentTime) {
+                wordEl.parentElement.style.width = `100%`;
+            }
+            else if (startTime <= currentTime && currentTime <= endTime) {
+                wordEl.parentElement.style.width = `${(currentTime - startTime) / (endTime - startTime) * 100}%`;
+            }
+        });
     }
     findIndexByTime(time) {
         return this.search.search(this.lyric, time);
     }
-    isMusicOnelyTime(interval) {
-        return interval > 10000;
+    displaySongData() {
+        this.lyricEl.innerHTML = `
+            <p>Ca sĩ: ${this.songData.singer} </p>
+            <p>Bài hát: ${this.songData.song}</p> 
+        `;
     }
-    isPhraseBreak(interval) {
-        return interval > 2000;
+    setDisplayLine(words, index) {
+        this.lyricEl.children[index].classList.add("removing");
+        setTimeout(() => {
+            this.lyricEl.children[index].classList.remove("removing");
+            this.lyricEl.children[index].innerHTML = this.getWordInnerHTML(words);
+            this.fixedWidthWord();
+        }, this.delayChangeLine);
     }
-    chunkWords(size, lyric) {
-        var firstWords = lyric.data.sentences[0].words;
-        var firstData = this.createMusicOnlyWords(0, firstWords[firstWords.length - 1].endTime);
-        var last = firstData[firstData.length - 1];
-        var currentItems = [];
-        var newData = [firstData, currentItems];
-        var count = 0;
-        for (const ws of lyric.data.sentences) {
-            var cur = new Words(ws);
-            count++;
-            var interval = last.getTimeBetweenOtherBegin(cur);
-            var needCreateNewArr = false;
-            if (this.isMusicOnelyTime(interval)) {
-                var songData = this.createMusicOnlyWords(last.getEndTime(), cur.getStartTime());
-                newData.push(songData);
-                needCreateNewArr = true;
-            }
-            else if (count > size || this.isPhraseBreak(interval)) {
-                needCreateNewArr = true;
-            }
-            if (needCreateNewArr) {
-                needCreateNewArr = false;
-                currentItems = [cur];
-                newData.push(currentItems);
-                count = 1;
-            }
-            else {
-                currentItems.push(cur);
-            }
-            last = cur;
+    isMusicOnlyTime(cur, next) {
+        if (!next) {
+            return true;
         }
-        if (this.isMusicOnelyTime(this.audioEl.duration * 1000 - last.getEndTime())) {
-            newData.push(this.createMusicOnlyWords(last.getEndTime(), this.audioEl.duration * 1000));
-        }
-        return newData;
+        return cur[cur.length - 1].endTime + 10000 < next[0].startTime;
     }
-    createMusicOnlyWords(startTime, endTime) {
-        return [
-            new Words({
-                words: [{
-                        startTime: startTime,
-                        endTime: endTime,
-                        data: `Bài Hát: ${this.songData.song}`
-                    }]
-            }),
-            new Words({
-                words: [{
-                        startTime: startTime,
-                        endTime: endTime,
-                        data: `Ca sĩ: ${this.songData.singer}`
-                    }]
-            })
-        ];
+    getWordInnerHTML(words) {
+        return words.map(word => `<span class="word-outer">
+                ${word.data} 
+               <span class="word-middle">
+                    <span class="word" data-starTime="${word.startTime}" data-endTime="${word.endTime}">
+                        ${word.data}
+                    </span>
+               </span>
+            </span>`).join(" ");
     }
-    iterator() {
-        return new LyricResolverIterator(this.lyric);
+    fixedWidthWord() {
+        Array.from(this.lyricEl.querySelectorAll(".word-outer")).forEach((parent) => {
+            var width = parent.offsetWidth;
+            var wordEl = parent.querySelector(".word");
+            wordEl.style.width = width + 1 + "px";
+        });
+    }
+    sentencesIterator() {
+        return new SentencesIterator(this.lyric);
+    }
+    wordsIterator(words) {
+        return new WordIterator(words);
     }
 }
-export class Words {
-    constructor(words) {
-        this.words = words;
-    }
-    getStartTime() {
-        return this.words.words[0].startTime;
-    }
-    getEndTime() {
-        return this.words.words[this.words.words.length - 1].endTime;
-    }
-    getTimeBetweenOtherBegin(other) {
-        return Math.abs(this.getEndTime() - other.getStartTime());
-    }
-    toTextContent() {
-        return this.words.words.map(function (word) {
-            return word.data;
-        }).join(" ");
-    }
-}
-class LyricResolverIterator {
-    constructor(wordss) {
-        this.wordss = wordss;
-        this.currentIndex = -1;
-    }
+class IteratorConcrete {
     hasNext() {
-        return this.currentIndex + 1 < this.wordss.length;
+        return this.currentIndex + 1 < this.arr.length;
+    }
+    peekNext() {
+        return this.arr[this.currentIndex + 1];
     }
     next() {
         this.currentIndex++;
-        return this.wordss[this.currentIndex];
+        return this.arr[this.currentIndex];
+    }
+    peekCur() {
+        return this.arr[this.currentIndex];
+    }
+    getIndex() {
+        return this.currentIndex;
     }
     setIndex(index) {
         this.currentIndex = index;
-        return this.wordss[this.currentIndex];
+        return this.arr[this.currentIndex];
+    }
+}
+class WordIterator extends IteratorConcrete {
+    constructor(words) {
+        super();
+        this.currentIndex = 0;
+        this.arr = words;
+    }
+}
+class SentencesIterator extends IteratorConcrete {
+    constructor(wordss) {
+        super();
+        this.arr = wordss;
+        this.currentIndex = -1;
     }
 }
 export class BinarySearch {
@@ -171,8 +192,8 @@ export class BinarySearchWord extends BinarySearch {
         var comapre = function (o1, o2) {
             return o1 - o2;
         };
-        var func = function (wordss) {
-            return wordss[0].getStartTime();
+        var func = function (words) {
+            return words[0].startTime;
         };
         super(comapre, func);
     }

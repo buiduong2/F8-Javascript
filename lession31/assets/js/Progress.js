@@ -1,13 +1,14 @@
 export class Progress {
-    constructor(el, duration, current = 0, state) {
+    constructor(el, audioEl, state) {
         this.progressBarEl = el;
         this.progressEl = el.querySelector(".progress");
         this.progressThumbEl = el.querySelector(".progress-thumb");
         this.currentTimeEl = document.querySelector(".progress-current");
         this.durationTimeEl = document.querySelector(".progress-duration");
         this.progressPointEl = document.querySelector(".progress-point");
-        this.duration = duration;
-        this.current = current;
+        this.audioEl = audioEl;
+        this.duration = audioEl.duration;
+        this.current = audioEl.currentTime;
         this.state = state;
         this.isChangingCurrent = false;
         this.moute();
@@ -43,6 +44,10 @@ export class Progress {
     }
     moute() {
         this.addValidate();
+        var _this = this;
+        this.audioEl.addEventListener("timeupdate", function () {
+            _this.changeCurrentTime(_this.audioEl.currentTime);
+        });
         this.durationTimeEl.innerText = this.computeTime(this.duration);
         this.setCurrentProgressBar(this.current);
         this.addChangeCurrentBehavior();

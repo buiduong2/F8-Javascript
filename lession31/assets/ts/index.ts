@@ -16,11 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
     var btnShowLyric = document.querySelector(".btn-show-lyric") as HTMLElement;
     var lyricSectionEl = document.querySelector(".lyric-section") as HTMLElement;
     var btnCloseLyricSection = document.querySelector(".lyric-section .btn-close") as HTMLElement;
+    var playerEl = document.querySelector(".player") as HTMLElement;
+
     btnShowLyric.addEventListener("click", function () {
         lyricSectionEl.classList.add("active");
+        setTimeout(() => {
+            playerEl.classList.add("showing-karaoke")
+        }, 250);
     })
 
     btnCloseLyricSection.addEventListener("click", function () {
         lyricSectionEl.classList.remove("active");
+        playerEl.classList.remove("showing-karaoke")
     })
 })
