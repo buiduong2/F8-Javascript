@@ -16,28 +16,28 @@ dragItems.forEach(function (dragItem) {
 	dragItem.addEventListener('dragover', function (e) {
 		e.preventDefault()
 		if (draggingItem === this) return
-		if (draggingItem) {
-			var insertPosition =
-				draggingItem.offsetTop > this.offsetTop
-					? 'beforebegin'
-					: 'afterend'
-			this.insertAdjacentElement(insertPosition, draggingItem)
-		} else {
-			throw new Error('Error Dragging Item NOt Found')
-		}
+		if (!draggingItem) throw new Error('Error Dragging Item NOt Found')
+
+		var insertPosition =
+			draggingItem.offsetTop > this.offsetTop ? 'beforebegin' : 'afterend'
+		this.insertAdjacentElement(insertPosition, draggingItem)
 	})
 	dragItem.addEventListener('drop', function (e) {
 		e.preventDefault()
-		if (draggingItem) {
-			draggingItem.classList.remove(CLASS_DRAGGING)
-			draggingItem = null
-		}
+		if (!draggingItem) throw new Error('Error Dragging Item NOt Found')
+
+		draggingItem.classList.remove(CLASS_DRAGGING)
+		draggingItem = null
 		indexingAllDragElement()
 	})
 })
 
 function getAllIdEl() {
-	var idEls = Array.from(document.querySelectorAll(QUERY_STRING_DRAG_ITEM_ID))
+	var idEls = Array.from(
+		document.querySelectorAll(QUERY_STRING_DRAG_ITEM)
+	).map(function (dragEl) {
+		return dragEl.querySelector(QUERY_STRING_DRAG_ITEM_ID)
+	})
 	var isIdValid = idEls.every(function (id) {
 		return (
 			id &&
@@ -56,10 +56,9 @@ function indexingAllDragElement() {
 	var idEls = getAllIdEl()
 	var idCount = {}
 	idEls.forEach(function (el) {
-		var _a
-		var groupId = (_a = Array.from(el.classList).find(function (className) {
+		var groupId = Array.from(el.classList).find(function (className) {
 			return className.startsWith(PREFIX_GROUP_ID)
-		}))
+		})
 		if (!(groupId in idCount)) {
 			idCount[groupId] = 0
 		}
