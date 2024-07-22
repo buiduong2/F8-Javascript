@@ -1,0 +1,35 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.list {
+    max-width: 600px;
+    padding: 16px;
+    background-color: #4286f4;
+    margin: 5px;
+    border-radius: 2px;
+
+}
+
+.list-item {
+    padding: 8px;
+    margin: 0.8px;
+    border: 1px solid white;
+    border-radius: 2px;
+    background-color: #8bb3f4;
+}
+
+.list-item.dragging {
+    background-color: #4286f4;
+}
+
+.list-item.list-item--module {
+    background-color: #ff6f00;
+}
+
+
+.list-item.list-item--module.dragging {
+    background-color: #ff5100;
+}
