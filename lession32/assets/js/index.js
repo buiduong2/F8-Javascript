@@ -3,6 +3,12 @@ var QUERY_STRING_DRAG_ITEM_ID = '.list-item[draggable="true"] .drag-id'
 var PREFIX_GROUP_ID = 'id-'
 var CLASS_DRAGGING = 'dragging'
 
+var ERROR_MSG_DRAG_OVER = 'Error: An item being dragged must be set'
+var ERROR_MSG_DRAG_END =
+	'Error: No item being dragged was assigned when drag action ended'
+var ERROR_MSG_GET_ID_EL = `Error: Some draggable items do not have a tag with required classes:
+			 drag-id ,a class with prefix ${PREFIX_GROUP_ID}`
+
 var dragItems = document.querySelectorAll(QUERY_STRING_DRAG_ITEM)
 var draggingItem = null
 
@@ -16,15 +22,15 @@ dragItems.forEach(function (dragItem) {
 	dragItem.addEventListener('dragover', function (e) {
 		e.preventDefault()
 		if (draggingItem === this) return
-		if (!draggingItem) throw new Error('Error Dragging Item NOt Found')
+		if (!draggingItem) throw new Error(ERROR_MSG_DRAG_OVER)
 
 		var insertPosition =
 			draggingItem.offsetTop > this.offsetTop ? 'beforebegin' : 'afterend'
 		this.insertAdjacentElement(insertPosition, draggingItem)
 	})
-	dragItem.addEventListener('drop', function (e) {
+	dragItem.addEventListener('dragend', function (e) {
 		e.preventDefault()
-		if (!draggingItem) throw new Error('Error Dragging Item NOt Found')
+		if (!draggingItem) throw new Error(ERROR_MSG_DRAG_END)
 
 		draggingItem.classList.remove(CLASS_DRAGGING)
 		draggingItem = null
@@ -47,7 +53,7 @@ function getAllIdEl() {
 		)
 	})
 	if (!isIdValid) {
-		throw new Error('Error on structur define')
+		throw new Error(ERROR_MSG_GET_ID_EL)
 	}
 	return idEls
 }

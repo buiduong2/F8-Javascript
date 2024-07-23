@@ -19,6 +19,7 @@
     border: 1px solid white;
     border-radius: 2px;
     background-color: #8bb3f4;
+    list-style-type: none;
 }
 
 .list-item.dragging {
