@@ -10,6 +10,15 @@
     padding-inline: 50px;
 }
 
+.player.showing-karaoke {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    color: bisque;
+}
+
 .player-actions {
     display: flex;
     align-items: center;
@@ -22,6 +31,7 @@
     background-color: rgba(0, 0, 0, 0);
     font-size: 30px;
     cursor: pointer;
+    color: inherit;
 }
 
 .player-detail {
@@ -39,6 +49,11 @@
     position: relative;
     cursor: pointer;
 }
+
+.player.showing-karaoke .progress-bar {
+    background-color: bisque;
+}
+
 
 .progress-bar:hover {
     background-color: yellowgreen;
@@ -148,4 +163,36 @@
     font-weight: 500;
     letter-spacing: 1px;
     word-spacing: 2px;
+}
+
+.lyric-section .section-content p {
+    opacity: 1;
+    transition: opacity 250ms ease-in-out;
+
+}
+
+.lyric-section .section-content p.removing {
+    opacity: 0;
+}
+
+.lyric-section .section-content p>span {
+    position: relative;
+    display: inline-block;
+}
+
+.lyric-section .section-content p>span>span {
+    overflow: hidden;
+    position: absolute;
+    inset: 0;
+    display: inline-block;
+    width: 0%;
+}
+
+
+.lyric-section .section-content p span .word {
+    position: absolute;
+    left: 0;
+    color: yellow;
+    display: inline-block;
+    overflow: hidden;
 }
