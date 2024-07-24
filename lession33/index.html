@@ -32,9 +32,9 @@
                         File
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">New</a></li>
-                        <li><a class="dropdown-item" href="#">Save as TXT</a></li>
-                        <li><a class="dropdown-item" href="#">Save as PDF</a></li>
+                        <li><button class="dropdown-item btn--clear">New</button></li>
+                        <li><button class="dropdown-item btn--save-txt">Save as TXT</button></li>
+                        <li><button class="dropdown-item btn--save-pdf">Save as PDF</button></li>
                     </ul>
                 </div>
 
@@ -46,10 +46,10 @@
             </div>
 
             <div class="formatting-action">
-                <button type="button" class="btn btn-dark action-item"><b>b</b></button>
-                <button type="button" class="btn btn-dark action-item"><u>u</u></button>
-                <button type="button" class="btn btn-dark action-item"><i>i</i></button>
-                <input type="color" name="" id="" class="btn action-item">
+                <button type="button" class="btn btn-outline-dark action-item btn--bold"><b>b</b></button>
+                <button type="button" class="btn btn-outline-dark action-item btn--underline"><u>u</u></button>
+                <button type="button" class="btn btn-outline-dark action-item btn--italic"><i>i</i></button>
+                <input type="color" class="btn action-item btn--color">
             </div>
 
         </div>
@@ -63,7 +63,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <script src="./assets/js/index.js"></script>
 
 </body>
 
