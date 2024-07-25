@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var contentEl = document.querySelector('.editor-content')
 	var quantityLetterEl = document.querySelector('.quantity--letter .quantity')
 	var quantityWordEl = document.querySelector('.quantity--word .quantity')
+    var btnClear = document.querySelector('.btn--clear')
 	var formatBold = new FormatBtn('.btn--bold', 'bold', contentEl)
 	var formatUnderline = new FormatBtn( '.btn--underline', 'underline', contentEl)
 	var formatItalic = new FormatBtn('.btn--italic', 'italic', contentEl)
@@ -23,6 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
 	Object.values(tagMap).forEach(function (formatBtn) {
 		formatBtn.addEventListener()
 	})
+
+    btnClear.addEventListener('click', function () {
+        contentEl.innerHTML = ''
+        quantityLetterEl.textContent = "0"
+		quantityWordEl.textContent = "0"
+        removeAllBtnActiveClass();
+        contentEl.focus()
+    })
 
 	contentEl.addEventListener('click', addActiveClassBtnByCurrentSelect)
 
@@ -84,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
 		var startContainer = selectedNode.getRangeAt(0).startContainer
 		var endContainer = selectedNode.getRangeAt(0).endContainer
-        
+
 		return startContainer === endContainer ? startContainer : null
 	}
 
@@ -97,15 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
     
 	// File Handler
 	window.addEventListener('load', function () {
-		var btnClear = document.querySelector('.btn--clear')
 		var btnSaveTxt = document.querySelector('.btn--save-txt')
 		var btnSavePdf = document.querySelector('.btn--save-pdf')
 		var inputFileNameEl = document.querySelector('.input-file-name')
 
-		btnClear.addEventListener('click', function () {
-			contentEl.innerHTML = ''
-			contentEl.focus()
-		})
+
 
 		btnSaveTxt.addEventListener('click', function () {
 			var blob = new Blob([contentEl.innerText], { type: 'text/plain' })
