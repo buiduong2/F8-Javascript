@@ -1,0 +1,50 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Roboto", sans-serif;
+}
+
+.editor-action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.file-action {
+    gap: 10px;
+    display: flex;
+}
+
+.formatting-action {
+    display: flex;
+    gap: 10px;
+
+}
+
+.formatting-action .action-item {
+    min-width: 40px;
+}
+
+.formatting-action .action-item:last-child {
+    height: 100%;
+    margin: 0;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.editor-content {
+    min-height: 500px;
+    outline:none;
+    
+}
+
+.content-statistics {
+    list-style-type: none;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
