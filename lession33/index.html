@@ -39,8 +39,8 @@
                 </div>
 
                 <div class="input-wrapper">
-                    <input class="form-control" type="text" placeholder="File Name..." aria-label="File Name...">
-
+                    <input class="form-control input-file-name" type="text" placeholder="File Name..."
+                        aria-label="File Name..." value="untitled">
                 </div>
 
             </div>
@@ -55,6 +55,11 @@
         </div>
 
         <div class="editor-content shadow  rounded mt-5 p-3" contenteditable="true"></div>
+
+        <ul class="content-statistics mt-3">
+            <li class="quantity--letter">Số kí tự : <span class="quantity">0</span></li>
+            <li class="quantity--word"> Số từ : <span class="quantity">0</span></li>
+        </ul>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -67,6 +72,7 @@
         integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <script src="./assets/js/FormatBtn.js"></script>
     <script src="./assets/js/index.js"></script>
 
 </body>

@@ -1,65 +1,81 @@
-// Format Btn Handler
 document.addEventListener("DOMContentLoaded", function () {
+    // Format Action Handle
     var contentEl = document.querySelector(".editor-content") as HTMLDivElement;
-    var boldBtn = document.querySelector(".btn--bold") as HTMLButtonElement;
-    var underlineBtn = document.querySelector(".btn--underline") as HTMLButtonElement;
-    var italicBtn = document.querySelector(".btn--italic") as HTMLButtonElement;
-    var pickColorBtn = document.querySelector(".btn--color") as HTMLInputElement;
+    var quantityLetterEl = document.querySelector(".quantity--letter .quantity") as HTMLElement;
+    var quantityWordEl = document.querySelector(".quantity--word .quantity") as HTMLElement;
+    var formatBold = new FormatBtn(".btn--bold", "bold", contentEl);
+    var formatUnderline = new FormatBtn(".btn--underline", "underline", contentEl);
+    var formatItalic = new FormatBtn(".btn--italic", "italic", contentEl);
+    var formatColor = new FormatColorBtn(".btn--color", "foreColor", contentEl);
 
-    var tagMap: { [key: string]: HTMLElement } = {
-        b: boldBtn,
-        u: underlineBtn,
-        i: italicBtn,
-        font: pickColorBtn
+    var tagMap: TagMap = {
+        "B": formatBold,
+        "U": formatUnderline,
+        "I": formatItalic,
+        "FONT": formatColor
     }
 
-    contentEl.addEventListener("click", function (e) {
-        addActiveClassBtnByCurrentSelect();
+    var keyBoardMap: KeyBoardMap = {
+        "b": formatBold,
+        "u": formatUnderline,
+        "i": formatItalic
+    }
+
+
+
+    Object.values(tagMap).forEach(function (formatBtn) {
+        formatBtn.addEventListener();
+    })
+
+    contentEl.addEventListener("click", addActiveClassBtnByCurrentSelect)
+
+    contentEl.addEventListener("input", function (e) {
+        quantityLetterEl.textContent = String(countLetter());
+        quantityWordEl.textContent = String(countWord());
     })
 
     contentEl.addEventListener("keydown", function (e) {
-        if (e.ctrlKey && e.key in tagMap) {
-            tagMap[e.key].classList.toggle("active")
-        } else {
-            var moveCursorKeys = ["ArrowLeft", "ArrowRight", "ArrowTop", "ArrowBottom", "Delete", "Backspace"]
-            if (moveCursorKeys.includes(e.key)) {
-                addActiveClassBtnByCurrentSelect();
+        var moveCursorKeys = ["ArrowLeft", "ArrowRight", "ArrowTop", "ArrowBottom", "Delete", "Backspace"];
+        if (e.ctrlKey && e.key in keyBoardMap) {
+            keyBoardMap[e.key].toggleActive();
+        } else if (moveCursorKeys.includes(e.key)) {
+            addActiveClassBtnByCurrentSelect();
+        }
+    })
+
+    function countWord(): number {
+        var str = (contentEl.innerText as string);
+        var nonLetterCharCodes = new Set<Number>([160, 10, 32, 9]) //['&npsb'; '\n', ' ' , '\t']
+        var encounteredLetter: boolean = false;
+        var count = 0;
+        for (var i = 0; i < str.length; i++) {
+            if (!nonLetterCharCodes.has(str.charCodeAt(i))) {
+                if (!encounteredLetter) {
+                    count++;
+                }
+                encounteredLetter = true;
+            } else {
+                encounteredLetter = false;
             }
         }
-    })
 
+        return count;
 
-    boldBtn.addEventListener("click", formatBtnHandler("bold"));
-    underlineBtn.addEventListener("click", formatBtnHandler("underline"))
-    italicBtn.addEventListener("click", formatBtnHandler("italic"))
-    pickColorBtn.addEventListener("input", function (e) {
-        document.execCommand("foreColor", false, this.value);
-        contentEl.focus();
-    })
+    }
 
-    function formatBtnHandler(commandId: string) {
-        return function (this: HTMLButtonElement) {
-            document.execCommand(commandId);
-            contentEl.focus();
-            this.classList.toggle("active")
-        }
+    function countLetter(): number {
+        return (contentEl.innerText as string).length;
     }
 
     function addActiveClassBtnByCurrentSelect(): void {
-        RemoveAllBtnActiveClass();
+        removeAllBtnActiveClass();
         var node = getSelectedNode();
+
         if (node === null) return;
 
         while (node !== contentEl) {
-            if (node instanceof HTMLElement) {
-                var tagNameLowerCase = node.tagName.toLowerCase()
-                if (tagNameLowerCase in tagMap) {
-                    if (tagNameLowerCase === 'font') {
-                        (tagMap[tagNameLowerCase] as HTMLInputElement).value = node.getAttribute("color") ?? "#000000";
-                    } else {
-                        tagMap[tagNameLowerCase].classList.add("active");
-                    }
-                }
+            if (node instanceof HTMLElement && node.tagName in tagMap) {
+                tagMap[node.tagName].addActiveState(node);
             }
             node = (node.parentElement as Node);
         }
@@ -68,31 +84,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getSelectedNode(): Node | null {
         var selectedNode = window.getSelection();
-        if (document.activeElement === contentEl && selectedNode && selectedNode.rangeCount > 0) {
-            var startContainer = selectedNode.getRangeAt(0).startContainer;
-            var endContainer = selectedNode.getRangeAt(0).endContainer;
-            if (startContainer === endContainer) {
-                return startContainer;
-            }
-        }
 
-        return null;
+        if (document.activeElement !== contentEl) return null;
+        if (!selectedNode || selectedNode.rangeCount === 0) return null;
+
+        var startContainer = selectedNode.getRangeAt(0).startContainer;
+        var endContainer = selectedNode.getRangeAt(0).endContainer;
+        return startContainer === endContainer ? startContainer : null;
     }
 
-    function RemoveAllBtnActiveClass() {
+    function removeAllBtnActiveClass() {
         for (const tagName in tagMap) {
-            tagMap[tagName].classList.remove("active")
+            tagMap[tagName].removeActive();
         }
-        ; (tagMap['font'] as HTMLInputElement).value = '#000000'
     }
-
-
 
     // File Handler
     window.addEventListener("load", function () {
         var btnClear = document.querySelector(".btn--clear") as HTMLElement;
         var btnSaveTxt = document.querySelector(".btn--save-txt") as HTMLElement;
         var btnSavePdf = document.querySelector(".btn--save-pdf") as HTMLElement;
+        var inputFileNameEl = document.querySelector(".input-file-name") as HTMLInputElement;
 
         btnClear.addEventListener("click", function () {
             contentEl.innerHTML = ""
@@ -100,25 +112,45 @@ document.addEventListener("DOMContentLoaded", function () {
         })
 
         btnSaveTxt.addEventListener("click", function () {
-            var opt = {
-                margin: 1,
-                filename: 'myfile.txt',
-            }
-            new Blob(contentEl.textContent);
+            var blob = new Blob([contentEl.innerText as string], { "type": "text/plain" });
+            var url = URL.createObjectURL(blob);
+            goUrl(url);
+            URL.revokeObjectURL(url)
         })
 
         btnSavePdf.addEventListener("click", function () {
 
             var opt = {
                 margin: 1,
-                filename: 'untitled.pdf',
+                filename: inputFileNameEl.value,
             }
 
             html2pdf(contentEl, opt);
 
         })
+
+
+        function goUrl(url: string) {
+            var anchorEl = document.createElement("a") as HTMLAnchorElement;
+            anchorEl.href = url;
+            anchorEl.download = inputFileNameEl.value;
+
+            document.body.appendChild(anchorEl);
+            anchorEl.click();
+            document.body.removeChild(anchorEl);
+
+        }
     })
 
 })
 
+type TagMap = {
+    [tagName: TagName]: FormatAction<HTMLButtonElement | HTMLInputElement>
+}
+
+type KeyBoardMap = {
+    [key: string]: FormatAction<HTMLButtonElement | HTMLInputElement>
+}
+
+type TagName = string
 
