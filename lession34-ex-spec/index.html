@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        div[v-data] {
+            border: 1px solid red;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <hello-world>
+
+        <div>
+            <h1>Todo List</h1>
+            <h1 v-on:click="console.log(todoList)">Todo List</h1>
+            <ul>
+                <template v-for="todo in todoList">
+                    <li> <span v-text="todo.id"></span>:<span v-text="todo.content"></span></li>
+                </template>
+            </ul>
+        </div>
+
+        <div v-data="{numbers: [2,4,6,8]} ">
+            <h1>number1</h1>
+            <ul>
+                <template v-for="num in numbers">
+                    <li> <span v-text="num">123</span></li>
+                </template>
+            </ul>
+            <button v-on:click="numbers.push(parseInt(Math.random() * 10))"> Add Number1</button>
+            <button v-on:click="numbers.pop()"> Remove Last Number1</button>
+
+            <h2>NUmber 2</h2>
+        </div>
+        <div v-data="{numbers2:[1,2,3,4]}">
+            <ul>
+                <template v-for="num in numbers2">
+                    <li> <span v-text="num">123</span>:
+                        <span v-text="$index"></span>
+                        <button v-on:click="num++">+</button>
+                        <button v-on:click="numbers2.splice($index,1)">Delete</button>
+                    </li>
+                </template>
+            </ul>
+
+
+
+            <button v-on:click="numbers2.push(parseInt(Math.random() * 10))"> Add Number2</button>
+            <button v-on:click="numbers2.pop()"> Remove Last Number2</button>
+        </div>
+
+    </hello-world>
+
+    <script src="./assets/js/index.js" type="module"></script>
+</body>
+
+</html>
