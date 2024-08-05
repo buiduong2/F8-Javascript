@@ -14,7 +14,7 @@ const btnEl = document.querySelector(".btn");
 let speechContent = "";
 
 function changeClassState(newState) {
-    const els = [msgWrapperEl,speechContentDetailEl];
+    const els = [msgWrapperEl,speechContentWrapperEl];
     const classes = ["idle", "failure", "pending", "success"]
     for (const el of els) {
         for (const className of classes) {
