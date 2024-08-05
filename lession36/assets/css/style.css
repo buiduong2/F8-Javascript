@@ -1,0 +1,74 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.btn {
+    padding: 5px 20px;
+    border-radius: 5px;
+    outline: none;
+    background-color: red;
+    color: white;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: green;
+}
+
+.msg {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.search-content-wrapper {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid green;
+    border-radius: 5px;
+    text-align: center;
+    margin-inline: 50px;
+}
+
+
+
+.idle {
+    display: none;
+}
+
+.pending {
+    color: green;
+}
+
+.success {
+    color: orange;
+}
+
+.failure {
+    color: red;
+}
+
+.search-content.pending,
+.search-content.failure,
+.search-content.success,
+.msg.pending,
+.msg.failure,
+.msg.success {
+    display: none;
+}
+
+.pending>.pending {
+    display: block;
+}
+
+.failure>.failure {
+    display: block;
+}
+
+.success>.success {
+    display: block;
+}
