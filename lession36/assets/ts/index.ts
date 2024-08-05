@@ -13,17 +13,20 @@ const btnEl = document.querySelector(".btn") as HTMLButtonElement;
 
 let speechContent = "";
 
-function changeClassState(newState: string, el: HTMLElement) {
-    el.classList.remove("idle");
-    el.classList.remove("failure");
-    el.classList.remove("pending");
-    el.classList.remove("success");
-    el.classList.add(newState);
+function changeClassState(newState: string) {
+    const stateClasses: string[] = ["idle", "failure", "pending", "success"];
+    const els = [msgWrapperEl, speechContentWrapperEl];
+
+    els.forEach(el => {
+        stateClasses.forEach(className => {
+            el.classList.remove(className);
+        })
+        el.classList.add(newState);
+    })
 }
 
 btnEl.onclick = function () {
-    changeClassState("pending", msgWrapperEl);
-    changeClassState("pending", speechContentWrapperEl);
+    changeClassState("pending");
     recognition.start();
 }
 
@@ -47,20 +50,17 @@ recognition.onend = function () {
 
     proccessSpeechContent(speechContent)
         .then((url) => {
-            changeClassState("success", msgWrapperEl);
-            changeClassState("success", speechContentWrapperEl);
+            changeClassState("success");
             setTimeout(() => {
                 goUrl(url);
             }, 1000);
         })
         .catch(() => {
-            changeClassState("failure", msgWrapperEl);
-            changeClassState("failure", speechContentWrapperEl);
+            changeClassState("failure");
         })
         .finally(() => {
             setTimeout(() => {
-                changeClassState("idle", msgWrapperEl);
-                changeClassState("idle", speechContentWrapperEl);
+                changeClassState("idle");
                 speechContentDetailEl.textContent = "";
             }, 2000);
         });
@@ -96,6 +96,7 @@ const services: Service[] = [
     {
         keywords: ['chỉ đường tới', 'chỉ đường', 'đường tới', 'tới'],
         url: "https://www.google.com/maps/search/",
+        searchQuery: true,
         encodeChars: {
             ' ': '%20'
         }
@@ -104,6 +105,7 @@ const services: Service[] = [
     {
         keywords: ['bài hát', 'mở bài hát', ' nghe bài hát'],
         url: 'https://zingmp3.vn/tim-kiem/tat-ca?q=',
+        searchQuery: true,
         encodeChars: {
             ' ': "+"
         }
@@ -112,6 +114,7 @@ const services: Service[] = [
     {
         keywords: ['xem video', 'mở video', 'video', 'phim', 'xem'],
         url: "https://www.youtube.com/results?search_query=",
+        searchQuery: true,
         encodeChars: {
             ' ': '+'
         }
@@ -130,12 +133,13 @@ function proccessSpeechContent(speechContent: string): Promise<string> {
             }
 
             const { service, keyword } = serviceMatch;
-            let orderDetail = getOrderDetail(keyword, speechContent);
-            Object.entries(service.encodeChars || {})
-                .forEach(([key, value]) => {
-                    orderDetail = orderDetail.replace(key, value);
-                })
-            const url = service.url + orderDetail;
+            let url = service.url
+            if (service.searchQuery) {
+                let orderDetail = getOrderDetail(keyword, speechContent);
+                Object.entries(service.encodeChars || {})
+                    .forEach(([key, value]) => orderDetail = orderDetail.replace(key, value));
+                url += orderDetail;
+            }
 
             resolve(url);
         }, 1500);
@@ -192,6 +196,7 @@ type Service = {
     keywords: string[],
     url: string,
     encodeChars?: { [char: string]: string }
+    searchQuery?: boolean,
 }
 
 type ServiceMatch = { service: Service, keyword: string, index: number };
