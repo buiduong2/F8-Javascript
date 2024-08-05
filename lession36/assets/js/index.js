@@ -13,17 +13,19 @@ const btnEl = document.querySelector(".btn");
 
 let speechContent = "";
 
-function changeClassState(newState, el) {
-    el.classList.remove("idle");
-    el.classList.remove("failure");
-    el.classList.remove("pending");
-    el.classList.remove("success");
-    el.classList.add(newState);
+function changeClassState(newState) {
+    const els = [msgWrapperEl,speechContentDetailEl];
+    const classes = ["idle", "failure", "pending", "success"]
+    for (const el of els) {
+        for (const className of classes) {
+            el.classList.remove(className);
+        }
+        el.classList.add(newState);
+    }
 }
 
 btnEl.onclick = function () {
-    changeClassState("pending", msgWrapperEl);
-    changeClassState("pending", speechContentWrapperEl);
+    changeClassState("pending");
     recognition.start();
 };
 
@@ -43,23 +45,20 @@ recognition.onresult = function (e) {
 recognition.onend = function () {
     proccessSpeechContent(speechContent)
         .then((url) => {
-        changeClassState("success", msgWrapperEl);
-        changeClassState("success", speechContentWrapperEl);
-        setTimeout(() => {
-            goUrl(url);
-        }, 1000);
-    })
+            changeClassState("success");
+            setTimeout(() => {
+                goUrl(url);
+            }, 1000);
+        })
         .catch(() => {
-        changeClassState("failure", msgWrapperEl);
-        changeClassState("failure", speechContentWrapperEl);
-    })
+            changeClassState("failure");
+        })
         .finally(() => {
-        setTimeout(() => {
-            changeClassState("idle", msgWrapperEl);
-            changeClassState("idle", speechContentWrapperEl);
-            speechContentDetailEl.textContent = "";
-        }, 2000);
-    });
+            setTimeout(() => {
+                changeClassState("idle");
+                speechContentDetailEl.textContent = "";
+            }, 2000);
+        });
 };
 
 // di chuyển đến link tương ứng
@@ -96,6 +95,7 @@ const services = [
     {
         keywords: ['chỉ đường tới', 'chỉ đường', 'đường tới', 'tới'],
         url: "https://www.google.com/maps/search/",
+        searchQuery:true,
         encodeChars: {
             ' ': '%20'
         }
@@ -103,6 +103,7 @@ const services = [
     {
         keywords: ['bài hát', 'mở bài hát', ' nghe bài hát'],
         url: 'https://zingmp3.vn/tim-kiem/tat-ca?q=',
+        searchQuery:true,
         encodeChars: {
             ' ': "+"
         }
@@ -110,6 +111,7 @@ const services = [
     {
         keywords: ['xem video', 'mở video', 'video', 'phim', 'xem'],
         url: "https://www.youtube.com/results?search_query=",
+        searchQuery:true,
         encodeChars: {
             ' ': '+'
         }
@@ -125,18 +127,19 @@ function proccessSpeechContent(speechContent) {
                 return;
             }
             const { service, keyword } = serviceMatch;
-            let orderDetail = getOrderDetail(keyword, speechContent);
-            Object.entries(service.encodeChars || {})
-                .forEach(([key, value]) => {
-                orderDetail = orderDetail.replace(key, value);
-            });
-            const url = service.url + orderDetail;
+            let url = service.url;
+            if(service.searchQuery) {
+                let orderDetail = getOrderDetail(keyword, speechContent);
+                Object.entries(service.encodeChars || {})
+                    .forEach(([key, value]) => orderDetail = orderDetail.replace(key, value));
+                url = url + orderDetail;
+            }   
             resolve(url);
         }, 1500);
     });
 }
 
-// lấy ra server có độ khớp cao nhất
+// lấy ra service có độ khớp cao nhất
 function getService(speechContent) {
     speechContent = speechContent.toLowerCase();
     const serviceMatches = [];
