@@ -24,16 +24,15 @@
 
 
     <div class="modal">
-
         <div class="overlay"></div>
 
-        <form class="modal-content">
+        <form class="modal-content modal-form">
             <div class="content-body">
-                <input class="from-input" type="text" placeholder="Add Todo">
+                <input class="form-input" type="text" placeholder="Add Todo">
             </div>
             <div class="content-action-list">
-                <button class="btn btn-green" type="submit">Save</button>
-                <button class="btn btn-white" type="reset">Cancel</button>
+                <button class="btn btn-green btn-save" type="submit">Save</button>
+                <button class="btn btn-white btn-cancel" type="reset">Cancel</button>
             </div>
         </form>
     </div>
@@ -48,55 +47,25 @@
                 </form>
 
                 <div class="todo-action-item action-add-todo">
-                    <button class="btn btn-green">Add Todos</button>
-                    <form class="form-add-todo" action="#" method="post">
-                    </form>
+                    <button class="btn btn-green btn-add-todo">Add Todos</button>
                 </div>
             </div>
         </header>
 
         <section class="todo-content">
-            <ul class="todo-list todo-list--pending">
-                <li class="todo-item">
-                    <span class="todo-content">Complete Mark.</span>
-                    <div class="todo-item-action-list">
-                        <button class="todo-item-action btn btn-delete">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                        <button class="todo-item-action btn btn-edit">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button class="todo-item-action btn btn-mark-complete">
-                            <i class="fa-solid fa-check-to-slot"></i>
-                        </button>
-                    </div>
-                </li>
-            </ul>
+            <ul class="todo-list todo-list--pending"></ul>
 
             <div class="btn-wrapper">
-                <button class="btn btn-green btn-show-complete-todo">Completed Todos <span class="quantity">1</span> <i
-                        class="fa-solid fa-circle-arrow-down"></i> </button>
+                <button class="btn btn-green btn-show-complete-todo">Completed Todos
+                    <span class="todo-complete-count">1</span>
+                    <i class="fa-solid fa-circle-arrow-down btn-icon"></i>
+                </button>
             </div>
-            <ul class="todo-list todo-list--completed">
-                <li class="todo-item">
-                    <span class="todo-content">Minh's next task</span>
-                    <div class="todo-item-action-list">
-                        <button class="todo-item-action btn btn-delete">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                        <button class="todo-item-action btn btn-edit">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button class="todo-item-action btn btn-mark-complete">
-                            <i class="fa-solid fa-check-to-slot"></i>
-                        </button>
-                    </div>
-                </li>
-            </ul>
+            <ul class="todo-list todo-list--completed"></ul>
         </section>
-
-
     </main>
+
+    <script src="./assets/js/index.js" type="module"></script>
 </body>
 
 </html>
