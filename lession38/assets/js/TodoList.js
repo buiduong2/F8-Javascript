@@ -141,6 +141,7 @@ export class TodoList {
 
     addTodo(todoData) {
         const newTodo = new TodoItem(todoData, this);
+        this.todoItems.push(newTodo);
         this.appendToPendingList(newTodo);
         this.filteringTodoItem(newTodo);
     }
