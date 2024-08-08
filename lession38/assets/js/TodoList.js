@@ -69,6 +69,7 @@ export class TodoList {
                 todoItem.highlight(keyword);
             }
             else {
+                todoItem.removeHighlight();
                 todoItem.hidden();
             }
         }
@@ -88,8 +89,8 @@ export class TodoList {
             const res = await fetch(API_TODO, {
                 method: "POST", body, headers
             });
-            if (!res.ok)
-                throw new Error("Server ERROR");
+            if (!res.ok) throw new Error("Server ERROR");
+
             const todoData = await res.json();
             this.addTodo(todoData);
         });
