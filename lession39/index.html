@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smatyx Todos</title>
+
+    <link rel="shortcut icon"
+        href="https://w7.pngwing.com/pngs/673/363/png-transparent-playbuzz-business-advertising-quiz-logo-favicon-purple-violet-text.png"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+
+    <span class="global-loader">
+    </span>
+    <div class="modal">
+        <div class="overlay"></div>
+
+        <form class="modal-content modal-form">
+            <div class="content-body">
+                <input class="form-input" type="text" placeholder="Add Todo" required>
+            </div>
+            <div class="content-action-list">
+                <button class="btn btn-green btn-save" type="submit">
+                    Save</button>
+                <button class="btn btn-white btn-cancel" type="reset">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <main class="app">
+        <header class="todo-header">
+            <h1 class="app-title"> <span class="text-logo">Smatyx</span> Todos App </h1>
+
+            <div class="todo-action-list">
+                <form class="todo-action-item action-search active" action="#" method="GET">
+                    <input type="text" class="form-input" placeholder="Search Todos">
+                    <button class="btn btn-primary btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                <div class="todo-action-item action-add-todo">
+                    <button class="btn btn-green btn-add-todo">Add Todos</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="todo-content">
+            <ul class="todo-list todo-list--pending"></ul>
+
+            <div class="btn-wrapper">
+                <button class="btn btn-green btn-show-complete-todo">Completed Todos
+                    <span class="todo-complete-count">1</span>
+                    <i class="fa-solid fa-circle-arrow-down btn-icon"></i>
+                </button>
+            </div>
+            <ul class="todo-list todo-list--completed"></ul>
+        </section>
+    </main>
+
+    <script src="./assets/js/index.js"></script>
+</body>
+
+</html>
