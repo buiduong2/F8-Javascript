@@ -17,16 +17,20 @@ const countCompletedWrapper = {
         this.el.textContent = String(number);
     }
 };
+
 let modalSubmitHandler;
 init();
+
 function init() {
     addHandlerAppBtn();
     renderTodos();
     addHandlerModal();
 }
+
 function addHandlerAppBtn() {
     const btnAddTodos = document.querySelector(".btn-add-todo");
     const btnShowCompletedTodos = document.querySelector(".btn-show-complete-todo");
+
     btnAddTodos.addEventListener("click", () => {
         modalEl.classList.add("active");
         inputModalEl.value = "";
@@ -35,10 +39,12 @@ function addHandlerAppBtn() {
             modalEl.classList.remove('active');
         };
     });
+
     btnShowCompletedTodos.addEventListener("click", () => {
         todoListCompletedEl.classList.toggle("active");
         btnShowCompletedTodos.classList.toggle("active");
     });
+
     searchInputEl.addEventListener("input", () => {
         const liEls = document.querySelectorAll(".todo-item");
         liEls.forEach(liEl => handleFilterTodo(liEl));
@@ -48,16 +54,20 @@ function addHandlerAppBtn() {
         countCompletedWrapper.set(todoCompletedCount);
     });
 }
+
 function addHandlerModal() {
     const overLayEl = modalEl.querySelector(".overlay");
     const modalForm = modalEl.querySelector(".modal-form");
     const cancelBtn = modalEl.querySelector(".btn-cancel");
+
     overLayEl.addEventListener("click", () => {
         modalEl.classList.remove("active");
     });
+
     cancelBtn.addEventListener("click", () => {
         modalEl.classList.remove("active");
     });
+
     let fetching = false;
     modalForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -69,8 +79,10 @@ function addHandlerModal() {
         fetching = false;
     });
 }
+
 async function renderTodos() {
     const todos = await fetchAllTodos();
+
     todos.forEach(todo => {
         if (todo.completed) {
             todoListCompletedEl.appendChild(createTodoItem(todo));
@@ -81,8 +93,10 @@ async function renderTodos() {
     });
     countCompletedWrapper.set(todos.filter(todo => todo.completed).length);
 }
+
 function createTodoItem(todo) {
     const el = document.createElement("li");
+
     el.innerHTML = `
             <span class="todo-content">${todo.content}</span>
             <div class="todo-item-action-list">
@@ -110,6 +124,7 @@ function createTodoItem(todo) {
     el.dataset.id = String(todo.id);
     return el;
 }
+
 async function handleAddTodo(content) {
     if (content) {
         const todoData = await fetchAddTodo(content);
@@ -118,9 +133,11 @@ async function handleAddTodo(content) {
         handleFilterTodo(liEl);
     }
 }
+
 async function handleFilterTodo(liEl) {
     const contentEl = liEl.querySelector(".todo-content");
     const keyword = searchInputEl.value;
+
     if (keyword && contentEl.textContent?.includes(keyword)) {
         contentEl.innerHTML = contentEl.textContent.replaceAll(keyword, `<span class='highlight'>${keyword}</span>`);
         liEl.style.display = "";
@@ -135,10 +152,12 @@ async function handleFilterTodo(liEl) {
         contentEl.textContent = contentEl.textContent;
     }
 }
+
 async function handleEditTodo(id) {
     const liEl = document.querySelector(`.todo-item[data-id='${id}']`);
     const contentEl = liEl.querySelector(".todo-content");
     const oldContent = contentEl.textContent;
+
     modalEl.classList.add("active");
     inputModalEl.value = oldContent || "";
     modalSubmitHandler = async function (content) {
@@ -152,13 +171,17 @@ async function handleEditTodo(id) {
         modalEl.classList.remove('active');
     };
 }
+
 async function handleToggleCompletedTodo(id) {
     const liEl = document.querySelector(`.todo-item[data-id='${id}']`);
+
     let completed = false;
     if (todoListPendingEl.contains(liEl)) {
         completed = true;
     }
+
     await fetchToggleCompletedTodoById(id, completed);
+
     if (completed) {
         todoListCompletedEl.appendChild(liEl);
         countCompletedWrapper.increase();
@@ -168,24 +191,25 @@ async function handleToggleCompletedTodo(id) {
         countCompletedWrapper.decrease();
     }
 }
+
 async function handleDeleteTodo(id) {
     await fetchDeleteTodoById(id);
     const liEl = document.querySelector(`.todo-item[data-id='${id}']`);
+
     if (todoListCompletedEl.contains(liEl)) {
         countCompletedWrapper.decrease();
     }
     liEl.remove();
 }
+
 async function fetchAllTodos() {
     const loadingEl = document.querySelector(".global-loader");
-    const data = await fetchTodoGeneric({ method: "GET" }, loadingEl);
-    return data;
+    return await fetchTodoGeneric({ method: "GET" }, loadingEl);
 }
+
 async function fetchAddTodo(content) {
     const loadingEl = modalEl.querySelector(".btn-save");
-    ;
-    const data = await fetchTodoGeneric({ method: "POST", data: { content } }, loadingEl);
-    return data;
+    return await fetchTodoGeneric({ method: "POST", data: { content } }, loadingEl);
 }
 async function fetchEditContentTodoById(id, content) {
     const loadingEl = modalEl.querySelector(".btn-save");
@@ -209,10 +233,12 @@ async function fetchTodoGeneric({ method, data, id }, loadingEl) {
         options.body = JSON.stringify(data);
     }
     const url = TODO_API + (id ? `/${id}` : "");
+    
     loadingEl.classList.add("loading", "loader-wrapper");
     const oldContent = loadingEl.innerHTML;
     loadingEl.innerHTML = "<span class='loader'></span>";
     let error;
+
     try {
         const res = await fetch(url, options);
         if (!res.ok)
