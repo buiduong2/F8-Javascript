@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./assets/js/",
+        "lib": [
+            "ES2023",
+            "dom"
+        ]
+    },
+    "include": [
+        "assets/ts/*"
+, "assets/ts/directive/DirectiveManager.ts", "assets/ts/directive/DirectiveProvider.ts"    ],
+    "exclude": [
+        "assets/js/**",
+        "assets/ts/type.ts"
+    ]
+}
