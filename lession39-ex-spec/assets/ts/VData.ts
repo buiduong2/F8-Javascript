@@ -44,7 +44,6 @@ export class VDataTree {
 
 export class VDataNode {
     private ref: any;
-    private refProp: string;
     private el: Element;
     private data: Object;
 
@@ -55,11 +54,6 @@ export class VDataNode {
         this.el = element;
         this.ref = {};
         this.data = data;
-        this.refProp = "";
-    }
-
-    public setRefProp(refProp: string) {
-        this.refProp = refProp;
     }
 
     public getData(): any {
@@ -74,15 +68,13 @@ export class VDataNode {
 
 
     public setRef(refName: string, target: any, prop: string): void {
-        this.refProp = prop;
         this.ref[refName] = null;
-        const _this = this;
         Object.defineProperty(this.ref, refName, {
             get() {
-                return target[_this.refProp]
+                return target[prop]
             },
             set(value) {
-                target[_this.refProp] = value;
+                target[prop] = value;
                 return true;
             }
         })

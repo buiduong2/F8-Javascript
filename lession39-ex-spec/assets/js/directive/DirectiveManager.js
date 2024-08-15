@@ -1,4 +1,4 @@
-import { VForDirectiveProvider, VKeyDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
+import { VForDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
 export class DirectiveManager {
     providers;
     dependencyMap;
@@ -11,7 +11,6 @@ export class DirectiveManager {
             new VShowDirectiveProvider(data, this),
             new VOnDirectiveProvider(data, this),
             new VForDirectiveProvider(data, this),
-            new VKeyDirectiveProvider(data, this)
         ];
         this.data = data;
         this.currentElement = null;
@@ -33,6 +32,12 @@ export class DirectiveManager {
             if (key.startsWith(path)) {
                 this.dependencyMap.delete(key);
             }
+        }
+    }
+    untrackDepdencyArr(path, oldLength, newLength) {
+        for (let i = newLength; i <= oldLength; i++) {
+            const prefix = `${path}.${i}`;
+            this.untrackDependency(prefix);
         }
     }
     addDependency(path, element) {

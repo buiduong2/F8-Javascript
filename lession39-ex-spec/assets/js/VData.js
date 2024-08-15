@@ -38,7 +38,6 @@ export class VDataTree {
 }
 export class VDataNode {
     ref;
-    refProp;
     el;
     data;
     children;
@@ -47,10 +46,6 @@ export class VDataNode {
         this.el = element;
         this.ref = {};
         this.data = data;
-        this.refProp = "";
-    }
-    setRefProp(refProp) {
-        this.refProp = refProp;
     }
     getData() {
         const combined = {};
@@ -59,15 +54,13 @@ export class VDataNode {
         return combined;
     }
     setRef(refName, target, prop) {
-        this.refProp = prop;
         this.ref[refName] = null;
-        const _this = this;
         Object.defineProperty(this.ref, refName, {
             get() {
-                return target[_this.refProp];
+                return target[prop];
             },
             set(value) {
-                target[_this.refProp] = value;
+                target[prop] = value;
                 return true;
             }
         });

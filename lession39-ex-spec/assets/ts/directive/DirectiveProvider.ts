@@ -116,16 +116,16 @@ export class VForDirectiveProvider extends DirectiveProvider {
         // method not Impleted
     }
 
-    private handleNewElement(parent: Element, [itemName, listName]: string[], data: any, clone: Element): void {
+    private handleNewElement(parent: Element, [itemName, listName]: string[], data: any, prototype: Element): void {
         for (const key in data[listName]) {
-            let node = clone.cloneNode(true) as any;
+            let node = prototype.cloneNode(true) as any;
             parent.appendChild(node);
             this.data.addNode(node, itemName, data[listName], key);
         }
 
     }
 
-    private handleUpdateElement(parent: Element, [itemName, listName]: string[], data: any, clone: Element): void {
+    private handleUpdateElement(parent: Element, [itemName, listName]: string[], data: any, prototype: Element): void {
         const list = data[listName];
         if (list.length === parent.childElementCount - 1) {
             return;
@@ -134,11 +134,10 @@ export class VForDirectiveProvider extends DirectiveProvider {
                 if (!parent.lastElementChild) break;
                 this.data.deleteNode(parent.lastElementChild);
                 parent.lastElementChild.remove();
-                this.manager.untrackDependency(`${listName}.${parent.childElementCount - 1}`);
             }
         } else {
             while (parent.childElementCount - 1 !== list.length) {
-                let node = clone.cloneNode(true) as any;
+                let node = prototype.cloneNode(true) as any;
                 this.data.addNode(node, itemName, data[listName], String(parent.childElementCount - 1));
                 parent.appendChild(node);
                 this.manager.processElement(node);
@@ -149,22 +148,6 @@ export class VForDirectiveProvider extends DirectiveProvider {
 
     private getItemNameAndListName(attr: Attr): string[] {
         return attr.value.split(" in ").map(name => name.trim());
-    }
-
-}
-
-export class VKeyDirectiveProvider extends DirectiveProvider {
-    public isNeedTrack(): boolean {
-        return true;
-    }
-    protected predicate(attr: Attr): boolean {
-        return attr.name === 'v-key'
-    }
-    protected handle(element: Element, attr: Attr, data: any): void {
-        const attrValue = attr.value;
-        const func = Function("data", `with (data)  return ${attrValue}`);
-        const keyValue = func(data);
-        (element as any)['$key'] = keyValue;
     }
 
 }

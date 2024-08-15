@@ -91,14 +91,14 @@ export class VForDirectiveProvider extends DirectiveProvider {
     handle(element, attr, data) {
         // method not Impleted
     }
-    handleNewElement(parent, [itemName, listName], data, clone) {
+    handleNewElement(parent, [itemName, listName], data, prototype) {
         for (const key in data[listName]) {
-            let node = clone.cloneNode(true);
+            let node = prototype.cloneNode(true);
             parent.appendChild(node);
             this.data.addNode(node, itemName, data[listName], key);
         }
     }
-    handleUpdateElement(parent, [itemName, listName], data, clone) {
+    handleUpdateElement(parent, [itemName, listName], data, prototype) {
         const list = data[listName];
         if (list.length === parent.childElementCount - 1) {
             return;
@@ -109,12 +109,11 @@ export class VForDirectiveProvider extends DirectiveProvider {
                     break;
                 this.data.deleteNode(parent.lastElementChild);
                 parent.lastElementChild.remove();
-                this.manager.untrackDependency(`${listName}.${parent.childElementCount - 1}`);
             }
         }
         else {
             while (parent.childElementCount - 1 !== list.length) {
-                let node = clone.cloneNode(true);
+                let node = prototype.cloneNode(true);
                 this.data.addNode(node, itemName, data[listName], String(parent.childElementCount - 1));
                 parent.appendChild(node);
                 this.manager.processElement(node);
@@ -123,19 +122,5 @@ export class VForDirectiveProvider extends DirectiveProvider {
     }
     getItemNameAndListName(attr) {
         return attr.value.split(" in ").map(name => name.trim());
-    }
-}
-export class VKeyDirectiveProvider extends DirectiveProvider {
-    isNeedTrack() {
-        return true;
-    }
-    predicate(attr) {
-        return attr.name === 'v-key';
-    }
-    handle(element, attr, data) {
-        const attrValue = attr.value;
-        const func = Function("data", `with (data)  return ${attrValue}`);
-        const keyValue = func(data);
-        element['$key'] = keyValue;
     }
 }

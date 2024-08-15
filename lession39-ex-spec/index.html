@@ -18,11 +18,13 @@
 
         <ul>
             <template v-for="num in numbers">
-                <li v-text="JSON.stringify(num)">
-
+                <li>
+                    <span v-text="num"></span>
+                    <button v-on:click="num++">Num++</button>
                 </li>
             </template>
         </ul>
+        <button v-on:click="numbers.push(Math.random()); console.log(numbers)">numbers.push(Math.random())</button>
         <ul>
             <template v-for="person in persons">
                 <li>
@@ -33,8 +35,11 @@
             </template>
         </ul>
 
-        <button v-on:click="persons[0].id++">persons[0].id++</button>
+        <button v-on:click="console.log(persons);persons[0].id++">persons[0].id++</button>
         <button v-on:click="persons.push({id:persons.length + 1,name:'Duong'})">Push</button>
+        <button v-on:click="persons.pop()">POP</button>
+        <button v-on:click="persons.shift()">Shfit</button>
+        <button v-on:click="persons.unshift({id:persons.length + 1,name:'Duong'})">unshift</button>
         <button v-on:click="persons.splice(1,1)">Splice</button>
     </div>
 

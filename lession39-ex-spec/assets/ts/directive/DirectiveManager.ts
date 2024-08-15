@@ -1,6 +1,5 @@
 import { VDataTree } from "../VData.js";
-import { Vue } from "../Vue.js";
-import { DirectiveProvider, VForDirectiveProvider, VKeyDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
+import { DirectiveProvider, VForDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
 
 export class DirectiveManager {
     providers: DirectiveProvider[];
@@ -15,7 +14,6 @@ export class DirectiveManager {
             new VShowDirectiveProvider(data, this),
             new VOnDirectiveProvider(data, this),
             new VForDirectiveProvider(data, this),
-            new VKeyDirectiveProvider(data, this)
         ];
         this.data = data;
         this.currentElement = null;
@@ -42,6 +40,13 @@ export class DirectiveManager {
             if (key.startsWith(path)) {
                 this.dependencyMap.delete(key);
             }
+        }
+    }
+
+    public untrackDepdencyArr(path: string, oldLength: number, newLength: number) {
+        for (let i = newLength; i <= oldLength; i++) {
+            const prefix = `${path}.${i}`;
+            this.untrackDependency(prefix);
         }
     }
 
