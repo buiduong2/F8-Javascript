@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        <h1 v-text="message"> Hello Darkness</h1>
+
+        <h2 v-show="show">Show</h2>
+        <h2 v-text="Boolean(show)">Show</h2>
+        <!-- <h1 v-text="numbers"></h1> -->
+
+        <ul>
+            <template v-for="num in numbers">
+                <li>
+                    <span v-text="num"></span>
+                    <button v-on:click="num++">Num++</button>
+                </li>
+            </template>
+        </ul>
+        <button v-on:click="numbers.push(Math.random()); console.log(numbers)">numbers.push(Math.random())</button>
+        <ul>
+            <template v-for="person in persons">
+                <li>
+                    <span v-text="person.id"></span>-
+                    <span v-text="person.name"></span>
+                    <button v-on:click="person.id++">person.id++</button>
+                </li>
+            </template>
+        </ul>
+
+        <button v-on:click="persons.pop()">POP</button>
+        <button v-on:click="persons.shift()">SHIFT</button>
+        <button v-on:click="persons.unshift({id:1,name:'unshift'})">UNSHIFT</button>
+        <button v-on:click="persons.splice(2,4)">Splice(2,4)</button>
+
+        <button v-on:click="logPersons()">Logs(persons)</button>
+        <button v-on:click="addPerson()">Add Persons</button>
+    </div>
+
+    <script src="./assets/js/index.js" type="module"></script>
+</body>
+
+</html>
