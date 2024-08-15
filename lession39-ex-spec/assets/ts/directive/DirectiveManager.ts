@@ -1,3 +1,4 @@
+import { ReactiveTrie } from "../reactive/ReactiveTrie.js";
 import { VDataTree } from "../VData.js";
 import { DirectiveProvider, VForDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
 
@@ -6,8 +7,9 @@ export class DirectiveManager {
     dependencyMap: Map<string, Set<Element>>
     data: VDataTree;
     currentElement: Element | null;
+    reactiveTrie: ReactiveTrie;
 
-    constructor(data: VDataTree) {
+    constructor(data: VDataTree, reactiveTrie: ReactiveTrie) {
         this.dependencyMap = new Map();
         this.providers = [
             new VTextDirectiveProvider(data, this),
@@ -17,6 +19,8 @@ export class DirectiveManager {
         ];
         this.data = data;
         this.currentElement = null;
+        this.reactiveTrie = reactiveTrie;
+        reactiveTrie.onDataChange = elements => elements.forEach(element => this.applyDirective(element));
     }
 
     public setData(data: VDataTree) {
@@ -28,40 +32,6 @@ export class DirectiveManager {
         this.providers = providers;
     }
 
-    public trackDependency(path: string): void {
-        if (this.currentElement) {
-
-            this.addDependency(path, this.currentElement);
-        }
-    }
-
-    public untrackDependency(path: string): void {
-        for (const [key] of this.dependencyMap.entries()) {
-            if (key.startsWith(path)) {
-                this.dependencyMap.delete(key);
-            }
-        }
-    }
-
-    public untrackDepdencyArr(path: string, oldLength: number, newLength: number) {
-        for (let i = newLength; i <= oldLength; i++) {
-            const prefix = `${path}.${i}`;
-            this.untrackDependency(prefix);
-        }
-    }
-
-    public addDependency(path: string, element: Element) {
-        if (!this.dependencyMap.has(path)) {
-            this.dependencyMap.set(path, new Set());
-        }
-        this.dependencyMap.get(path)?.add(element);
-    }
-
-    public applyChange(path: string) {
-        this.dependencyMap.get(path)?.forEach(element => this.applyDirective(element));
-    }
-
-
     public processElement(element: Element) {
         this.levelTraversalNode(element, this.applyDirective.bind(this));
     }
@@ -70,10 +40,10 @@ export class DirectiveManager {
         const data = this.data.getDataByElement(element) || {};
         this.providers.forEach(provider => {
             if (provider.isNeedTrack()) {
-                this.currentElement = element;
+                this.reactiveTrie.setCurrentElement(element);
             }
             provider.applyDirective(element, data)
-            this.currentElement = null;
+            this.reactiveTrie.setCurrentElement(undefined);
         });
     }
 

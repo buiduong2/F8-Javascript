@@ -1,13 +1,25 @@
 export class VDataTree {
     root;
-    constructor(rootEl, data) {
-        this.root = new VDataNode(rootEl, data);
+    data;
+    methods;
+    constructor(rootEl) {
+        this.root = new VDataNode(rootEl);
+        this.data = {};
+        this.methods = {};
+    }
+    setData(data) {
+        this.data = data;
+    }
+    setMethods(methods) {
+        this.methods = methods;
     }
     getDataByElement(element) {
         let node = this.root;
         let combined = {};
+        this.combineObj(combined, this.data);
+        this.combineObj(combined, this.methods);
         do {
-            Object.defineProperties(combined, Object.getOwnPropertyDescriptors(node.getData()));
+            this.combineObj(combined, node.getData());
             node = node.getChilByElement(element);
         } while (node);
         return combined;
@@ -19,7 +31,7 @@ export class VDataTree {
             node = curr;
             curr = curr.getChilByElement(element);
         }
-        const newNode = new VDataNode(element, {});
+        const newNode = new VDataNode(element);
         newNode.setRef(refName, target, prop);
         node.addChild(newNode);
         return newNode;
@@ -35,23 +47,21 @@ export class VDataTree {
         }
         parent.removeChild(element);
     }
+    combineObj(obj1, obj2) {
+        return Object.defineProperties(obj1, Object.getOwnPropertyDescriptors(obj2));
+    }
 }
 export class VDataNode {
     ref;
     el;
-    data;
     children;
-    constructor(element, data) {
+    constructor(element) {
         this.children = new Map();
         this.el = element;
         this.ref = {};
-        this.data = data;
     }
     getData() {
-        const combined = {};
-        Object.defineProperties(combined, Object.getOwnPropertyDescriptors(this.data));
-        Object.defineProperties(combined, Object.getOwnPropertyDescriptors(this.ref));
-        return combined;
+        return this.ref;
     }
     setRef(refName, target, prop) {
         this.ref[refName] = null;

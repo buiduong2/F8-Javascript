@@ -23,9 +23,11 @@ Vue.create({
         };
     },
     methods: {
-        addNumber() {
+        logPersons() {
+            console.log(this.persons);
         },
-        removeNUmber() {
+        addPerson() {
+            this.persons.push({ id: Math.floor(Math.random() * 10), name: "Duong" });
         }
     }
 });

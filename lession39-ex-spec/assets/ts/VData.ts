@@ -1,15 +1,29 @@
 export class VDataTree {
     private root: VDataNode;
+    private data: any;
+    private methods: any;
 
-    constructor(rootEl: Element, data: NodeData) {
-        this.root = new VDataNode(rootEl, data);
+    constructor(rootEl: Element) {
+        this.root = new VDataNode(rootEl);
+        this.data = {};
+        this.methods = {};
+    }
+
+    public setData(data: any): void {
+        this.data = data;
+    }
+
+    public setMethods(methods: any): void {
+        this.methods = methods;
     }
 
     public getDataByElement(element: Element): Object {
         let node: VDataNode | undefined = this.root;
         let combined = {};
+        this.combineObj(combined, this.data);
+        this.combineObj(combined, this.methods);
         do {
-            Object.defineProperties(combined, Object.getOwnPropertyDescriptors(node.getData()));
+            this.combineObj(combined, node.getData());
             node = node.getChilByElement(element);
         } while (node);
         return combined;
@@ -23,7 +37,7 @@ export class VDataTree {
             curr = curr.getChilByElement(element);
         }
 
-        const newNode = new VDataNode(element, {});
+        const newNode = new VDataNode(element);
         newNode.setRef(refName, target, prop);
         node.addChild(newNode);
         return newNode
@@ -40,30 +54,26 @@ export class VDataTree {
         }
         parent.removeChild(element);
     }
+
+    private combineObj(obj1: any, obj2: any): any {
+        return Object.defineProperties(obj1, Object.getOwnPropertyDescriptors(obj2));
+    }
 }
 
 export class VDataNode {
+    
     private ref: any;
     private el: Element;
-    private data: Object;
-
     private children: Map<Element, VDataNode>;
 
-    constructor(element: Element, data: Object) {
+    constructor(element: Element) {
         this.children = new Map();
         this.el = element;
         this.ref = {};
-        this.data = data;
     }
 
     public getData(): any {
-
-
-        const combined = {};
-        Object.defineProperties(combined, Object.getOwnPropertyDescriptors(this.data));
-        Object.defineProperties(combined, Object.getOwnPropertyDescriptors(this.ref));
-
-        return combined;
+        return this.ref;
     }
 
 
@@ -107,5 +117,3 @@ export class VDataNode {
     }
 
 }
-
-type NodeData = any;

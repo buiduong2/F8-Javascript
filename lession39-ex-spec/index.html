@@ -35,12 +35,13 @@
             </template>
         </ul>
 
-        <button v-on:click="console.log(persons);persons[0].id++">persons[0].id++</button>
-        <button v-on:click="persons.push({id:persons.length + 1,name:'Duong'})">Push</button>
         <button v-on:click="persons.pop()">POP</button>
-        <button v-on:click="persons.shift()">Shfit</button>
-        <button v-on:click="persons.unshift({id:persons.length + 1,name:'Duong'})">unshift</button>
-        <button v-on:click="persons.splice(1,1)">Splice</button>
+        <button v-on:click="persons.shift()">SHIFT</button>
+        <button v-on:click="persons.unshift({id:1,name:'unshift'})">UNSHIFT</button>
+        <button v-on:click="persons.splice(2,4)">Splice(2,4)</button>
+
+        <button v-on:click="logPersons()">Logs(persons)</button>
+        <button v-on:click="addPerson()">Add Persons</button>
     </div>
 
     <script src="./assets/js/index.js" type="module"></script>

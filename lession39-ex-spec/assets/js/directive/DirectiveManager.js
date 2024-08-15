@@ -4,7 +4,8 @@ export class DirectiveManager {
     dependencyMap;
     data;
     currentElement;
-    constructor(data) {
+    reactiveTrie;
+    constructor(data, reactiveTrie) {
         this.dependencyMap = new Map();
         this.providers = [
             new VTextDirectiveProvider(data, this),
@@ -14,6 +15,8 @@ export class DirectiveManager {
         ];
         this.data = data;
         this.currentElement = null;
+        this.reactiveTrie = reactiveTrie;
+        reactiveTrie.onDataChange = elements => elements.forEach(element => this.applyDirective(element));
     }
     setData(data) {
         this.data = data;
@@ -22,33 +25,6 @@ export class DirectiveManager {
     setProviders(providers) {
         this.providers = providers;
     }
-    trackDependency(path) {
-        if (this.currentElement) {
-            this.addDependency(path, this.currentElement);
-        }
-    }
-    untrackDependency(path) {
-        for (const [key] of this.dependencyMap.entries()) {
-            if (key.startsWith(path)) {
-                this.dependencyMap.delete(key);
-            }
-        }
-    }
-    untrackDepdencyArr(path, oldLength, newLength) {
-        for (let i = newLength; i <= oldLength; i++) {
-            const prefix = `${path}.${i}`;
-            this.untrackDependency(prefix);
-        }
-    }
-    addDependency(path, element) {
-        if (!this.dependencyMap.has(path)) {
-            this.dependencyMap.set(path, new Set());
-        }
-        this.dependencyMap.get(path)?.add(element);
-    }
-    applyChange(path) {
-        this.dependencyMap.get(path)?.forEach(element => this.applyDirective(element));
-    }
     processElement(element) {
         this.levelTraversalNode(element, this.applyDirective.bind(this));
     }
@@ -56,10 +32,10 @@ export class DirectiveManager {
         const data = this.data.getDataByElement(element) || {};
         this.providers.forEach(provider => {
             if (provider.isNeedTrack()) {
-                this.currentElement = element;
+                this.reactiveTrie.setCurrentElement(element);
             }
             provider.applyDirective(element, data);
-            this.currentElement = null;
+            this.reactiveTrie.setCurrentElement(undefined);
         });
     }
     levelTraversalNode(element, callback) {
