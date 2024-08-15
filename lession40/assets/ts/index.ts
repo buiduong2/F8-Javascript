@@ -9,11 +9,15 @@ function addInfinityScrollEvent() {
         _limit: 4,
     }
     let postCount = 0;
+    let isFetching = false;
     const overserver = new IntersectionObserver((entries) => {
         entries.forEach(async entry => {
             if (entry.isIntersecting) {
+                if (isFetching) return;
                 try {
+                    isFetching = true;
                     loaderEl.classList.add("loading");
+
                     const { res, postLength } = await fetchPosts(pageQuery)
                     postCount = postCount + postLength;
                     const totalCount = parseInt(res.headers.get('x-total-count') || '0')
@@ -25,6 +29,7 @@ function addInfinityScrollEvent() {
                 } catch (error) {
                     console.log(error);
                 } finally {
+                    isFetching = false;
                     loaderEl.classList.remove("loading");
                 }
 
