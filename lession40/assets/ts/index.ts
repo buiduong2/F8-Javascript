@@ -3,6 +3,7 @@ const postListEnd = document.querySelector(".post-list-end") as HTMLElement;
 const loaderEl = document.querySelector(".loader") as HTMLElement;
 
 addInfinityScrollEvent()
+
 function addInfinityScrollEvent() {
     const pageQuery = {
         _page: 1,
@@ -24,10 +25,12 @@ function addInfinityScrollEvent() {
                     if (postCount < totalCount) {
                         pageQuery._page++;
                     } else {
+                        showToast("All Post has been successfully loaded");
                         overserver.unobserve(postListEnd);
                     }
                 } catch (error) {
-                    console.log(error);
+                    showToast("An error occurred on the server. Please try again later. " + String(error));
+                    overserver.observe(postListEnd);
                 } finally {
                     isFetching = false;
                     loaderEl.classList.remove("loading");
@@ -47,10 +50,15 @@ function addInfinityScrollEvent() {
 
 async function fetchPosts(query: any) {
     const searchParam = new URLSearchParams(query as any);
-    const res = await fetch('http://localhost:3000/posts?' + searchParam.toString());
+    const res = await fetch('http://localhost:3000/posts?_embed=users' + searchParam.toString());
+    if (!res.ok) {
+        throw new Error("Server Error");
+    }
 
     const posts: any[] = await res.json();
-    posts.map(createPost).forEach(el => postListEl.appendChild(el));
+    const fragment = document.createDocumentFragment();
+    posts.map(createPost).forEach(el => fragment.appendChild(el));
+    postListEl.appendChild(fragment);
     return { res, postLength: posts.length };
 }
 
@@ -91,4 +99,13 @@ function createPost(post: any): HTMLElement {
                     </div>
                 `
     return el;
+}
+
+function showToast(msg: string) {
+    const toastPrototype = document.querySelector(".toast") as HTMLElement;
+    const clone = toastPrototype.cloneNode(true) as Element;
+    toastPrototype.insertAdjacentElement("afterend", clone);
+    (clone.querySelector(".toast-body") as HTMLElement).innerText = msg;
+    const toast = bootstrap.Toast.getOrCreateInstance(clone);
+    toast.show();
 }
