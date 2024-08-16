@@ -1,4 +1,7 @@
 export class VDataTree {
+    root;
+    data;
+    methods;
     constructor(rootEl) {
         this.root = new VDataNode(rootEl);
         this.data = {};

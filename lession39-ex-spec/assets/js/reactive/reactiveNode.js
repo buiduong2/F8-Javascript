@@ -1,5 +1,6 @@
-
 export class ReactiveNode {
+    children;
+    elements;
     constructor() {
         this.elements = new Set();
         this.children = new Map();

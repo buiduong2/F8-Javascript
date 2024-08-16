@@ -1,1 +1,0 @@
-## Cố gắng triển khai theo cách giống VueJS

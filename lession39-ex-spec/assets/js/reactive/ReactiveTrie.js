@@ -1,5 +1,8 @@
 import { ReactiveNode } from "./ReactiveNode.js";
 export class ReactiveTrie {
+    currentElement;
+    reactiveRoot;
+    onDataChange;
     constructor() {
         this.reactiveRoot = new ReactiveNode();
         this.onDataChange = function (elements) {
@@ -55,7 +58,14 @@ export class ReactiveTrie {
                     return value;
                 },
                 set(newValue) {
-                    value = newValue;
+                    if (_this.isProxy(newValue)) {
+                        newValue = Object.assign({}, newValue);
+                    }
+                    if (newValue instanceof Node) {
+                        value = newValue;
+                        return true;
+                    }
+                    value = _this.createNestedReactive(newValue, key);
                     _this.applyChange(key);
                     return true;
                 }
@@ -70,10 +80,10 @@ export class ReactiveTrie {
     }
     createNestedReactive(data, prefix) {
         const _this = this;
-        // Handle Các method của array có dạng thay đổi số lượng phần tử
-        // Có vẻ cách làm của chúng ta vì Arrray tự động cập nhật lại index. 
-        // Nên các index ngoài cũng sẽ bị vứt. nên ta cũng vứt các index ngoài cùng luôn ko cần thiết phải sửa lại
-        // shift pop  splice
+        if (data === null || data == undefined) {
+            return data;
+        }
+
         if (typeof data === 'function' && data === Array.prototype[data.name]) {
             return new Proxy(data, {
                 apply(target, thisArg, argArray) {
@@ -87,7 +97,6 @@ export class ReactiveTrie {
                 },
             });
         }
-        // Kiểu dữ liệu nguyên thủy thì thôi
         if (typeof data !== 'object')
             return data;
         for (const key in data) {
@@ -113,14 +122,12 @@ export class ReactiveTrie {
                     if (typeof prop !== 'string')
                         return Reflect.set(target, prop, newValue, receiver);
                     if (prop === 'length') {
-                        //cố gắng sửa đổi số lượng phần tử Array
                         const value = Reflect.set(target, prop, newValue, receiver);
                         _this.applyChange(`${prefix}`);
                         return value;
                     }
                     if (isNaN(parseInt(prop)))
                         return Reflect.set(target, prop, newValue, receiver);
-                    // Cố gắng sửa đổi giá tị in-place của array
                     if (_this.isProxy(newValue)) {
                         newValue = Object.assign({}, newValue);
                     }
@@ -154,7 +161,7 @@ export class ReactiveTrie {
         });
     }
     isProxy(obj) {
-        return !!obj.__isProxy;
+        return obj && !!obj.__isProxy;
     }
     trackDependency(path) {
         if (this.currentElement) {
