@@ -1,4 +1,4 @@
-import { ReactiveNode } from "./ReactiveNode.js";
+import { ReactiveNode } from "./reactiveNode.js";
 export class ReactiveTrie {
     currentElement;
     reactiveRoot;
