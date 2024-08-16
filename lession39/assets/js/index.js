@@ -1,5 +1,5 @@
 "use strict";
-const TODO_API = 'https://k6thrk-8080.csb.app/todos';
+const TODO_API = 'https://stvp8n-8080.csb.app/todos';
 const todoListCompletedEl = document.querySelector(".todo-list--completed");
 const todoListPendingEl = document.querySelector(".todo-list--pending");
 const modalEl = document.querySelector(".modal");
