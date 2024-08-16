@@ -12,24 +12,26 @@ function addInfinityScrollEvent() {
     let isFetching = false;
     const overserver = new IntersectionObserver((entries) => {
         entries.forEach(async (entry) => {
-            if(isFetching) return;
             if (entry.isIntersecting) {
+                if (isFetching)
+                    return;
                 try {
                     isFetching = true;
                     loaderEl.classList.add("loading");
                     const { res, postLength } = await fetchPosts(pageQuery);
-                    postCount += postLength;
+                    postCount = postCount + postLength;
                     const totalCount = parseInt(res.headers.get('x-total-count') || '0');
                     if (postCount < totalCount) {
                         pageQuery._page++;
                     }
                     else {
-                        console.log("done");
+                        showToast("All Post has been successfully loaded");
                         overserver.unobserve(postListEnd);
                     }
                 }
                 catch (error) {
-                    console.log(error);
+                    showToast("An error occurred on the server. Please try again later. " + String(error));
+                    overserver.observe(postListEnd);
                 }
                 finally {
                     isFetching = false;
@@ -47,8 +49,13 @@ function addInfinityScrollEvent() {
 async function fetchPosts(query) {
     const searchParam = new URLSearchParams(query);
     const res = await fetch('https://stvp8n-8080.csb.app/posts?' + searchParam.toString());
+    if (!res.ok) {
+        throw new Error("Server Error");
+    }
     const posts = await res.json();
-    posts.map(createPost).forEach(el => postListEl.appendChild(el));
+    const fragment = document.createDocumentFragment();
+    posts.map(createPost).forEach(el => fragment.appendChild(el));
+    postListEl.appendChild(fragment);
     return { res, postLength: posts.length };
 }
 function createPost(post) {
@@ -88,4 +95,12 @@ function createPost(post) {
                     </div>
                 `;
     return el;
+}
+function showToast(msg) {
+    const toastPrototype = document.querySelector(".toast");
+    const clone = toastPrototype.cloneNode(true);
+    toastPrototype.insertAdjacentElement("afterend", clone);
+    clone.querySelector(".toast-body").innerText = msg;
+    const toast = bootstrap.Toast.getOrCreateInstance(clone);
+    toast.show();
 }
