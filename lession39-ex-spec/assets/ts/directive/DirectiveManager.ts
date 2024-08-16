@@ -1,6 +1,6 @@
 import { ReactiveTrie } from "../reactive/ReactiveTrie.js";
 import { VDataTree } from "../VData.js";
-import { DirectiveProvider, VForDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
+import { DirectiveProvider, VBindClassDirevtiveProvider, VForDirectiveProvider, VOnDirectiveProvider, VShowDirectiveProvider, VTextDirectiveProvider } from "./DirectiveProvider.js";
 
 export class DirectiveManager {
     providers: DirectiveProvider[];
@@ -13,6 +13,7 @@ export class DirectiveManager {
         this.dependencyMap = new Map();
         this.providers = [
             new VTextDirectiveProvider(data, this),
+            new VBindClassDirevtiveProvider(data, this),
             new VShowDirectiveProvider(data, this),
             new VOnDirectiveProvider(data, this),
             new VForDirectiveProvider(data, this),
@@ -20,7 +21,7 @@ export class DirectiveManager {
         this.data = data;
         this.currentElement = null;
         this.reactiveTrie = reactiveTrie;
-        reactiveTrie.onDataChange = elements => elements.forEach(element => this.applyDirective(element));
+        reactiveTrie.onDataChange = elements => elements.forEach(element => this.updateElement(element));
     }
 
     public setData(data: VDataTree) {
@@ -34,6 +35,17 @@ export class DirectiveManager {
 
     public processElement(element: Element) {
         this.levelTraversalNode(element, this.applyDirective.bind(this));
+    }
+
+    public updateElement(element: Element) {
+        const data = this.data.getDataByElement(element) || {};
+        this.providers.forEach(provider => {
+            if (provider.isNeedTrack()) {
+                this.reactiveTrie.setCurrentElement(element);
+                provider.applyDirective(element, data)
+            }
+            this.reactiveTrie.setCurrentElement(undefined);
+        });
     }
 
     private applyDirective(element: Element): void {

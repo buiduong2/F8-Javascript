@@ -72,7 +72,14 @@ export class ReactiveTrie {
                     return value;
                 },
                 set(newValue) {
-                    value = newValue;
+                    if (_this.isProxy(newValue)) {
+                        newValue = Object.assign({}, newValue);
+                    }
+                    if (newValue instanceof Node) {
+                        value = newValue;
+                        return true;
+                    }
+                    value = _this.createNestedReactive(newValue, key);
                     _this.applyChange(key);
                     return true;
                 }
@@ -92,7 +99,9 @@ export class ReactiveTrie {
     private createNestedReactive(data: any, prefix: string): any {
         const _this = this;
 
-
+        if (data === null || data == undefined) {
+            return data;
+        }
 
         // Handle Các method của array có dạng thay đổi số lượng phần tử
         // Có vẻ cách làm của chúng ta vì Arrray tự động cập nhật lại index. 
@@ -182,7 +191,7 @@ export class ReactiveTrie {
     }
 
     private isProxy(obj: any): boolean {
-        return !!obj.__isProxy;
+        return obj && !!obj.__isProxy;
     }
 
     public trackDependency(path: string): void {

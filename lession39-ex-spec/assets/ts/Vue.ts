@@ -7,9 +7,10 @@ export class Vue {
     rootEl: HTMLElement;
     directiveManager: DirectiveManager;
     data: VDataTree;
+    cycleCallback: Cyclecallback;
 
 
-    constructor({ selector, data, methods }: CreateOption) {
+    constructor({ selector, data, methods, mouted }: CreateOption) {
         this.rootEl = document.querySelector(selector) as HTMLElement;
         this.data = new VDataTree(this.rootEl);
         const reactiveTrie = new ReactiveTrie();
@@ -18,10 +19,15 @@ export class Vue {
         const reactiveData = reactiveTrie.createReactiveData(data());
         this.data.setData(reactiveData);
         this.data.setMethods(methods);
+
+        this.cycleCallback = {
+            mouted
+        }
     }
 
     moute() {
         this.processHtml();
+        this.cycleCallback.mouted?.call(this.data.getDataByElement(this.rootEl));
     }
 
     processHtml() {
@@ -34,11 +40,18 @@ export class Vue {
     }
 }
 
+export default Vue;
 
 type CreateOption = {
     selector: string,
     data: () => { [key: string]: any };
-    methods: { [key: string]: (this: ThisArg, ...args: any[]) => any };
+    methods?: { [key: string]: (this: ThisArg, ...args: any[]) => any };
+    mouted?: (this: ThisArg) => void;
+
+}
+
+type Cyclecallback = {
+    mouted?: () => void
 }
 
 type DataType = ReturnType<CreateOption['data']>

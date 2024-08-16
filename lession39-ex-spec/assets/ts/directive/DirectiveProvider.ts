@@ -76,7 +76,7 @@ export class VOnDirectiveProvider extends DirectiveProvider {
         const actionName: string = attr.name.substring("v-on:".length);
         const expression = attr.value;
 
-        const func = Function("data", "event", `with (data)  { ${expression}}`);
+        const func = Function("data", "$event", `with (data)  { ${expression}}`);
         element.addEventListener(actionName, (e) => {
             func.call(element, data, e);
         });
@@ -148,6 +148,30 @@ export class VForDirectiveProvider extends DirectiveProvider {
 
     private getItemNameAndListName(attr: Attr): string[] {
         return attr.value.split(" in ").map(name => name.trim());
+    }
+
+}
+
+export class VBindClassDirevtiveProvider extends DirectiveProvider {
+    public isNeedTrack(): boolean {
+        return true;
+    }
+    protected predicate(attr: Attr): boolean {
+        return attr.name === 'v-bind:class'
+    }
+    protected handle(element: Element, attr: Attr, data: any): void {
+        const expression = attr.value;
+
+        const func = Function("data", "event", `with (data)  { return (${expression})}`);
+
+        const objClasses = func(data);
+        for (const key in objClasses) {
+            if (objClasses[key]) {
+                element.classList.add(key);
+            } else {
+                element.classList.remove(key);
+            }
+        }
     }
 
 }

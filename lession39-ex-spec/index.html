@@ -4,44 +4,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Smatyx Todos</title>
+    <link rel="shortcut icon"
+        href="https://w7.pngwing.com/pngs/673/363/png-transparent-playbuzz-business-advertising-quiz-logo-favicon-purple-violet-text.png"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
 
     <div id="app">
-        <h1 v-text="message"> Hello Darkness</h1>
+        <span class="global-loader">
+        </span>
+        <div class="modal" v-bind:class="{'active': activeModal}">
+            <div class="overlay" v-on:click="activeModal = false"></div>
 
-        <h2 v-show="show">Show</h2>
-        <h2 v-text="Boolean(show)">Show</h2>
-        <!-- <h1 v-text="numbers"></h1> -->
+            <form class="modal-content modal-form" v-on:submit="handleSubmitFormModal($event)">
+                <div class="content-body">
+                    <input class="form-input" type="text" placeholder="Add Todo" required>
+                </div>
+                <div class="content-action-list">
+                    <button class="btn btn-green btn-save" type="submit">
+                        Save
+                    </button>
+                    <button class="btn btn-white btn-cancel" type="reset"
+                        v-on:click="activeModal = false">Cancel</button>
+                </div>
+            </form>
+        </div>
+        <main class="app">
+            <header class="todo-header">
+                <h1 class="app-title"> <span class="text-logo">Smatyx</span> Todos App </h1>
 
-        <ul>
-            <template v-for="num in numbers">
-                <li>
-                    <span v-text="num"></span>
-                    <button v-on:click="num++">Num++</button>
-                </li>
-            </template>
-        </ul>
-        <button v-on:click="numbers.push(Math.random()); console.log(numbers)">numbers.push(Math.random())</button>
-        <ul>
-            <template v-for="person in persons">
-                <li>
-                    <span v-text="person.id"></span>-
-                    <span v-text="person.name"></span>
-                    <button v-on:click="person.id++">person.id++</button>
-                </li>
-            </template>
-        </ul>
+                <div class="todo-action-list">
+                    <form class="todo-action-item action-search active" action="#" method="GET">
+                        <input type="text" class="form-input" placeholder="Search Todos" v-on:input="handleFilterTodo(this.value)">
+                        <button class="btn btn-primary btn-search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
 
-        <button v-on:click="persons.pop()">POP</button>
-        <button v-on:click="persons.shift()">SHIFT</button>
-        <button v-on:click="persons.unshift({id:1,name:'unshift'})">UNSHIFT</button>
-        <button v-on:click="persons.splice(2,4)">Splice(2,4)</button>
+                    <div class="todo-action-item action-add-todo">
+                        <button class="btn btn-green btn-add-todo" v-on:click="openModalToAddTodo()">Add Todos</button>
+                    </div>
+                </div>
+            </header>
 
-        <button v-on:click="logPersons()">Logs(persons)</button>
-        <button v-on:click="addPerson()">Add Persons</button>
+            <section class="todo-content">
+                <ul class="todo-list todo-list--pending">
+                    <template v-for="todo in pendingTodos">
+                        <li class="todo-item">
+                            <span class="todo-content" v-text="todo.content"></span>
+                            <div class="todo-item-action-list">
+                                <button class="todo-item-action btn btn-delete" v-on:click="deleteTodo(todo,this)">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                                <button class="todo-item-action btn btn-edit" v-on:click="openModalToEditTodo(todo)">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button class="todo-item-action btn btn-mark-complete"
+                                    v-on:click="toggleTodo(todo,this)">
+                                    <i class="fa-solid fa-check-to-slot"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+
+                <div class="btn-wrapper">
+                    <button class="btn btn-green btn-show-complete-todo" v-bind:class="{active: showCompltedList}"
+                        v-on:click="showCompltedList = !showCompltedList">
+                        Completed Todos
+                        <span class="todo-complete-count" v-text="completedTodos.length">1</span>
+                        <i class="fa-solid fa-circle-arrow-down btn-icon"></i>
+                    </button>
+                </div>
+                <ul class="todo-list todo-list--completed" v-bind:class="{active: showCompltedList}">
+                    <template v-for="todo in completedTodos">
+                        <li class="todo-item">
+                            <span class="todo-content" v-text="todo.content"></span>
+                            <div class="todo-item-action-list">
+                                <button class="todo-item-action btn btn-delete" v-on:click="deleteTodo(todo,this)">
+                                    <i class=" fa-regular fa-trash-can"></i>
+                                </button>
+                                <button class="todo-item-action btn btn-edit" v-on:click="openModalToEditTodo(todo)">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button class="todo-item-action btn btn-mark-complete"
+                                    v-on:click="toggleTodo(todo,this)">
+                                    <i class="fa-solid fa-check-to-slot"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </section>
+        </main>
     </div>
 
     <script src="./assets/js/index.js" type="module"></script>

@@ -5,7 +5,8 @@ export class Vue {
     rootEl;
     directiveManager;
     data;
-    constructor({ selector, data, methods }) {
+    cycleCallback;
+    constructor({ selector, data, methods, mouted }) {
         this.rootEl = document.querySelector(selector);
         this.data = new VDataTree(this.rootEl);
         const reactiveTrie = new ReactiveTrie();
@@ -13,9 +14,13 @@ export class Vue {
         const reactiveData = reactiveTrie.createReactiveData(data());
         this.data.setData(reactiveData);
         this.data.setMethods(methods);
+        this.cycleCallback = {
+            mouted
+        };
     }
     moute() {
         this.processHtml();
+        this.cycleCallback.mouted?.call(this.data.getDataByElement(this.rootEl));
     }
     processHtml() {
         this.directiveManager.processElement(this.rootEl);
@@ -25,3 +30,4 @@ export class Vue {
         intance.moute();
     }
 }
+export default Vue;
