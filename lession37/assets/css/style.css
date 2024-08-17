@@ -1,0 +1,33 @@
+
+img {
+    width: 100%;
+}
+
+.img-zoom-wrapper:first-of-type .img-wrapper {
+    width: 40%;
+}
+
+.img-zoom-wrapper:first-of-type .wrapper-zoom {
+    width: 800px;
+    height: 800px;
+}
+
+.img-zoom-wrapper:last-of-type .wrapper-zoom {
+    width: 400px;
+    height: 400px;
+}
+
+
+.img-zoom-wrapper {
+    display: flex;
+    gap: 10px;
+    margin: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.zoom-cover {
+    position: absolute;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+}
