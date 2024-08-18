@@ -22,9 +22,19 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    &.begin-state {
+        .section-nav {
+            display: none;
+        }
+
+        .footer-section {
+            display: none;
+        }
+    }
 }
 
-.main-cotent {
+.main-content {
     flex-grow: 1;
     padding: 20px;
 }
@@ -39,6 +49,18 @@ body {
     position: relative;
     background-color: rgba($color: #0000, $alpha: 0.15);
     backdrop-filter: blur(5px);
+    transition: opacity ease-in 300ms;
+    opacity: 0;
+
+    &.in {
+        opacity: 1;
+
+    }
+
+    &.out {
+        opacity: 0;
+    }
+
 
     .game-info-list-left {
         display: flex;
@@ -57,7 +79,7 @@ body {
             }
         }
 
-        .streck {
+        .streak {
             width: 300px;
             border: 2px solid gray;
             position: relative;
@@ -70,7 +92,7 @@ body {
 
 
 
-            .streck-title {
+            .streak-title {
                 color: white;
                 font-weight: bolder;
                 text-shadow: 0.5px 0.5px black;
@@ -81,7 +103,7 @@ body {
             }
 
 
-            .streck-progress {
+            .streak-progress {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -91,36 +113,40 @@ body {
                 border-top-right-radius: 5px;
                 border-bottom-right-radius: 5px;
 
-                &.active {
-                    background: linear-gradient(90deg, rgba(246, 168, 10, 1) 20%, rgba(227, 235, 72, 1) 65%, rgba(243, 243, 243, 1) 89%);
-                    z-index: 10;
-                }
-
-
-                &:not(.active) .current {
-                    background: linear-gradient(90deg, rgba(246, 168, 10, 1) 20%, rgba(234, 242, 91, 1) 54%);
+                .current {
+                    width: 0;
+                    transition: width ease-in-out 500ms;
                     height: 100%;
-                    width: 300px;
+
+                    &.active {
+                        background: linear-gradient(90deg, rgba(246, 168, 10, 1) 20%, rgba(227, 235, 72, 1) 65%, rgba(243, 243, 243, 1) 70%);
+                        z-index: 10;
+                    }
+
+                    &:not(.active) {
+                        background: linear-gradient(90deg, rgba(246, 168, 10, 1) 20%, rgba(234, 242, 91, 1) 54%);
+                    }
                 }
+
             }
 
             &.max {
                 animation: horizontal-shaking 400ms ease-in-out infinite;
 
-                .streck-progress {
+                .streak-progress {
                     .current {
                         background: linear-gradient(0deg, rgba(246, 168, 10, 1) 20%, rgba(235, 72, 72, 1) 65%, rgba(243, 243, 243, 1) 96%);
                     }
                 }
             }
 
-            .streck-separator {
+            .streak-separator {
                 height: 60%;
                 border: 1px solid gray;
                 z-index: 9;
             }
 
-            .streck-number {
+            .streak-number {
                 z-index: 99;
                 position: absolute;
                 right: 0;
@@ -161,6 +187,17 @@ body {
 
 .main-menu-state {
     height: 100%;
+    opacity: 0;
+    transition: opacity ease-in;
+
+    &.in {
+        opacity: 1;
+
+    }
+
+    &.out {
+        opacity: 0;
+    }
 }
 
 .count-down-state {
@@ -186,7 +223,6 @@ body {
 .game-playing-state {
     color: white;
     height: 100%;
-
     position: relative;
 
     .question-wrapper {
@@ -355,11 +391,19 @@ body {
     flex-direction: column;
     justify-content: center;
     align-content: center;
-
     background-color: rgba($color: #000000, $alpha: 0.3);
-
     border-radius: 10px;
     padding: 20px;
+    opacity: 0;
+    transition: opacity ease-in-out 500ms;
+
+    &.in {
+        opacity: 1;
+    }
+
+    &.out {
+        opacity: 0;
+    }
 
     .game-end-title {
         text-align: center;
@@ -423,7 +467,7 @@ body {
                 background-position: -138px -588px;
             }
 
-            &.bg-image--streck {
+            &.bg-image--streak {
                 background-position: -3px -316px;
                 width: 60px;
             }
@@ -432,7 +476,7 @@ body {
             &.bg-image--time {
                 background-position: -240px -223px;
             }
-            
+
         }
 
         .statistic-value {
@@ -451,12 +495,16 @@ body {
     z-index: 9;
     color: white;
     font-weight: bolder;
-    font-size: 45px;
+    font-size: 35px;
     transform: translateY(100%);
     transition: transform ease-in-out 300ms;
 
-    &.incorrect,
-    &.correct {
+    .message {
+        padding: 20px;
+        display: none;
+    }
+
+    &.active {
         transform: translateY(0);
     }
 
@@ -465,17 +513,23 @@ body {
         .message {
             background-color: orangered;
         }
+
+        .message--incorrect {
+            display: block;
+        }
     }
 
     &.correct {
         .message {
             background-color: greenyellow;
         }
+
+        .message--correct {
+            display: block;
+        }
     }
 
-    .message {
-        padding: 20px;
-    }
+
 
 
 
@@ -490,6 +544,18 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+
+    transition: opacity ease-in 300ms;
+    opacity: 0;
+
+    &.in {
+        opacity: 1;
+
+    }
+
+    &.out {
+        opacity: 0;
+    }
 
     .img-wrapper {
         position: relative;

@@ -1,12 +1,7 @@
-"use strict";
+import { QuizzApp } from "./App.js";
 console.log('hello world');
-// countDownState()
-function countDownState() {
-    const countDownItems = document.querySelectorAll(".count-down-item");
-    Array.from(countDownItems).forEach((item, index) => {
-        item.style.display = "none";
-        setTimeout(() => {
-            item.style.display = "";
-        }, index * 1000);
-    });
-}
+window.addEventListener("DOMContentLoaded", () => {
+    const appEl = document.querySelector("#app");
+    console.log(appEl);
+    new QuizzApp(appEl);
+});

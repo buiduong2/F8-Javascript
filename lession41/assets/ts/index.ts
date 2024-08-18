@@ -1,12 +1,11 @@
-console.log('hello world');
-// countDownState()
-function countDownState() {
-    const countDownItems = document.querySelectorAll(".count-down-item");
-    Array.from(countDownItems).forEach((item, index) => {
-        (item as HTMLElement).style.display = "none";
+import { QuizzApp } from "./App.js";
 
-        setTimeout(() => {
-            (item as HTMLElement).style.display = "";
-        }, index * 1000);
-    })
-}
+console.log('hello world');
+
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    const appEl = document.querySelector("#app") as HTMLElement;
+    console.log(appEl);
+    new QuizzApp(appEl)
+})
