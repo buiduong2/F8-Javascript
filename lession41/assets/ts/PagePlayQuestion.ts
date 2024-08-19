@@ -1,4 +1,5 @@
-import { PlayPage } from "./PagePlay";
+import { PlayPage } from "./PagePlay.js";
+import { shuffleArray } from "./util.js";
 
 export abstract class PagePlayQuestion {
     playPage: PlayPage;
@@ -13,6 +14,7 @@ export abstract class PagePlayQuestion {
     constructor(playPlage: PlayPage, question: QuestionType, currentQuestion: number, totalQuestion: number) {
         this.playPage = playPlage;
         this.question = question;
+        shuffleArray(this.question.answers);
         this.starTime = Number.MAX_VALUE;
         this.answer = [];
         this.contentEl = this.createContentEl(question, currentQuestion, totalQuestion);

@@ -14,14 +14,22 @@ export class EndPage extends QuizzPage {
             this.contentEl.classList.add("in");
         }, 1);
         this.audioBgm.play();
-        const correctProgress = this.contentEl.querySelector(".correct-progress");
-        console.log(correctProgress);
         try {
             await this.counterUpAllSore(true);
         }
         catch (error) {
             this.counterUpAllSore(false);
         }
+    }
+    appendFireWord() {
+        const firework = document.createElement("div");
+        firework.innerHTML = `
+            <div class="pyro active">
+                <div class="before"></div>
+                <div class="after"></div>
+            </div>
+        `;
+        this.contentEl.appendChild(firework);
     }
     async counterUpAllSore(withSound) {
         const scoreNumberEl = this.contentEl.querySelector(".score-number");
@@ -59,6 +67,7 @@ export class EndPage extends QuizzPage {
             countEls[index].stop();
             index++;
             if (index >= countEls.length) {
+                this.appendFireWord();
                 document.removeEventListener("click", skipCountUp);
             }
         };
@@ -72,6 +81,7 @@ export class EndPage extends QuizzPage {
                 await curr.start();
             });
         }, Promise.resolve()).then(() => {
+            this.appendFireWord();
             document.removeEventListener("click", skipCountUp);
         });
     }
@@ -105,7 +115,7 @@ export class EndPage extends QuizzPage {
         const el = document.createElement("section");
         el.className = 'game-end-state';
         el.innerHTML = `
-                <h2 class="game-end-title">Bạn là Ace hãy tiếp tục tỏa sáng</h2>
+                <h2 class="game-end-title">${prop.playerName} là Ace hãy tiếp tục tỏa sáng</h2>
 
                 <div class="correct-progress">
                     <div class="progress-current">

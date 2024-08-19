@@ -1,15 +1,11 @@
 import type { PageContructor } from "./PageAbstract.js";
 import { QuizzPage } from "./PageAbstract.js";
-import { EndPage } from "./PageEnd.js";
-import { PlayPage } from "./PagePlay.js";
 import { PreparePage } from "./PagePrepare.js";
 
 export class QuizzApp {
     el: HTMLElement;
     mainContentEl: HTMLElement;
-
     currentPage: QuizzPage<any>;
-
     totalQuestion: number;
 
     constructor(el: HTMLElement) {
@@ -29,7 +25,7 @@ export class QuizzApp {
             }
         }
 
-        this.currentPage = new PlayPage(this, data);
+        this.currentPage = new PreparePage(this, data);
         this.init();
     }
 

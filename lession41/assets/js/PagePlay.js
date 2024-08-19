@@ -1,7 +1,7 @@
 import { QuizzPage } from "./PageAbstract.js";
 import { EndPage } from "./PageEnd.js";
 import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
-import { checkArrayStringEqual, counterUp, sleep } from "./util.js";
+import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js";
 export class PlayPage extends QuizzPage {
     navEl;
     footerEl;
@@ -17,6 +17,7 @@ export class PlayPage extends QuizzPage {
     totalQuestNumber;
     stats;
     questions;
+    questionIds;
     constructor(app, prop) {
         super(app, prop);
         this.navEl = PlayPage.createNavEl();
@@ -38,6 +39,8 @@ export class PlayPage extends QuizzPage {
         this.questions = questions;
         this.currentQuestNumber = 0;
         this.totalQuestNumber = 10;
+        this.questionIds = new Array(this.totalQuestNumber).fill(0).map((value, index) => index + 1);
+        shuffleArray(this.questionIds);
     }
     render() {
         this.app.mainContentEl.insertAdjacentElement("beforebegin", this.navEl);
@@ -136,36 +139,19 @@ export class PlayPage extends QuizzPage {
         this.prepareNextQuestion();
     }
     async prepareNextQuestion() {
-        const question = {
-            type: "pick",
-            content: "Đâu là thứ tự các số từ nhỏ đến lớn",
-            answers: [
-                {
-                    id: 1,
-                    content: "{ 1, 2 ,3 ,4 ,5 ,6}"
-                },
-                {
-                    id: 2,
-                    content: "{ 1, 2 ,3 ,5 ,7 ,6}"
-                },
-                {
-                    id: 3,
-                    content: "{ 1, 2 ,-1 ,4 ,2 ,6}"
-                },
-                {
-                    id: 4,
-                    content: "{ 1, 2 ,3 4, 5, 6, -1}"
-                }
-            ],
-            correctAnswers: ["1", "2"]
-        };
-        const question2 = {
-            answers: [],
-            type: "input",
-            content: "Nhập vào -10 + 20 = ?",
-            correctAnswers: ['-10']
-        };
-        this.questions.push(question2);
+        const nextQuestionsId = this.questionIds[this.questions.length];
+        if (!nextQuestionsId)
+            return;
+        try {
+            const res = await fetch('http://localhost:3000/questions/' + nextQuestionsId);
+            if (!res.ok)
+                throw new Error(res.statusText);
+            const question = await res.json();
+            this.questions.push(question);
+        }
+        catch (error) {
+            alert(error);
+        }
     }
     finishGameSession() {
         const data = {

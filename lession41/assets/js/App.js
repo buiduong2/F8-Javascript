@@ -1,4 +1,4 @@
-import { PlayPage } from "./PagePlay.js";
+import { PreparePage } from "./PagePrepare.js";
 export class QuizzApp {
     el;
     mainContentEl;
@@ -19,7 +19,7 @@ export class QuizzApp {
                 maxStreak: 10
             }
         };
-        this.currentPage = new PlayPage(this, data);
+        this.currentPage = new PreparePage(this, data);
         this.init();
     }
     init() {

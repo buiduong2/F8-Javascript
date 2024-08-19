@@ -2,7 +2,7 @@ import { QuizzApp } from "./App.js";
 import { QuizzPage } from "./PageAbstract.js";
 import { EndPage } from "./PageEnd.js";
 import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
-import { checkArrayStringEqual, counterUp, sleep } from "./util.js";
+import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js";
 
 import type { PropSchema } from "./PageAbstract.js";
 import type { EndPageProp } from "./PageEnd.js"
@@ -28,6 +28,7 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
     stats: GameStats;
 
     questions: QuestionType[];
+    questionIds: number[];
 
 
     constructor(app: QuizzApp, prop: any) {
@@ -55,6 +56,10 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
         this.questions = questions;
         this.currentQuestNumber = 0;
         this.totalQuestNumber = 10;
+
+        this.questionIds = new Array(this.totalQuestNumber).fill(0).map((value, index) => index + 1);
+        shuffleArray(this.questionIds);
+
     }
 
     render(): void {
@@ -167,38 +172,17 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
 
     async prepareNextQuestion() {
 
-        const question: QuestionType = {
-            type: "pick",
-            content: "Đâu là thứ tự các số từ nhỏ đến lớn",
-            answers: [
-                {
-                    id: 1,
-                    content: "{ 1, 2 ,3 ,4 ,5 ,6}"
-                },
-                {
-                    id: 2,
-                    content: "{ 1, 2 ,3 ,5 ,7 ,6}"
-                },
-                {
-                    id: 3,
-                    content: "{ 1, 2 ,-1 ,4 ,2 ,6}"
-                },
-                {
-                    id: 4,
-                    content: "{ 1, 2 ,3 4, 5, 6, -1}"
-                }
-            ],
-            correctAnswers: ["1", "2"]
-        }
+        const nextQuestionsId = this.questionIds[this.questions.length];
+        if (!nextQuestionsId) return;
+        try {
+            const res = await fetch('http://localhost:3000/questions/' + nextQuestionsId);
+            if (!res.ok) throw new Error(res.statusText);
 
-        const question2: QuestionType = {
-            answers: [],
-            type: "input",
-            content: "Nhập vào -10 + 20 = ?",
-            correctAnswers: ['-10']
+            const question = await res.json();
+            this.questions.push(question);
+        } catch (error) {
+            alert(error);
         }
-
-        this.questions.push(question2);
     }
 
     finishGameSession() {

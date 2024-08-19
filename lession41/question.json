@@ -1,0 +1,215 @@
+{
+	"questions": [
+		{
+			"id": 1,
+			"type": "pick",
+			"content": "Gía trị đúng của (-4)<sup>2</sup> là:",
+			"answers": [
+				{
+					"id": 1,
+					"content": "8"
+				},
+				{
+					"id": 2,
+					"content": "-8"
+				},
+				{
+					"id": 3,
+					"content": "16"
+				},
+				{
+					"id": 4,
+					"content": "-16"
+				}
+			],
+			"correctAnswers": ["3"]
+		},
+		{
+			"id": 2,
+			"type": "pick",
+			"content": "2.(-3) + 5",
+			"answers": [
+				{
+					"id": 1,
+					"content": "8"
+				},
+				{
+					"id": 2,
+					"content": "1"
+				},
+				{
+					"id": 3,
+					"content": "-1"
+				},
+				{
+					"id": 4,
+					"content": "-8"
+				}
+			],
+			"correctAnswers": ["3"]
+		},
+		{
+			"id": 3,
+			"type": "pick",
+			"content": "Số nguyên x nào dưới đây thỏa mãn x - 8 = 20",
+			"answers": [
+				{
+					"id": 1,
+					"content": "x = 12"
+				},
+				{
+					"id": 2,
+					"content": "x = 28"
+				},
+				{
+					"id": 3,
+					"content": "x = 160"
+				},
+				{
+					"id": 4,
+					"content": "x = -28"
+				}
+			],
+			"correctAnswers": ["2"]
+		},
+		{
+			"id": 4,
+			"type": "pick",
+			"content": "Trong các số nguyên âm sau, số nhỏ nhất là.",
+			"answers": [
+				{
+					"id": 1,
+					"content": "-789."
+				},
+				{
+					"id": 2,
+					"content": "-123."
+				},
+				{
+					"id": 3,
+					"content": "-987."
+				},
+				{
+					"id": 4,
+					"content": "-102."
+				}
+			],
+			"correctAnswers": ["3"]
+		},
+
+		{
+			"id": 5,
+			"type": "pick",
+			"content": "Kết quả đúng của phép tính 2<sup>6</sup>:2 là",
+			"answers": [
+				{
+					"id": 1,
+					"content": "2<sup>7</sup>"
+				},
+				{
+					"id": 2,
+					"content": "2<sup>6</sup>"
+				},
+				{
+					"id": 3,
+					"content": "2<sup>5</sup>"
+				},
+				{
+					"id": 4,
+					"content": "1<sup>7</sup>"
+				}
+			],
+			"correctAnswers": ["3"]
+		},
+		{
+			"id": 6,
+			"answers": [],
+			"type": "input",
+			"content": "Biểu thức (-20)+|10| có giá trị là",
+			"correctAnswers": ["-10"]
+		},
+
+		{
+			"id": 7,
+			"answers": [],
+			"type": "input",
+			"content": "Giá trị tuyệt đối của số..........là số 0",
+			"correctAnswers": ["0"]
+		},
+
+		{
+			"id": 8,
+			"type": "pick",
+			"content": "Tổng của số nguyên âm nhỏ nhất có ba chữ số với số nguyên dương nhỏ nhất có một chữ số là:",
+			"answers": [
+				{
+					"id": 1,
+					"content": "-1000"
+				},
+				{
+					"id": 2,
+					"content": "-900"
+				},
+				{
+					"id": 3,
+					"content": "-998"
+				},
+				{
+					"id": 4,
+					"content": "-989"
+				}
+			],
+			"correctAnswers": ["3"]
+		},
+
+		{
+			"id": 9,
+			"type": "pick",
+			"content": "Trong cách xếp sau theo thứ tự tăng dần, cách xếp nào đúng?",
+			"answers": [
+				{
+					"id": 1,
+					"content": "0; -20; -15; -12; 8"
+				},
+				{
+					"id": 2,
+					"content": "8; 0; -12; -15; -20"
+				},
+				{
+					"id": 3,
+					"content": "-15; -12; 0; 8; 20"
+				},
+				{
+					"id": 4,
+					"content": "-20; -15; -12; 0; 8"
+				}
+			],
+			"correctAnswers": ["4", "3"]
+		},
+
+		{
+			"id": 10,
+			"type": "pick",
+			"content": "Bỏ dấu ngoặc rồi tính 30 - {51 + [-9 - (51 - 18) - 18]} ta được:",
+			"answers": [
+				{
+					"id": 1,
+					"content": "3"
+				},
+				{
+					"id": 2,
+					"content": "21"
+				},
+				{
+					"id": 3,
+					"content": "-81"
+				},
+				{
+					"id": 4,
+					"content": "39"
+				}
+			],
+			"correctAnswers": ["4"]
+		}
+	]
+}
