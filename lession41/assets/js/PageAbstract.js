@@ -3,8 +3,7 @@ export class QuizzPage {
     prop;
     constructor(app, prop = {}) {
         this.app = app;
-        if (!this.validateProp(prop))
-            throw new Error("Error on contruct Page. This page need some required data");
+        this.validateProp(prop);
         this.prop = prop;
     }
     validateProp(prop) {
@@ -23,7 +22,6 @@ export class QuizzPage {
                 }
             }
         }
-        return true;
     }
     goNextPage(data, nextPageCon) {
         this.app.goNextPage(data, nextPageCon);

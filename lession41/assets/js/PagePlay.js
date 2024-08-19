@@ -1,19 +1,31 @@
 import { QuizzPage } from "./PageAbstract.js";
 import { EndPage } from "./PageEnd.js";
+import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
+import { checkArrayStringEqual, counterUp, sleep } from "./util.js";
 export class PlayPage extends QuizzPage {
     navEl;
     footerEl;
     messageEl;
     contentEl;
+    audioCorrect;
+    audioIncorrect;
+    audioBgm;
     statsView;
     feedbackView;
+    currentQuestion;
+    currentQuestNumber;
+    totalQuestNumber;
     stats;
+    questions;
     constructor(app, prop) {
         super(app, prop);
         this.navEl = PlayPage.createNavEl();
-        this.footerEl = PlayPage.createFooterEl();
+        this.footerEl = PlayPage.createFooterEl(prop.playerName);
         this.messageEl = PlayPage.createMessageEl();
         this.contentEl = PlayPage.createContentEl();
+        this.audioIncorrect = document.querySelector("#incorrect-sound-effect");
+        this.audioCorrect = document.querySelector("#correct-sound-effect");
+        this.audioBgm = document.querySelector("#playgame-bgm");
         this.statsView = new GameStatsManager(this.navEl, prop.totalQuestion, 4);
         this.feedbackView = new FeedbackManager(this.messageEl);
         this.stats = {
@@ -22,9 +34,10 @@ export class PlayPage extends QuizzPage {
             maxStreak: 0,
             startTime: Date.now()
         };
-        setTimeout(() => {
-            this.finishGameSession();
-        }, 1000);
+        const questions = [];
+        this.questions = questions;
+        this.currentQuestNumber = 0;
+        this.totalQuestNumber = 10;
     }
     render() {
         this.app.mainContentEl.insertAdjacentElement("beforebegin", this.navEl);
@@ -36,9 +49,12 @@ export class PlayPage extends QuizzPage {
             this.footerEl.classList.add("in");
             this.contentEl.classList.add("in");
         }, 0);
+        this.audioBgm.play();
+        this.renderNextQuestion();
     }
     remove() {
         const fadeDuration = 1200;
+        this.audioBgm.pause();
         return new Promise(resolve => {
             this.navEl.classList.add("out");
             this.footerEl.classList.add("out");
@@ -51,6 +67,105 @@ export class PlayPage extends QuizzPage {
                 resolve();
             }, fadeDuration);
         });
+    }
+    async submitAnswer(answers, playedTime) {
+        const correctAnswers = this.questions[this.currentQuestNumber].correctAnswers;
+        if (checkArrayStringEqual(correctAnswers, answers)) {
+            this.handleCorrectAnwser(playedTime);
+        }
+        else {
+            this.handleIncorrectAnwser();
+        }
+        this.statsView.stopTimeoutProgress();
+        await sleep(2000);
+        this.currentQuestNumber++;
+        this.feedbackView.hideMsg();
+        if (this.currentQuestNumber < this.totalQuestNumber) {
+            this.renderNextQuestion();
+        }
+        else {
+            this.currentQuestion?.remove();
+            this.finishGameSession();
+        }
+    }
+    handleCorrectAnwser(playedTime) {
+        if (!this.currentQuestion)
+            throw new Error("Current Question is NULL");
+        this.audioCorrect.play();
+        this.statsView.increaseStreak();
+        this.feedbackView.showCorrectMsg();
+        this.currentQuestion.showAnswer();
+        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
+        this.stats.correctCount++;
+        this.stats.maxStreak = Math.max(this.statsView.currentStreak, this.stats.maxStreak);
+    }
+    handleIncorrectAnwser() {
+        if (!this.currentQuestion)
+            throw new Error("Current Question is NULL");
+        this.audioIncorrect.play();
+        this.statsView.resetStreak();
+        this.feedbackView.showIncorrectMsg();
+        this.currentQuestion.showAnswer();
+        this.stats.incorrectCount++;
+    }
+    calcScore(playedTime) {
+        playedTime = Math.max(0, playedTime);
+        const scorePerSeconds = 100;
+        const scorePerStreak = 100;
+        let score = 1000 - playedTime / 1000 * scorePerSeconds + Math.min(this.statsView.currentStreak, 4) * scorePerStreak;
+        return score;
+    }
+    async renderNextQuestion() {
+        if (this.currentQuestNumber + 1 > this.questions.length) {
+            await this.prepareNextQuestion();
+            this.renderNextQuestion();
+            return;
+        }
+        const nextQuestion = this.createQuestionPage(this.questions[this.currentQuestNumber], this.currentQuestNumber + 1, 10);
+        if (this.currentQuestion) {
+            await this.currentQuestion.remove();
+        }
+        nextQuestion.render()
+            .then(async () => {
+            this.statsView.resetTimeout();
+            await sleep(100);
+            this.statsView.beginTimeoutProgress();
+        });
+        this.statsView.increaseCurrentQuestion();
+        this.currentQuestion = nextQuestion;
+        this.prepareNextQuestion();
+    }
+    async prepareNextQuestion() {
+        const question = {
+            type: "pick",
+            content: "Đâu là thứ tự các số từ nhỏ đến lớn",
+            answers: [
+                {
+                    id: 1,
+                    content: "{ 1, 2 ,3 ,4 ,5 ,6}"
+                },
+                {
+                    id: 2,
+                    content: "{ 1, 2 ,3 ,5 ,7 ,6}"
+                },
+                {
+                    id: 3,
+                    content: "{ 1, 2 ,-1 ,4 ,2 ,6}"
+                },
+                {
+                    id: 4,
+                    content: "{ 1, 2 ,3 4, 5, 6, -1}"
+                }
+            ],
+            correctAnswers: ["1", "2"]
+        };
+        const question2 = {
+            answers: [],
+            type: "input",
+            content: "Nhập vào -10 + 20 = ?",
+            correctAnswers: ['-10']
+        };
+        this.questions.push(question2);
     }
     finishGameSession() {
         const data = {
@@ -75,10 +190,24 @@ export class PlayPage extends QuizzPage {
             }
         };
     }
+    createQuestionPage(question, currentQuestion, totalQuestion) {
+        switch (question.type) {
+            case "pick":
+                return new QuestionPick(this, question, currentQuestion, totalQuestion);
+            case "input":
+                return new QuestionInput(this, question, currentQuestion, totalQuestion);
+            default:
+                break;
+        }
+        throw new Error("Question type was not implemented");
+    }
     static createNavEl() {
         const navEl = document.createElement("nav");
         navEl.className = 'section-nav';
         navEl.innerHTML = `
+                <div class='timeout-progress'>
+                    <div class="current"></div>
+                </div>
                 <ul class="game-info-list-left">
                     <li class="current-question btn btn-secondary"><span class="current">2</span>/<span
                             class="total">10</span></li>
@@ -100,15 +229,18 @@ export class PlayPage extends QuizzPage {
                     <li class="btn btn-secondary point"> <span class="current">1</span> <i class="fa-solid fa-coins"></i></li>
                     <li class="go-home btn btn-danger"><a href="#">Home</a></li>
                 </ul>
+                <ul class="score-factory">
+                </ul>
+                
         `;
         return navEl;
     }
-    static createFooterEl() {
+    static createFooterEl(playerName) {
         const footerEl = document.createElement("footer");
         footerEl.className = 'footer-section';
         footerEl.innerHTML = `
                 <div class="img-wrapper"><img src="./assets/img/Joker.(Persona.5).600.1923854.jpg" alt=""></div>
-                <p class="user-info">Bùi Đức Dương</p>
+                <p class="user-info">${playerName}</p>
             `;
         return footerEl;
     }
@@ -124,77 +256,6 @@ export class PlayPage extends QuizzPage {
     static createContentEl() {
         const contentEl = document.createElement("section");
         contentEl.className = 'game-playing-state';
-        contentEl.innerHTML = `
-                <article class="question-wrapper current">
-                    <div class="question">
-                        <p class="question-number">
-                            2/16
-                        </p>
-                        <p class="question-content">
-                            Trong các tập hợp số nguyên sau, tập hợp nào có các số nguyên được sắp xếp theo thứ tự tăng
-                            dần
-                        </p>
-                    </div>
-
-                    <div class="answer">
-                        <ul class="answer-list">
-                            <li class="answer-item">
-                                <button class="btn ">{ -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn"> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                        </ul>
-                        <div class="pyro">
-                            <div class="before"></div>
-                            <div class="after"></div>
-                        </div>
-
-                    </div>
-
-                </article>
-
-                <article class="question-wrapper pending">
-                    <div class="question">
-                        <p class="question-number">
-                            2/16
-                        </p>
-                        <p class="question-content">
-                            Trong các tập hợp số nguyên sau, tập hợp nào có các số nguyên được sắp xếp theo thứ tự tăng
-                            dần
-                        </p>
-                    </div>
-
-                    <div class="answer">
-                        <ul class="answer-list">
-                            <li class="answer-item">
-                                <button class="btn ">{ -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn"> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                        </ul>
-                        <div class="pyro">
-                            <div class="before"></div>
-                            <div class="after"></div>
-                        </div>
-
-                    </div>
-
-                </article>
-        `;
         return contentEl;
     }
 }
@@ -208,8 +269,10 @@ class GameStatsManager {
     currentQuestionEl;
     streakEl;
     scoreEl;
+    scoreFactoryEl;
+    timeoutProgressEl;
     constructor(el, totalQuestion, maxStreak) {
-        this.currentQuestion = 1;
+        this.currentQuestion = 0;
         this.totalQuestion = totalQuestion;
         this.currentStreak = 0;
         this.maxStreak = maxStreak;
@@ -218,6 +281,8 @@ class GameStatsManager {
         this.currentQuestionEl = el.querySelector(".current-question");
         this.streakEl = el.querySelector(".streak");
         this.scoreEl = el.querySelector(".point .current");
+        this.scoreFactoryEl = el.querySelector(".score-factory");
+        this.timeoutProgressEl = el.querySelector(".timeout-progress .current");
         this.moute();
     }
     moute() {
@@ -225,6 +290,18 @@ class GameStatsManager {
         this.currentQuestionEl.querySelector(".current").textContent = String(this.currentQuestion);
         this.resetStreak();
         this.scoreEl.textContent = String(this.score);
+    }
+    beginTimeoutProgress() {
+        this.timeoutProgressEl.style.transitionDuration = '10s';
+        this.timeoutProgressEl.style.width = "0%";
+    }
+    stopTimeoutProgress() {
+        this.timeoutProgressEl.style.transitionDuration = '0s';
+        this.timeoutProgressEl.style.width = window.getComputedStyle(this.timeoutProgressEl).width;
+    }
+    resetTimeout() {
+        this.timeoutProgressEl.style.transitionDuration = '0s';
+        this.timeoutProgressEl.style.width = "100%";
     }
     increaseStreak() {
         this.currentStreak++;
@@ -261,15 +338,24 @@ class GameStatsManager {
     increaseScoreNumber(number) {
         let prevScore = this.score;
         this.score += number;
-        const intervalId = setInterval(() => {
-            prevScore += 100;
-            if (prevScore >= this.score) {
-                this.scoreEl.textContent = String(this.score);
-                clearTimeout(intervalId);
-                return;
-            }
-            this.scoreEl.textContent = String(prevScore);
-        }, 200);
+        counterUp((score) => {
+            this.scoreEl.textContent = String(Math.floor(score));
+        }, prevScore, this.score, 1000).start();
+        this.showIncreaseScoreStep(number);
+    }
+    showIncreaseScoreStep(number) {
+        const liEl = document.createElement("li");
+        liEl.className = 'score-item';
+        liEl.textContent = "+" + String(number);
+        this.scoreFactoryEl.appendChild(liEl);
+        const { transitionDuration } = window.getComputedStyle(liEl);
+        const liveTime = transitionDuration
+            .split(",")
+            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0);
+        liEl.classList.add("active");
+        setTimeout(() => {
+            liEl.remove();
+        }, liveTime);
     }
 }
 class FeedbackManager {

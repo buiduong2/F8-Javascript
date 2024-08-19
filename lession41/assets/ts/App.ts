@@ -1,6 +1,8 @@
 import type { PageContructor } from "./PageAbstract.js";
 import { QuizzPage } from "./PageAbstract.js";
+import { EndPage } from "./PageEnd.js";
 import { PlayPage } from "./PagePlay.js";
+import { PreparePage } from "./PagePrepare.js";
 
 export class QuizzApp {
     el: HTMLElement;
@@ -20,19 +22,26 @@ export class QuizzApp {
             totalQuestion: 10,
             scoreStatistic: {
                 number: 10000,
-                correctCount: 10,
-                incorrectCount: 0,
+                correctCount: 8,
+                incorrectCount: 2,
                 playTime: 10,
-                maxStreck: 10
+                maxStreak: 10
             }
         }
-        
+
         this.currentPage = new PlayPage(this, data);
         this.init();
     }
 
     public init(): void {
         this.currentPage.render();
+        const bgmAudios = Array.from(document.querySelectorAll(".bgm"));
+        const soundEffectAudios = Array.from(document.querySelectorAll(".sound-effect"));
+
+        bgmAudios.forEach(audio => {
+            (audio as HTMLAudioElement).volume = 0.3;
+        })
+        soundEffectAudios.forEach(audio => (audio as HTMLAudioElement).volume = 1);
     }
 
     public goNextPage(data: any, nextPageCon: PageContructor): void {

@@ -1,9 +1,12 @@
 import { QuizzApp } from "./App.js";
 import { QuizzPage } from "./PageAbstract.js";
+import { EndPage } from "./PageEnd.js";
+import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
+import { checkArrayStringEqual, counterUp, sleep } from "./util.js";
 
 import type { PropSchema } from "./PageAbstract.js";
-import { EndPage } from "./PageEnd.js";
 import type { EndPageProp } from "./PageEnd.js"
+import type { PagePlayQuestion, QuestionType } from "./PagePlayQuestion.js";
 
 export class PlayPage extends QuizzPage<PlayPageProp> {
 
@@ -12,17 +15,32 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
     messageEl: HTMLElement;
     contentEl: HTMLElement;
 
+    audioCorrect: HTMLAudioElement;
+    audioIncorrect: HTMLAudioElement;
+    audioBgm: HTMLAudioElement;
+
     statsView: GameStatsManager;
     feedbackView: FeedbackManager;
+    currentQuestion?: PagePlayQuestion;
 
+    currentQuestNumber: number;
+    totalQuestNumber: number;
     stats: GameStats;
+
+    questions: QuestionType[];
+
 
     constructor(app: QuizzApp, prop: any) {
         super(app, prop);
         this.navEl = PlayPage.createNavEl();
-        this.footerEl = PlayPage.createFooterEl();
+        this.footerEl = PlayPage.createFooterEl(prop.playerName);
         this.messageEl = PlayPage.createMessageEl();
         this.contentEl = PlayPage.createContentEl();
+
+        this.audioIncorrect = document.querySelector("#incorrect-sound-effect") as HTMLAudioElement;
+        this.audioCorrect = document.querySelector("#correct-sound-effect") as HTMLAudioElement;
+        this.audioBgm = document.querySelector("#playgame-bgm") as HTMLAudioElement;
+
         this.statsView = new GameStatsManager(this.navEl, prop.totalQuestion, 4);
         this.feedbackView = new FeedbackManager(this.messageEl);
 
@@ -33,9 +51,10 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
             startTime: Date.now()
         }
 
-        setTimeout(() => {
-            this.finishGameSession()
-        }, 1000);
+        const questions: QuestionType[] = [];
+        this.questions = questions;
+        this.currentQuestNumber = 0;
+        this.totalQuestNumber = 10;
     }
 
     render(): void {
@@ -48,10 +67,13 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
             this.footerEl.classList.add("in")
             this.contentEl.classList.add("in")
         }, 0);
+        this.audioBgm.play();
+        this.renderNextQuestion();
     }
 
     remove(): Promise<void> {
         const fadeDuration = 1200;
+        this.audioBgm.pause();
 
         return new Promise(resolve => {
             this.navEl.classList.add("out")
@@ -69,8 +91,118 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
         })
     }
 
+    async submitAnswer(answers: string[], playedTime: number) {
+        const correctAnswers = this.questions[this.currentQuestNumber].correctAnswers;
+
+        if (checkArrayStringEqual(correctAnswers, answers)) {
+            this.handleCorrectAnwser(playedTime);
+        } else {
+            this.handleIncorrectAnwser();
+        }
+        this.statsView.stopTimeoutProgress();
+        await sleep(2000);
+        this.currentQuestNumber++;
+        this.feedbackView.hideMsg();
+        if (this.currentQuestNumber < this.totalQuestNumber) {
+            this.renderNextQuestion();
+        } else {
+            this.currentQuestion?.remove();
+            this.finishGameSession();
+        }
+    }
+
+    handleCorrectAnwser(playedTime: number) {
+        if (!this.currentQuestion) throw new Error("Current Question is NULL");
+        this.audioCorrect.play();
+        this.statsView.increaseStreak();
+        this.feedbackView.showCorrectMsg();
+        this.currentQuestion.showAnswer();
+        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
+
+        this.stats.correctCount++;
+        this.stats.maxStreak = Math.max(this.statsView.currentStreak, this.stats.maxStreak);
+    }
+
+    handleIncorrectAnwser() {
+        if (!this.currentQuestion) throw new Error("Current Question is NULL");
+        this.audioIncorrect.play();
+        this.statsView.resetStreak();
+        this.feedbackView.showIncorrectMsg();
+        this.currentQuestion.showAnswer();
+
+        this.stats.incorrectCount++;
+    }
+
+    calcScore(playedTime: number): number {
+        playedTime = Math.max(0, playedTime);
+        const scorePerSeconds = 100;
+        const scorePerStreak = 100;
+        let score = 1000 - playedTime / 1000 * scorePerSeconds + Math.min(this.statsView.currentStreak, 4) * scorePerStreak;
+        return score;
+    }
+
+    async renderNextQuestion() {
+        if (this.currentQuestNumber + 1 > this.questions.length) {
+            await this.prepareNextQuestion();
+            this.renderNextQuestion();
+            return;
+        }
+
+        const nextQuestion = this.createQuestionPage(this.questions[this.currentQuestNumber], this.currentQuestNumber + 1, 10);
+
+        if (this.currentQuestion) {
+            await this.currentQuestion.remove();
+        }
+
+        nextQuestion.render()
+            .then(async () => {
+                this.statsView.resetTimeout()
+                await sleep(100);
+                this.statsView.beginTimeoutProgress()
+            });
+        this.statsView.increaseCurrentQuestion();
+        this.currentQuestion = nextQuestion;
+        this.prepareNextQuestion();
+    }
+
+    async prepareNextQuestion() {
+
+        const question: QuestionType = {
+            type: "pick",
+            content: "Đâu là thứ tự các số từ nhỏ đến lớn",
+            answers: [
+                {
+                    id: 1,
+                    content: "{ 1, 2 ,3 ,4 ,5 ,6}"
+                },
+                {
+                    id: 2,
+                    content: "{ 1, 2 ,3 ,5 ,7 ,6}"
+                },
+                {
+                    id: 3,
+                    content: "{ 1, 2 ,-1 ,4 ,2 ,6}"
+                },
+                {
+                    id: 4,
+                    content: "{ 1, 2 ,3 4, 5, 6, -1}"
+                }
+            ],
+            correctAnswers: ["1", "2"]
+        }
+
+        const question2: QuestionType = {
+            answers: [],
+            type: "input",
+            content: "Nhập vào -10 + 20 = ?",
+            correctAnswers: ['-10']
+        }
+
+        this.questions.push(question2);
+    }
+
     finishGameSession() {
-        const data = {
+        const data: EndPageProp = {
             ...this.prop,
             scoreStatistic: {
                 number: this.statsView.score,
@@ -94,10 +226,25 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
         }
     }
 
+    createQuestionPage(question: QuestionType, currentQuestion: number, totalQuestion: number): PagePlayQuestion {
+        switch (question.type) {
+            case "pick":
+                return new QuestionPick(this, question, currentQuestion, totalQuestion);
+            case "input":
+                return new QuestionInput(this, question, currentQuestion, totalQuestion);
+            default:
+                break;
+        }
+        throw new Error("Question type was not implemented");
+    }
+
     static createNavEl(): HTMLElement {
         const navEl = document.createElement("nav");
         navEl.className = 'section-nav'
         navEl.innerHTML = `
+                <div class='timeout-progress'>
+                    <div class="current"></div>
+                </div>
                 <ul class="game-info-list-left">
                     <li class="current-question btn btn-secondary"><span class="current">2</span>/<span
                             class="total">10</span></li>
@@ -119,16 +266,19 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
                     <li class="btn btn-secondary point"> <span class="current">1</span> <i class="fa-solid fa-coins"></i></li>
                     <li class="go-home btn btn-danger"><a href="#">Home</a></li>
                 </ul>
+                <ul class="score-factory">
+                </ul>
+                
         `
         return navEl;
     }
 
-    static createFooterEl(): HTMLElement {
+    static createFooterEl(playerName: string): HTMLElement {
         const footerEl = document.createElement("footer");
         footerEl.className = 'footer-section'
         footerEl.innerHTML = `
                 <div class="img-wrapper"><img src="./assets/img/Joker.(Persona.5).600.1923854.jpg" alt=""></div>
-                <p class="user-info">Bùi Đức Dương</p>
+                <p class="user-info">${playerName}</p>
             `
         return footerEl;
     }
@@ -146,78 +296,6 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
     static createContentEl(): HTMLElement {
         const contentEl = document.createElement("section");
         contentEl.className = 'game-playing-state'
-
-        contentEl.innerHTML = `
-                <article class="question-wrapper current">
-                    <div class="question">
-                        <p class="question-number">
-                            2/16
-                        </p>
-                        <p class="question-content">
-                            Trong các tập hợp số nguyên sau, tập hợp nào có các số nguyên được sắp xếp theo thứ tự tăng
-                            dần
-                        </p>
-                    </div>
-
-                    <div class="answer">
-                        <ul class="answer-list">
-                            <li class="answer-item">
-                                <button class="btn ">{ -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn"> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                        </ul>
-                        <div class="pyro">
-                            <div class="before"></div>
-                            <div class="after"></div>
-                        </div>
-
-                    </div>
-
-                </article>
-
-                <article class="question-wrapper pending">
-                    <div class="question">
-                        <p class="question-number">
-                            2/16
-                        </p>
-                        <p class="question-content">
-                            Trong các tập hợp số nguyên sau, tập hợp nào có các số nguyên được sắp xếp theo thứ tự tăng
-                            dần
-                        </p>
-                    </div>
-
-                    <div class="answer">
-                        <ul class="answer-list">
-                            <li class="answer-item">
-                                <button class="btn ">{ -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn "> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                            <li class="answer-item">
-                                <button class="btn"> { -17; -2; 0; 1; 2; 5 } </button>
-                            </li>
-                        </ul>
-                        <div class="pyro">
-                            <div class="before"></div>
-                            <div class="after"></div>
-                        </div>
-
-                    </div>
-
-                </article>
-        `
         return contentEl;
     }
 }
@@ -233,9 +311,11 @@ class GameStatsManager {
     currentQuestionEl: HTMLElement
     streakEl: HTMLElement;
     scoreEl: HTMLElement;
+    scoreFactoryEl: HTMLElement;
+    timeoutProgressEl: HTMLElement;
 
     constructor(el: HTMLElement, totalQuestion: number, maxStreak: number) {
-        this.currentQuestion = 1;
+        this.currentQuestion = 0;
         this.totalQuestion = totalQuestion;
         this.currentStreak = 0;
         this.maxStreak = maxStreak;
@@ -245,6 +325,8 @@ class GameStatsManager {
         this.currentQuestionEl = el.querySelector(".current-question") as HTMLElement;
         this.streakEl = el.querySelector(".streak") as HTMLElement;
         this.scoreEl = el.querySelector(".point .current") as HTMLElement;
+        this.scoreFactoryEl = el.querySelector(".score-factory") as HTMLElement;
+        this.timeoutProgressEl = el.querySelector(".timeout-progress .current") as HTMLElement;
 
         this.moute();
     }
@@ -255,6 +337,21 @@ class GameStatsManager {
 
         this.resetStreak();
         this.scoreEl.textContent = String(this.score);
+    }
+
+    beginTimeoutProgress() {
+        this.timeoutProgressEl.style.transitionDuration = '10s';
+        this.timeoutProgressEl.style.width = "0%";
+    }
+
+    stopTimeoutProgress() {
+        this.timeoutProgressEl.style.transitionDuration = '0s';
+        this.timeoutProgressEl.style.width = window.getComputedStyle(this.timeoutProgressEl).width;
+    }
+
+    resetTimeout() {
+        this.timeoutProgressEl.style.transitionDuration = '0s';
+        this.timeoutProgressEl.style.width = "100%";
     }
 
     increaseStreak() {
@@ -300,17 +397,25 @@ class GameStatsManager {
     increaseScoreNumber(number: number) {
         let prevScore = this.score;
         this.score += number;
+        counterUp((score: number) => {
+            this.scoreEl.textContent = String(Math.floor(score));
+        }, prevScore, this.score, 1000).start();
+        this.showIncreaseScoreStep(number);
+    }
 
-        const intervalId = setInterval(() => {
-            prevScore += 100;
-            if (prevScore >= this.score) {
-                this.scoreEl.textContent = String(this.score);
-                clearTimeout(intervalId);
-                return;
-            }
-
-            this.scoreEl.textContent = String(prevScore);
-        }, 200);
+    showIncreaseScoreStep(number: number) {
+        const liEl = document.createElement("li");
+        liEl.className = 'score-item';
+        liEl.textContent = "+" + String(number);
+        this.scoreFactoryEl.appendChild(liEl);
+        const { transitionDuration } = window.getComputedStyle(liEl);
+        const liveTime = transitionDuration
+            .split(",")
+            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0);
+        liEl.classList.add("active");
+        setTimeout(() => {
+            liEl.remove()
+        }, liveTime);
     }
 
 }

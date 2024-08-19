@@ -1,17 +1,82 @@
 import { QuizzPage } from "./PageAbstract.js";
+import { counterUp, sleep } from "./util.js";
 export class EndPage extends QuizzPage {
     contentEl;
+    audioBgm;
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = EndPage.getContentEl(prop);
+        this.audioBgm = document.querySelector("#victory-bgm");
     }
-    render() {
+    async render() {
         this.app.mainContentEl.appendChild(this.contentEl);
         setTimeout(() => {
             this.contentEl.classList.add("in");
         }, 1);
+        this.audioBgm.play();
+        const correctProgress = this.contentEl.querySelector(".correct-progress");
+        console.log(correctProgress);
+        try {
+            await this.counterUpAllSore(true);
+        }
+        catch (error) {
+            this.counterUpAllSore(false);
+        }
+    }
+    async counterUpAllSore(withSound) {
+        const scoreNumberEl = this.contentEl.querySelector(".score-number");
+        const correctCountEl = this.contentEl.querySelector(".correct-count");
+        const incorrectCountEl = this.contentEl.querySelector(".incorrect-count");
+        const playTimeEl = this.contentEl.querySelector(".play-time");
+        const maxStreakCountEl = this.contentEl.querySelector(".max-streak-count");
+        const percentProgressEl = this.contentEl.querySelector(".progress-current");
+        const audioGiftEffectEl = document.querySelector("#treasure-chest-sound-effect");
+        const { correctCount: correct, incorrectCount: incorrect } = this.prop.scoreStatistic;
+        const percent = correct / (correct + incorrect) * 100;
+        let percentCount = counterUp((percent) => {
+            const percentStr = percent.toFixed(0);
+            percentProgressEl.querySelector(".percent-count").textContent = percentStr;
+            percentProgressEl.style.width = percentStr + "%";
+        }, 0, percent, 2000);
+        let scoreCount = counterUp((score) => {
+            scoreNumberEl.textContent = String(Math.floor(score));
+        }, 0, this.prop.scoreStatistic.number, 2000);
+        let correctCount = counterUp((correctCount) => {
+            correctCountEl.textContent = String(Math.floor(correctCount));
+        }, 0, this.prop.scoreStatistic.correctCount, 1000);
+        let incorrectCount = counterUp((incorrectCount) => {
+            incorrectCountEl.textContent = String(Math.floor(incorrectCount));
+        }, 0, this.prop.scoreStatistic.incorrectCount, 1000);
+        let playTime = counterUp((playTime) => {
+            playTimeEl.textContent = playTime.toFixed(2);
+        }, 0, this.prop.scoreStatistic.playTime, 1000);
+        let maxStreakCount = counterUp((maxStreak) => {
+            maxStreakCountEl.textContent = String(Math.floor(maxStreak));
+        }, 0, this.prop.scoreStatistic.maxStreak, 1000);
+        let index = 0;
+        const countEls = [percentCount, scoreCount, correctCount, incorrectCount, playTime, maxStreakCount];
+        const skipCountUp = () => {
+            countEls[index].stop();
+            index++;
+            if (index >= countEls.length) {
+                document.removeEventListener("click", skipCountUp);
+            }
+        };
+        document.addEventListener("click", skipCountUp);
+        countEls.reduce(async (prev, curr) => {
+            return prev.then(async () => {
+                await sleep(1000);
+                if (withSound) {
+                    audioGiftEffectEl.play();
+                }
+                await curr.start();
+            });
+        }, Promise.resolve()).then(() => {
+            document.removeEventListener("click", skipCountUp);
+        });
     }
     remove() {
+        this.audioBgm.pause();
         return new Promise(resolve => {
             this.contentEl.classList.add("out");
             const fadeDuration = parseFloat(window.getComputedStyle(this.contentEl).transitionDuration) * 1000;
@@ -44,13 +109,13 @@ export class EndPage extends QuizzPage {
 
                 <div class="correct-progress">
                     <div class="progress-current">
-                        <div class="progress-percent"></div>
+                        <div class="progress-percent"><span class='percent-count'>0</span>%</div>
                     </div>
                 </div>
 
                 <div class="score-info">
                     <p class="score-title">Điểm số:</p>
-                    <p class="score-number">${prop.scoreStatistic.number}</p>
+                    <p class="score-number">0</p>
                     <div class="icon-wrapper"><i class="fa-solid fa-coins"></i></div>
                 </div>
 
@@ -59,7 +124,7 @@ export class EndPage extends QuizzPage {
                         <div class="col-6">
                             <article class="statistic-item">
                                 <div class="bg-image bg-image--correct"></div>
-                                <p class="statistic-value">${prop.scoreStatistic.correctCount}</p>
+                                <p class="statistic-value"><span class="correct-count">0</span></p>
                                 <p class="statistic-label">Câu đúng</p>
                             </article>
 
@@ -67,7 +132,7 @@ export class EndPage extends QuizzPage {
                         <div class="col-6">
                             <article class="statistic-item">
                                 <div class="bg-image bg-image--incorrect"></div>
-                                <p class="statistic-value">${prop.scoreStatistic.incorrectCount}</p>
+                                <p class="statistic-value"><span class="incorrect-count">0</class="incorrect-count"></p>
                                 <p class="statistic-label">Sai</p>
                             </article>
                         </div>
@@ -75,14 +140,14 @@ export class EndPage extends QuizzPage {
                         <div class="col-6">
                             <article class="statistic-item">
                                 <div class="bg-image bg-image--time"></div>
-                                <p class="statistic-value">${prop.scoreStatistic.playTime.toFixed(2)} m</p>
+                                <p class="statistic-value"><span class="play-time">0</span> m</p>
                                 <p class="statistic-label">Thời gian</p>
                             </article>
                         </div>
                         <div class="col-6">
                             <article class="statistic-item">
                                 <div class="bg-image bg-image--streak"></div>
-                                <p class="statistic-value">${prop.scoreStatistic.maxStreak}</p>
+                                <p class="statistic-value"><span class="max-streak-count">0</span></p>
                                 <p class="statistic-label">Vệt</p>
                             </article>
                         </div>

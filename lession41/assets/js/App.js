@@ -13,10 +13,10 @@ export class QuizzApp {
             totalQuestion: 10,
             scoreStatistic: {
                 number: 10000,
-                correctCount: 10,
-                incorrectCount: 0,
+                correctCount: 8,
+                incorrectCount: 2,
                 playTime: 10,
-                maxStreck: 10
+                maxStreak: 10
             }
         };
         this.currentPage = new PlayPage(this, data);
@@ -24,6 +24,12 @@ export class QuizzApp {
     }
     init() {
         this.currentPage.render();
+        const bgmAudios = Array.from(document.querySelectorAll(".bgm"));
+        const soundEffectAudios = Array.from(document.querySelectorAll(".sound-effect"));
+        bgmAudios.forEach(audio => {
+            audio.volume = 0.3;
+        });
+        soundEffectAudios.forEach(audio => audio.volume = 1);
     }
     goNextPage(data, nextPageCon) {
         this.currentPage.remove()

@@ -61,6 +61,21 @@ body {
         opacity: 0;
     }
 
+    .timeout-progress {
+        position: fixed;
+        height: 3px;
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+
+        .current {
+            background: blueviolet;
+            height: 100%;
+            width: 100%;
+            transition: width ease-in-out ;
+        }
+    }
 
     .game-info-list-left {
         display: flex;
@@ -183,6 +198,27 @@ body {
             }
         }
     }
+
+    .score-factory {
+        position: absolute;
+        right: 10%;
+        top: calc(100% + 50px);
+        font-size: 20px;
+        font-weight: 400;
+
+        .score-item {
+            position: absolute;
+            opacity: 1;
+            top: 0px;
+            transition: top ease-in-out 500ms, opacity ease-in-out 1000ms;
+
+            &.active {
+                top: -50px;
+                opacity: 0;
+            }
+
+        }
+    }
 }
 
 .main-menu-state {
@@ -224,16 +260,19 @@ body {
     color: white;
     height: 100%;
     position: relative;
+    width: 100%;
+
 
     .question-wrapper {
         display: flex;
         flex-direction: column;
         height: 100%;
+        width: 100%;
         position: absolute;
         transform: translateX(2000px);
 
 
-        &.current {
+        &.in {
             animation: bounce-in-right 1s forwards 1s;
 
         }
@@ -241,6 +280,8 @@ body {
         &.out {
             animation: bounce-out-down 1s forwards;
         }
+
+
 
         .question {
             display: flex;
@@ -272,6 +313,46 @@ body {
         .answer {
             height: 40%;
 
+            .answer-form {
+                background-color: rgba($color: #000000, $alpha: 0.6);
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.correct {
+                    .answer-input {
+                        animation: bounce2 1s ease forwards;
+                        background-color: yellowgreen;
+                        color: white;
+                    }
+                }
+
+                &.incorrect {
+                    .answer-input {
+                        animation: shake 1s ease forwards;
+                        background-color: orangered;
+                        color: white;
+                    }
+                }
+
+                .answer-input {
+                    width: 50%;
+                    padding: 10px;
+                    outline: none;
+                    font-size: 20px;
+                    border-bottom: 3px solid white;
+                    color: white;
+
+
+                    background-color: rgba($color: #000000, $alpha: 0.8);
+
+                    &::placeholder {
+                        color: white;
+                    }
+                }
+            }
+
             .answer-list {
                 display: flex;
                 height: 100%;
@@ -298,7 +379,17 @@ body {
 
                     &.chose {
                         animation: bounce 1s ease infinite;
+
+                        &::before {
+                            background-color: rgb(15, 4, 114);
+                        }
+
+                        button {
+
+                            background: linear-gradient(0deg, rgb(7, 36, 109) 40%, rgb(91, 58, 27) 99%);
+                        }
                     }
+
 
                     &.incorrect {
                         animation: shake 1s ease forwards;
@@ -380,6 +471,8 @@ body {
 
         }
     }
+
+
 }
 
 .game-end-state {
@@ -403,6 +496,38 @@ body {
 
     &.out {
         opacity: 0;
+    }
+
+    .correct-progress {
+        background-color: orangered;
+        border-radius: 99px;
+        width: 100%;
+        margin-bottom: 20px;
+        position: relative;
+        height: 20px;
+
+
+        .progress-current {
+            background-color: greenyellow;
+            position: relative;
+            width: 0%;
+            height: 100%;
+            border-radius: 99px;
+
+            .progress-percent {
+                position: absolute;
+                top: 50%;
+                right: 0;
+                font-size: 16px;
+                font-weight: bolder;
+                padding: 5px 10px;
+                background-color: white;
+                color: black;
+                border-radius: 99px;
+                transform: translate(50%, -50%);
+            }
+        }
+
     }
 
     .game-end-title {

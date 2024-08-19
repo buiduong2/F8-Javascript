@@ -1,4 +1,5 @@
 import { QuizzApp } from "./App.js";
+import { counterUp } from "./util.js";
 
 console.log('hello world');
 

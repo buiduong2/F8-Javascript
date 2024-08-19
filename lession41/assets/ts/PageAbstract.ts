@@ -7,12 +7,12 @@ export abstract class QuizzPage<P> {
 
     constructor(app: QuizzApp, prop: any = {}) {
         this.app = app;
-        if (!this.validateProp(prop)) throw new Error("Error on contruct Page. This page need some required data");
+        this.validateProp(prop)
         this.prop = prop;
 
     }
 
-    validateProp(prop: any): boolean {
+    validateProp(prop: any): void {
         const schema = this.getPropSchema();
         const queue: { data: any, schema: PropSchema | undefined }[] = [];
         queue.push({ data: prop, schema });
@@ -32,8 +32,6 @@ export abstract class QuizzPage<P> {
             }
 
         }
-
-        return true;
     }
 
     abstract getPropSchema(): PropSchema;
