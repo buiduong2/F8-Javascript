@@ -2,6 +2,7 @@ import { QuizzPage } from "./PageAbstract.js";
 import { EndPage } from "./PageEnd.js";
 import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
 import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js";
+import { PreparePage } from "./PagePrepare.js";
 const SERVER_API = `https://stvp8n-8080.csb.app/questions/`;
 export class PlayPage extends QuizzPage {
     constructor(app, prop) {
@@ -28,12 +29,17 @@ export class PlayPage extends QuizzPage {
         this.questionIds = new Array(this.totalQuestNumber).fill(0).map((value, index) => index + 1);
         shuffleArray(this.questionIds);
     }
-
     render() {
         this.app.mainContentEl.insertAdjacentElement("beforebegin", this.navEl);
         this.app.mainContentEl.insertAdjacentElement("afterend", this.footerEl);
         this.app.mainContentEl.appendChild(this.contentEl);
         this.app.mainContentEl.insertAdjacentElement("afterend", this.messageEl);
+        const goHomeBtn = this.navEl.querySelector(".go-home");
+        goHomeBtn.onclick = (e) => {
+            goHomeBtn.onclick = e => e.preventDefault();
+            e.preventDefault();
+            this.goNextPage(this.prop, PreparePage);
+        };
         setTimeout(() => {
             this.navEl.classList.add("in");
             this.footerEl.classList.add("in");
@@ -42,7 +48,6 @@ export class PlayPage extends QuizzPage {
         this.audioBgm.play();
         this.renderNextQuestion();
     }
-
     remove() {
         const fadeDuration = 1200;
         this.audioBgm.pause();
@@ -51,6 +56,7 @@ export class PlayPage extends QuizzPage {
             this.footerEl.classList.add("out");
             this.contentEl.classList.add("out");
             setTimeout(() => {
+                this.currentQuestion?.remove();
                 this.navEl.remove();
                 this.footerEl.remove();
                 this.contentEl.remove();
@@ -59,7 +65,6 @@ export class PlayPage extends QuizzPage {
             }, fadeDuration);
         });
     }
-    
     async submitAnswer(answers, playedTime) {
         const correctAnswers = this.questions[this.currentQuestNumber].correctAnswers;
         if (checkArrayStringEqual(correctAnswers, answers)) {
@@ -80,19 +85,17 @@ export class PlayPage extends QuizzPage {
             this.finishGameSession();
         }
     }
-
     handleCorrectAnwser(playedTime) {
         if (!this.currentQuestion)
             throw new Error("Current Question is NULL");
         this.audioCorrect.play();
+        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
         this.statsView.increaseStreak();
         this.feedbackView.showCorrectMsg();
         this.currentQuestion.showAnswer();
-        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
         this.stats.correctCount++;
         this.stats.maxStreak = Math.max(this.statsView.currentStreak, this.stats.maxStreak);
     }
-
     handleIncorrectAnwser() {
         if (!this.currentQuestion)
             throw new Error("Current Question is NULL");
@@ -102,15 +105,15 @@ export class PlayPage extends QuizzPage {
         this.currentQuestion.showAnswer();
         this.stats.incorrectCount++;
     }
-
     calcScore(playedTime) {
         playedTime = Math.max(0, playedTime);
         const scorePerSeconds = 100;
         const scorePerStreak = 100;
-        let score = 1000 - playedTime / 1000 * scorePerSeconds + Math.min(this.statsView.currentStreak, 4) * scorePerStreak;
-        return score;
+        const timeScore = Math.floor(1000 - playedTime / 1000 * scorePerSeconds);
+        const streakScore = Math.floor(Math.min(this.statsView.currentStreak, 4) * scorePerStreak);
+        let total = timeScore + streakScore;
+        return { total, info: { time: timeScore, streak: streakScore } };
     }
-
     async renderNextQuestion() {
         if (this.currentQuestNumber + 1 > this.questions.length) {
             await this.prepareNextQuestion();
@@ -131,7 +134,6 @@ export class PlayPage extends QuizzPage {
         this.currentQuestion = nextQuestion;
         this.prepareNextQuestion();
     }
-
     async prepareNextQuestion() {
         const nextQuestionsId = this.questionIds[this.questions.length];
         if (!nextQuestionsId)
@@ -147,7 +149,6 @@ export class PlayPage extends QuizzPage {
             alert(error);
         }
     }
-
     finishGameSession() {
         const data = {
             ...this.prop,
@@ -161,7 +162,6 @@ export class PlayPage extends QuizzPage {
         };
         this.goNextPage(data, EndPage);
     }
-
     getPropSchema() {
         return {
             playerName: {
@@ -172,7 +172,6 @@ export class PlayPage extends QuizzPage {
             }
         };
     }
-
     createQuestionPage(question, currentQuestion, totalQuestion) {
         switch (question.type) {
             case "pick":
@@ -184,7 +183,6 @@ export class PlayPage extends QuizzPage {
         }
         throw new Error("Question type was not implemented");
     }
-
     static createNavEl() {
         const navEl = document.createElement("nav");
         navEl.className = 'section-nav';
@@ -219,7 +217,6 @@ export class PlayPage extends QuizzPage {
         `;
         return navEl;
     }
-
     static createFooterEl(playerName) {
         const footerEl = document.createElement("footer");
         footerEl.className = 'footer-section';
@@ -229,7 +226,6 @@ export class PlayPage extends QuizzPage {
             `;
         return footerEl;
     }
-
     static createMessageEl() {
         const messageEl = document.createElement("div");
         messageEl.className = 'message-wrapper';
@@ -239,16 +235,13 @@ export class PlayPage extends QuizzPage {
         `;
         return messageEl;
     }
-
     static createContentEl() {
         const contentEl = document.createElement("section");
         contentEl.className = 'game-playing-state';
         return contentEl;
     }
 }
-
 class GameStatsManager {
-
     constructor(el, totalQuestion, maxStreak) {
         this.currentQuestion = 0;
         this.totalQuestion = totalQuestion;
@@ -263,29 +256,24 @@ class GameStatsManager {
         this.timeoutProgressEl = el.querySelector(".timeout-progress .current");
         this.moute();
     }
-
     moute() {
         this.currentQuestionEl.querySelector(".total").textContent = String(this.totalQuestion);
         this.currentQuestionEl.querySelector(".current").textContent = String(this.currentQuestion);
         this.resetStreak();
         this.scoreEl.textContent = String(this.score);
     }
-
     beginTimeoutProgress() {
         this.timeoutProgressEl.style.transitionDuration = '10s';
         this.timeoutProgressEl.style.width = "0%";
     }
-
     stopTimeoutProgress() {
         this.timeoutProgressEl.style.transitionDuration = '0s';
         this.timeoutProgressEl.style.width = window.getComputedStyle(this.timeoutProgressEl).width;
     }
-
     resetTimeout() {
         this.timeoutProgressEl.style.transitionDuration = '0s';
         this.timeoutProgressEl.style.width = "100%";
     }
-
     increaseStreak() {
         this.currentStreak++;
         if (this.currentStreak <= this.maxStreak) {
@@ -303,7 +291,6 @@ class GameStatsManager {
             this.streakEl.classList.add("max");
         }
     }
-
     resetStreak() {
         this.currentStreak = 0;
         const progressBar = this.streakEl.querySelector(".streak-progress .current");
@@ -312,7 +299,6 @@ class GameStatsManager {
         progressNumber.textContent = String(this.currentStreak);
         this.streakEl.classList.remove("max");
     }
-
     increaseCurrentQuestion() {
         if (this.currentQuestion === this.totalQuestion) {
             return;
@@ -320,32 +306,37 @@ class GameStatsManager {
         this.currentQuestion++;
         this.currentQuestionEl.querySelector(".current").textContent = String(this.currentQuestion);
     }
-
-    increaseScoreNumber(number) {
+    increaseScoreNumber({ total, info }) {
         let prevScore = this.score;
-        this.score += number;
+        this.score += total;
         counterUp((score) => {
             this.scoreEl.textContent = String(Math.floor(score));
         }, prevScore, this.score, 1000).start();
-        this.showIncreaseScoreStep(number);
+        this.showIncreaseScoreStep(info);
     }
-
-    showIncreaseScoreStep(number) {
-        const liEl = document.createElement("li");
-        liEl.className = 'score-item';
-        liEl.textContent = "+" + String(number);
-        this.scoreFactoryEl.appendChild(liEl);
-        const { transitionDuration } = window.getComputedStyle(liEl);
+    showIncreaseScoreStep(info) {
+        const ulEl = document.createElement("ul");
+        ulEl.className = 'score-item';
+        const fragment = document.createDocumentFragment();
+        Object.entries(info).forEach((([key, value]) => {
+            const liEl = document.createElement("li");
+            liEl.className = key;
+            liEl.innerText = "+" + value.toFixed(0);
+            fragment.appendChild(liEl);
+        }));
+        ulEl.appendChild(fragment);
+        this.scoreFactoryEl.appendChild(ulEl);
+        const { transitionDuration, transitionDelay } = window.getComputedStyle(ulEl);
         const liveTime = transitionDuration
             .split(",")
-            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0);
-        liEl.classList.add("active");
+            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0)
+            + parseFloat(transitionDelay) * 1000;
+        ulEl.classList.add("active");
         setTimeout(() => {
-            liEl.remove();
+            ulEl.remove();
         }, liveTime);
     }
 }
-
 class FeedbackManager {
     constructor(msgWrapperEl) {
         this.msgWrapperEl = msgWrapperEl;

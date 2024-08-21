@@ -4,7 +4,6 @@ export class QuizzPage {
         this.validateProp(prop);
         this.prop = prop;
     }
-
     validateProp(prop) {
         const schema = this.getPropSchema();
         const queue = [];
@@ -22,7 +21,6 @@ export class QuizzPage {
             }
         }
     }
-    
     goNextPage(data, nextPageCon) {
         this.app.goNextPage(data, nextPageCon);
     }

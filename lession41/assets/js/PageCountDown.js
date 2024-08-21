@@ -11,13 +11,11 @@ export class CountDownPage extends QuizzPage {
             }
         };
     }
-
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = CountDownPage.createContentEl();
         this.audioBegin = document.querySelector("#begin-sound-effect");
     }
-
     addCountDownInfo() {
         const countDownItems = this.contentEl.querySelectorAll(".count-down-item");
         Array.from(countDownItems).forEach((item, index) => {
@@ -27,7 +25,6 @@ export class CountDownPage extends QuizzPage {
             }, index * 1000);
         });
     }
-
     render() {
         this.addCountDownInfo();
         this.audioBegin.play().catch(() => {
@@ -36,19 +33,18 @@ export class CountDownPage extends QuizzPage {
                 this.goNextPage(this.prop, PlayPage);
             }, 3000);
         });
-        this.audioBegin.addEventListener("play", () => {
+        this.audioBegin.onplay = () => {
             this.app.mainContentEl.appendChild(this.contentEl);
-        });
-        this.audioBegin.addEventListener("ended", () => {
+        };
+        this.audioBegin.onended = () => {
             this.goNextPage(this.prop, PlayPage);
-        });
+        };
     }
-
     remove() {
+        this.audioBegin.pause();
         this.contentEl.remove();
         return Promise.resolve();
     }
-    
     static createContentEl() {
         const el = document.createElement("div");
         el.className = "count-down-state";

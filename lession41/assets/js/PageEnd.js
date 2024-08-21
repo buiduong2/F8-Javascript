@@ -1,12 +1,14 @@
 import { QuizzPage } from "./PageAbstract.js";
+import { CountDownPage } from "./PageCountDown.js";
+import { PreparePage } from "./PagePrepare.js";
 import { counterUp, sleep } from "./util.js";
 export class EndPage extends QuizzPage {
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = EndPage.getContentEl(prop);
         this.audioBgm = document.querySelector("#victory-bgm");
+        this.audioGift = document.querySelector("#treasure-chest-sound-effect");
     }
-
     async render() {
         this.app.mainContentEl.appendChild(this.contentEl);
         setTimeout(() => {
@@ -20,7 +22,6 @@ export class EndPage extends QuizzPage {
             this.counterUpAllSore(false);
         }
     }
-
     appendFireWord() {
         const firework = document.createElement("div");
         firework.innerHTML = `
@@ -31,7 +32,21 @@ export class EndPage extends QuizzPage {
         `;
         this.contentEl.appendChild(firework);
     }
-
+    appendBtn() {
+        const btnList = this.contentEl.querySelector(".action-list");
+        const btnPlay = this.contentEl.querySelector(".btn-replay");
+        const btnHome = this.contentEl.querySelector(".btn-home");
+        btnList.classList.add("show");
+        btnList.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (e.target === btnPlay) {
+                this.goNextPage(this.prop, CountDownPage);
+            }
+            else if (e.target === btnHome) {
+                this.goNextPage(this.prop, PreparePage);
+            }
+        }, { once: true });
+    }
     async counterUpAllSore(withSound) {
         const scoreNumberEl = this.contentEl.querySelector(".score-number");
         const correctCountEl = this.contentEl.querySelector(".correct-count");
@@ -39,36 +54,28 @@ export class EndPage extends QuizzPage {
         const playTimeEl = this.contentEl.querySelector(".play-time");
         const maxStreakCountEl = this.contentEl.querySelector(".max-streak-count");
         const percentProgressEl = this.contentEl.querySelector(".progress-current");
-        const audioGiftEffectEl = document.querySelector("#treasure-chest-sound-effect");
         const { correctCount: correct, incorrectCount: incorrect } = this.prop.scoreStatistic;
         const percent = correct / (correct + incorrect) * 100;
-
         let percentCount = counterUp((percent) => {
             const percentStr = percent.toFixed(0);
             percentProgressEl.querySelector(".percent-count").textContent = percentStr;
             percentProgressEl.style.width = percentStr + "%";
         }, 0, percent, 2000);
-
         let scoreCount = counterUp((score) => {
             scoreNumberEl.textContent = String(Math.floor(score));
         }, 0, this.prop.scoreStatistic.number, 2000);
-
         let correctCount = counterUp((correctCount) => {
             correctCountEl.textContent = String(Math.floor(correctCount));
         }, 0, this.prop.scoreStatistic.correctCount, 1000);
-        
         let incorrectCount = counterUp((incorrectCount) => {
             incorrectCountEl.textContent = String(Math.floor(incorrectCount));
         }, 0, this.prop.scoreStatistic.incorrectCount, 1000);
-
         let playTime = counterUp((playTime) => {
             playTimeEl.textContent = playTime.toFixed(2);
         }, 0, this.prop.scoreStatistic.playTime, 1000);
-
         let maxStreakCount = counterUp((maxStreak) => {
             maxStreakCountEl.textContent = String(Math.floor(maxStreak));
         }, 0, this.prop.scoreStatistic.maxStreak, 1000);
-
         let index = 0;
         const countEls = [percentCount, scoreCount, correctCount, incorrectCount, playTime, maxStreakCount];
         const skipCountUp = () => {
@@ -76,28 +83,30 @@ export class EndPage extends QuizzPage {
             index++;
             if (index >= countEls.length) {
                 this.appendFireWord();
+                this.appendBtn();
                 document.removeEventListener("click", skipCountUp);
             }
         };
-
         document.addEventListener("click", skipCountUp);
-        
         countEls.reduce(async (prev, curr) => {
             return prev.then(async () => {
                 await sleep(1000);
                 if (withSound) {
-                    audioGiftEffectEl.play();
+                    this.audioGift.play();
                 }
                 await curr.start();
             });
         }, Promise.resolve()).then(() => {
             this.appendFireWord();
+            this.appendBtn();
             document.removeEventListener("click", skipCountUp);
         });
     }
-
     remove() {
         this.audioBgm.pause();
+        this.audioGift.pause();
+        this.audioBgm.currentTime = 0;
+        this.audioGift.currentTime = 0;
         return new Promise(resolve => {
             this.contentEl.classList.add("out");
             const fadeDuration = parseFloat(window.getComputedStyle(this.contentEl).transitionDuration) * 1000;
@@ -107,7 +116,6 @@ export class EndPage extends QuizzPage {
             }, fadeDuration + 200);
         });
     }
-
     getPropSchema() {
         return {
             playerName: { type: "string" },
@@ -123,7 +131,6 @@ export class EndPage extends QuizzPage {
             }
         };
     }
-
     static getContentEl(prop) {
         const el = document.createElement("section");
         el.className = 'game-end-state';
@@ -175,6 +182,11 @@ export class EndPage extends QuizzPage {
                             </article>
                         </div>
                     </div>
+
+                    <ul class="action-list">
+                    <li class="action-item"><button class="btn btn-replay">Chơi lại</button></li>
+                    <li class="action-item"><button class="btn btn-home">Về trang chủ Home</button></li>
+                    </ul>
                 </div>
         `;
         return el;

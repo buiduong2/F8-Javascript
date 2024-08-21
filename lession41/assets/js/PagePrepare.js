@@ -8,13 +8,11 @@ export class PreparePage extends QuizzPage {
             }
         };
     }
-
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = PreparePage.createContentEl();
         this.fadeDuration = 250;
     }
-
     addFormHandle() {
         const formEl = this.contentEl.querySelector("form");
         const btnEl = this.contentEl.querySelector("button");
@@ -22,15 +20,15 @@ export class PreparePage extends QuizzPage {
         btnEl.addEventListener("click", () => {
             audioClickEffect.play();
         });
-        formEl.addEventListener("submit", (e) => {
+        formEl.onsubmit = (e) => {
+            formEl.onsubmit = e => e.preventDefault();
             e.preventDefault();
             const name = new FormData(formEl).get("name")?.toString();
             if (name) {
                 this.app.goNextPage({ totalQuestion: this.prop.totalQuestion, playerName: name }, CountDownPage);
             }
-        });
+        };
     }
-
     render() {
         this.contentEl.style.transitionDuration = this.fadeDuration + "ms";
         this.addFormHandle();
@@ -39,7 +37,6 @@ export class PreparePage extends QuizzPage {
             this.contentEl.classList.add("in");
         }, 0);
     }
-
     remove() {
         return new Promise((resolve, reject) => {
             this.contentEl.classList.add("out");
@@ -49,7 +46,6 @@ export class PreparePage extends QuizzPage {
             }, this.fadeDuration + 200);
         });
     }
-    
     static createContentEl() {
         const el = document.createElement("div");
         el.className = "main-menu-state position-relative";

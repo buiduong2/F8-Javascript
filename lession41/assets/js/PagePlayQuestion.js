@@ -1,6 +1,5 @@
 import { shuffleArray } from "./util.js";
 export class PagePlayQuestion {
-
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         this.playPage = playPlage;
         this.question = question;
@@ -11,15 +10,14 @@ export class PagePlayQuestion {
         this.audioGetPoint = document.querySelector("#get-point-effect");
         this.liveTime = 10 * 1000;
     }
-
     render() {
         return new Promise(resolve => {
             this.addHandler();
             this.playPage.contentEl.appendChild(this.contentEl);
-            setTimeout(() => {
+            this.timeoutId = setTimeout(() => {
                 this.contentEl.classList.add("in");
                 const { animationDuration, animationDelay } = window.getComputedStyle(this.contentEl);
-                setTimeout(() => {
+                this.timeoutId = setTimeout(() => {
                     this.starTime = Date.now();
                     resolve();
                     this.timeoutId = setTimeout(() => {
@@ -29,7 +27,6 @@ export class PagePlayQuestion {
             }, 1);
         });
     }
-
     remove() {
         const outTimeInterval = 1000;
         clearTimeout(this.timeoutId);
@@ -42,13 +39,11 @@ export class PagePlayQuestion {
             }, outTimeInterval);
         });
     }
-
     submitAnswer() {
         clearTimeout(this.timeoutId);
         this.removeHandler();
         this.playPage.submitAnswer(this.answer, Date.now() - this.starTime);
     }
-
     createContentEl(question, currentQuestion, totalQuestion) {
         const el = document.createElement("article");
         el.className = 'question-wrapper';
@@ -70,9 +65,7 @@ export class PagePlayQuestion {
         return el;
     }
 }
-
 export class QuestionPick extends PagePlayQuestion {
-
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         super(playPlage, question, currentQuestion, totalQuestion);
         this.totalAnswer = this.question.correctAnswers.length;
@@ -95,7 +88,6 @@ export class QuestionPick extends PagePlayQuestion {
             this.submitAnswer();
         }
     }
-
     showAnswer() {
         const correctAnswers = this.question.correctAnswers;
         const btns = Array.from(this.contentEl.querySelectorAll(".answer-item"));
@@ -109,7 +101,6 @@ export class QuestionPick extends PagePlayQuestion {
             btn.classList.add("correct");
         });
     }
-
     addHandler() {
         Array.from(this.contentEl.querySelectorAll(".answer-item"))
             .forEach(ansEl => {
@@ -119,14 +110,12 @@ export class QuestionPick extends PagePlayQuestion {
             };
         });
     }
-
     removeHandler() {
         const btns = Array.from(this.contentEl.querySelectorAll(".answer-item"));
         btns.forEach(btn => {
             btn.onclick = null;
         });
     }
-
     createAnswerEl() {
         const el = document.createElement("ul");
         el.className = 'answer-list';
@@ -140,14 +129,11 @@ export class QuestionPick extends PagePlayQuestion {
         return el;
     }
 }
-
 export class QuestionInput extends PagePlayQuestion {
-
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         super(playPlage, question, currentQuestion, totalQuestion);
         this.formEl = this.contentEl.querySelector(".answer-form");
     }
-
     showAnswer() {
         if (this.question.correctAnswers.includes(this.answer[0])) {
             this.formEl.classList.add("correct");
@@ -156,7 +142,6 @@ export class QuestionInput extends PagePlayQuestion {
             this.formEl.classList.add("incorrect");
         }
     }
-
     createAnswerEl() {
         const el = document.createElement("form");
         el.className = 'answer-form';
@@ -165,7 +150,6 @@ export class QuestionInput extends PagePlayQuestion {
         `;
         return el;
     }
-
     addHandler() {
         this.formEl.onsubmit = (e) => {
             e.preventDefault();
@@ -176,7 +160,6 @@ export class QuestionInput extends PagePlayQuestion {
             }
         };
     }
-    
     removeHandler() {
         this.formEl.onsubmit = (e) => {
             e.preventDefault();
