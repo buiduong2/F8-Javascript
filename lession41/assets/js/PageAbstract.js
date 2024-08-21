@@ -1,6 +1,4 @@
 export class QuizzPage {
-    app;
-    prop;
     constructor(app, prop = {}) {
         this.app = app;
         this.validateProp(prop);

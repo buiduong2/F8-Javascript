@@ -1,13 +1,5 @@
 import { shuffleArray } from "./util.js";
 export class PagePlayQuestion {
-    playPage;
-    question;
-    starTime;
-    liveTime;
-    timeoutId;
-    answer;
-    contentEl;
-    audioGetPoint;
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         this.playPage = playPlage;
         this.question = question;
@@ -22,10 +14,10 @@ export class PagePlayQuestion {
         return new Promise(resolve => {
             this.addHandler();
             this.playPage.contentEl.appendChild(this.contentEl);
-            setTimeout(() => {
+            this.timeoutId = setTimeout(() => {
                 this.contentEl.classList.add("in");
                 const { animationDuration, animationDelay } = window.getComputedStyle(this.contentEl);
-                setTimeout(() => {
+                this.timeoutId = setTimeout(() => {
                     this.starTime = Date.now();
                     resolve();
                     this.timeoutId = setTimeout(() => {
@@ -74,7 +66,6 @@ export class PagePlayQuestion {
     }
 }
 export class QuestionPick extends PagePlayQuestion {
-    totalAnswer;
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         super(playPlage, question, currentQuestion, totalQuestion);
         this.totalAnswer = this.question.correctAnswers.length;
@@ -139,7 +130,6 @@ export class QuestionPick extends PagePlayQuestion {
     }
 }
 export class QuestionInput extends PagePlayQuestion {
-    formEl;
     constructor(playPlage, question, currentQuestion, totalQuestion) {
         super(playPlage, question, currentQuestion, totalQuestion);
         this.formEl = this.contentEl.querySelector(".answer-form");

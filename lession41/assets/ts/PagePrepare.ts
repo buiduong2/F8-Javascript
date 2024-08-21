@@ -33,13 +33,16 @@ export class PreparePage extends QuizzPage<PreparePageProp> {
             audioClickEffect.play()
         })
 
-        formEl.addEventListener("submit", (e) => {
+        formEl.onsubmit = (e) => {
+            formEl.onsubmit = e => e.preventDefault();
+            console.log("Submit");
             e.preventDefault();
             const name = new FormData(formEl).get("name")?.toString();
             if (name) {
                 this.app.goNextPage({ totalQuestion: this.prop.totalQuestion, playerName: name }, CountDownPage);
             }
-        })
+
+        }
     }
 
 

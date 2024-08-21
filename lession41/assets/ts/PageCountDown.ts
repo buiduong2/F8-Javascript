@@ -46,14 +46,15 @@ export class CountDownPage extends QuizzPage<PlayPageProp> {
             }, 3000);
         });
 
-        this.audioBegin.addEventListener("play", () => {
+        this.audioBegin.onplay = () => {
             this.app.mainContentEl.appendChild(this.contentEl);
-        })
-        this.audioBegin.addEventListener("ended", () => {
+        }
+        this.audioBegin.onended = () => {
             this.goNextPage(this.prop, PlayPage);
-        })
+        }
     }
     remove(): Promise<void> {
+        this.audioBegin.pause();
         this.contentEl.remove();
         return Promise.resolve();
     }

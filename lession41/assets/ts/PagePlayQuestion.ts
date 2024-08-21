@@ -27,12 +27,13 @@ export abstract class PagePlayQuestion {
         return new Promise(resolve => {
             this.addHandler();
             this.playPage.contentEl.appendChild(this.contentEl);
-            setTimeout(() => {
+            this.timeoutId = setTimeout(() => {
                 this.contentEl.classList.add("in");
                 const { animationDuration, animationDelay } = window.getComputedStyle(this.contentEl);
-                setTimeout(() => {
+                this.timeoutId = setTimeout(() => {
                     this.starTime = Date.now();
                     resolve();
+
                     this.timeoutId = setTimeout(() => {
                         this.submitAnswer();
                     }, this.liveTime);

@@ -8,8 +8,6 @@ export class PreparePage extends QuizzPage {
             }
         };
     }
-    contentEl;
-    fadeDuration;
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = PreparePage.createContentEl();
@@ -22,13 +20,15 @@ export class PreparePage extends QuizzPage {
         btnEl.addEventListener("click", () => {
             audioClickEffect.play();
         });
-        formEl.addEventListener("submit", (e) => {
+        formEl.onsubmit = (e) => {
+            formEl.onsubmit = e => e.preventDefault();
+            console.log("Submit");
             e.preventDefault();
             const name = new FormData(formEl).get("name")?.toString();
             if (name) {
                 this.app.goNextPage({ totalQuestion: this.prop.totalQuestion, playerName: name }, CountDownPage);
             }
-        });
+        };
     }
     render() {
         this.contentEl.style.transitionDuration = this.fadeDuration + "ms";

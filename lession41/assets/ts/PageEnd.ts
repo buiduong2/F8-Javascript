@@ -1,17 +1,21 @@
 import { QuizzApp } from "./App.js";
-import { QuizzPage } from "./PageAbstract.js";
 import type { PropSchema } from "./PageAbstract.js";
+import { QuizzPage } from "./PageAbstract.js";
+import { CountDownPage } from "./PageCountDown.js";
+import { PreparePage } from "./PagePrepare.js";
 import { counterUp, sleep } from "./util.js";
 
 export class EndPage extends QuizzPage<EndPageProp> {
 
     contentEl: HTMLElement;
     audioBgm: HTMLAudioElement;
+    audioGift: HTMLAudioElement;
 
     constructor(app: QuizzApp, prop: EndPageProp) {
         super(app, prop);
         this.contentEl = EndPage.getContentEl(prop);
         this.audioBgm = document.querySelector("#victory-bgm") as HTMLAudioElement;
+        this.audioGift = document.querySelector("#treasure-chest-sound-effect") as HTMLAudioElement;
     }
 
     async render(): Promise<void> {
@@ -24,12 +28,9 @@ export class EndPage extends QuizzPage<EndPageProp> {
 
         try {
             await this.counterUpAllSore(true);
-
         } catch (error) {
             this.counterUpAllSore(false);
         }
-
-
     }
 
     appendFireWord(): void {
@@ -45,6 +46,22 @@ export class EndPage extends QuizzPage<EndPageProp> {
         this.contentEl.appendChild(firework);
     }
 
+    appendBtn(): void {
+        const btnList = this.contentEl.querySelector(".action-list") as HTMLElement;
+        const btnPlay = this.contentEl.querySelector(".btn-replay") as HTMLButtonElement;
+        const btnHome = this.contentEl.querySelector(".btn-home") as HTMLButtonElement;
+
+        btnList.classList.add("show");
+        btnList.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (e.target === btnPlay) {
+                this.goNextPage(this.prop, CountDownPage);
+            } else if (e.target === btnHome) {
+                this.goNextPage(this.prop, PreparePage);
+            }
+        }, { once: true })
+    }
+
     async counterUpAllSore(withSound: boolean) {
         const scoreNumberEl = this.contentEl.querySelector(".score-number") as HTMLElement;
         const correctCountEl = this.contentEl.querySelector(".correct-count") as HTMLElement;
@@ -52,7 +69,7 @@ export class EndPage extends QuizzPage<EndPageProp> {
         const playTimeEl = this.contentEl.querySelector(".play-time") as HTMLElement;
         const maxStreakCountEl = this.contentEl.querySelector(".max-streak-count") as HTMLElement;
         const percentProgressEl = this.contentEl.querySelector(".progress-current") as HTMLElement;
-        const audioGiftEffectEl = document.querySelector("#treasure-chest-sound-effect") as HTMLAudioElement;
+
 
         const { correctCount: correct, incorrectCount: incorrect } = this.prop.scoreStatistic;
 
@@ -90,6 +107,7 @@ export class EndPage extends QuizzPage<EndPageProp> {
             index++;
             if (index >= countEls.length) {
                 this.appendFireWord();
+                this.appendBtn();
                 document.removeEventListener("click", skipCountUp);
             }
         }
@@ -98,12 +116,13 @@ export class EndPage extends QuizzPage<EndPageProp> {
             return prev.then(async () => {
                 await sleep(1000);
                 if (withSound) {
-                    audioGiftEffectEl.play();
+                    this.audioGift.play();
                 }
                 await curr.start()
             });
         }, Promise.resolve()).then(() => {
             this.appendFireWord();
+            this.appendBtn();
             document.removeEventListener("click", skipCountUp);
         })
 
@@ -112,6 +131,9 @@ export class EndPage extends QuizzPage<EndPageProp> {
 
     remove(): Promise<void> {
         this.audioBgm.pause();
+        this.audioGift.pause();
+        this.audioBgm.currentTime = 0;
+        this.audioGift.currentTime = 0;
         return new Promise(resolve => {
             this.contentEl.classList.add("out");
             const fadeDuration = parseFloat(window.getComputedStyle(this.contentEl).transitionDuration) * 1000;
@@ -190,6 +212,11 @@ export class EndPage extends QuizzPage<EndPageProp> {
                             </article>
                         </div>
                     </div>
+
+                    <ul class="action-list">
+                    <li class="action-item"><button class="btn btn-replay">Chơi lại</button></li>
+                    <li class="action-item"><button class="btn btn-home">Về trang chủ Home</button></li>
+                    </ul>
                 </div>
         `
         return el;

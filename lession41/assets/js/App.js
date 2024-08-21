@@ -1,9 +1,5 @@
 import { PreparePage } from "./PagePrepare.js";
 export class QuizzApp {
-    el;
-    mainContentEl;
-    currentPage;
-    totalQuestion;
     constructor(el) {
         this.el = el;
         this.mainContentEl = this.el.querySelector(".main-content");

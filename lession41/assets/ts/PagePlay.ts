@@ -7,6 +7,7 @@ import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js
 import type { PropSchema } from "./PageAbstract.js";
 import type { EndPageProp } from "./PageEnd.js"
 import type { PagePlayQuestion, QuestionType } from "./PagePlayQuestion.js";
+import { PreparePage } from "./PagePrepare.js";
 
 export class PlayPage extends QuizzPage<PlayPageProp> {
 
@@ -67,6 +68,16 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
         this.app.mainContentEl.insertAdjacentElement("afterend", this.footerEl);
         this.app.mainContentEl.appendChild(this.contentEl);
         this.app.mainContentEl.insertAdjacentElement("afterend", this.messageEl);
+
+        const goHomeBtn = this.navEl.querySelector(".go-home") as HTMLElement
+
+        goHomeBtn.onclick = (e) => {
+            goHomeBtn.onclick = e => e.preventDefault();
+            e.preventDefault();
+
+            this.goNextPage(this.prop, PreparePage);
+        };
+
         setTimeout(() => {
             this.navEl.classList.add("in")
             this.footerEl.classList.add("in")
@@ -86,11 +97,11 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
             this.contentEl.classList.add("out")
 
             setTimeout(() => {
+                this.currentQuestion?.remove();
                 this.navEl.remove();
                 this.footerEl.remove();
                 this.contentEl.remove();
                 this.messageEl.remove();
-
                 resolve();
             }, fadeDuration);
         })
@@ -119,10 +130,10 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
     handleCorrectAnwser(playedTime: number) {
         if (!this.currentQuestion) throw new Error("Current Question is NULL");
         this.audioCorrect.play();
+        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
         this.statsView.increaseStreak();
         this.feedbackView.showCorrectMsg();
         this.currentQuestion.showAnswer();
-        this.statsView.increaseScoreNumber(this.calcScore(playedTime));
 
         this.stats.correctCount++;
         this.stats.maxStreak = Math.max(this.statsView.currentStreak, this.stats.maxStreak);
@@ -138,12 +149,15 @@ export class PlayPage extends QuizzPage<PlayPageProp> {
         this.stats.incorrectCount++;
     }
 
-    calcScore(playedTime: number): number {
+    calcScore(playedTime: number): { total: number, info: ScoreBonusInfo } {
         playedTime = Math.max(0, playedTime);
         const scorePerSeconds = 100;
         const scorePerStreak = 100;
-        let score = 1000 - playedTime / 1000 * scorePerSeconds + Math.min(this.statsView.currentStreak, 4) * scorePerStreak;
-        return score;
+
+        const timeScore = Math.floor(1000 - playedTime / 1000 * scorePerSeconds);
+        const streakScore = Math.floor(Math.min(this.statsView.currentStreak, 4) * scorePerStreak);
+        let total = timeScore + streakScore;
+        return { total, info: { time: timeScore, streak: streakScore } };
     }
 
     async renderNextQuestion() {
@@ -378,27 +392,37 @@ class GameStatsManager {
         (this.currentQuestionEl.querySelector(".current") as HTMLElement).textContent = String(this.currentQuestion);
     }
 
-    increaseScoreNumber(number: number) {
+    increaseScoreNumber({ total, info }: { total: number, info: ScoreBonusInfo }) {
         let prevScore = this.score;
-        this.score += number;
+        this.score += total;
         counterUp((score: number) => {
             this.scoreEl.textContent = String(Math.floor(score));
         }, prevScore, this.score, 1000).start();
-        this.showIncreaseScoreStep(number);
+        this.showIncreaseScoreStep(info);
     }
 
-    showIncreaseScoreStep(number: number) {
-        const liEl = document.createElement("li");
-        liEl.className = 'score-item';
-        liEl.textContent = "+" + String(number);
-        this.scoreFactoryEl.appendChild(liEl);
-        const { transitionDuration } = window.getComputedStyle(liEl);
+    showIncreaseScoreStep(info: ScoreBonusInfo) {
+        const ulEl = document.createElement("ul");
+        ulEl.className = 'score-item';
+
+        const fragment = document.createDocumentFragment();
+        Object.entries(info).forEach((([key, value]) => {
+            const liEl = document.createElement("li");
+            liEl.className = key;
+            liEl.innerText = "+" + value.toFixed(0);
+            fragment.appendChild(liEl);
+        }))
+        ulEl.appendChild(fragment);
+
+        this.scoreFactoryEl.appendChild(ulEl);
+        const { transitionDuration, transitionDelay } = window.getComputedStyle(ulEl);
         const liveTime = transitionDuration
             .split(",")
-            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0);
-        liEl.classList.add("active");
+            .reduce((max, curr) => Math.max(max, parseFloat(curr) * 1000), 0)
+            + parseFloat(transitionDelay) * 1000;
+        ulEl.classList.add("active");
         setTimeout(() => {
-            liEl.remove()
+            ulEl.remove()
         }, liveTime);
     }
 
@@ -441,4 +465,8 @@ type GameStats = {
     incorrectCount: number,
     maxStreak: number,
 
+}
+
+type ScoreBonusInfo = {
+    [key: string]: number
 }

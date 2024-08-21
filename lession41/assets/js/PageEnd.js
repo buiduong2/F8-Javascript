@@ -1,12 +1,13 @@
 import { QuizzPage } from "./PageAbstract.js";
+import { CountDownPage } from "./PageCountDown.js";
+import { PreparePage } from "./PagePrepare.js";
 import { counterUp, sleep } from "./util.js";
 export class EndPage extends QuizzPage {
-    contentEl;
-    audioBgm;
     constructor(app, prop) {
         super(app, prop);
         this.contentEl = EndPage.getContentEl(prop);
         this.audioBgm = document.querySelector("#victory-bgm");
+        this.audioGift = document.querySelector("#treasure-chest-sound-effect");
     }
     async render() {
         this.app.mainContentEl.appendChild(this.contentEl);
@@ -31,6 +32,21 @@ export class EndPage extends QuizzPage {
         `;
         this.contentEl.appendChild(firework);
     }
+    appendBtn() {
+        const btnList = this.contentEl.querySelector(".action-list");
+        const btnPlay = this.contentEl.querySelector(".btn-replay");
+        const btnHome = this.contentEl.querySelector(".btn-home");
+        btnList.classList.add("show");
+        btnList.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (e.target === btnPlay) {
+                this.goNextPage(this.prop, CountDownPage);
+            }
+            else if (e.target === btnHome) {
+                this.goNextPage(this.prop, PreparePage);
+            }
+        }, { once: true });
+    }
     async counterUpAllSore(withSound) {
         const scoreNumberEl = this.contentEl.querySelector(".score-number");
         const correctCountEl = this.contentEl.querySelector(".correct-count");
@@ -38,7 +54,6 @@ export class EndPage extends QuizzPage {
         const playTimeEl = this.contentEl.querySelector(".play-time");
         const maxStreakCountEl = this.contentEl.querySelector(".max-streak-count");
         const percentProgressEl = this.contentEl.querySelector(".progress-current");
-        const audioGiftEffectEl = document.querySelector("#treasure-chest-sound-effect");
         const { correctCount: correct, incorrectCount: incorrect } = this.prop.scoreStatistic;
         const percent = correct / (correct + incorrect) * 100;
         let percentCount = counterUp((percent) => {
@@ -68,6 +83,7 @@ export class EndPage extends QuizzPage {
             index++;
             if (index >= countEls.length) {
                 this.appendFireWord();
+                this.appendBtn();
                 document.removeEventListener("click", skipCountUp);
             }
         };
@@ -76,17 +92,21 @@ export class EndPage extends QuizzPage {
             return prev.then(async () => {
                 await sleep(1000);
                 if (withSound) {
-                    audioGiftEffectEl.play();
+                    this.audioGift.play();
                 }
                 await curr.start();
             });
         }, Promise.resolve()).then(() => {
             this.appendFireWord();
+            this.appendBtn();
             document.removeEventListener("click", skipCountUp);
         });
     }
     remove() {
         this.audioBgm.pause();
+        this.audioGift.pause();
+        this.audioBgm.currentTime = 0;
+        this.audioGift.currentTime = 0;
         return new Promise(resolve => {
             this.contentEl.classList.add("out");
             const fadeDuration = parseFloat(window.getComputedStyle(this.contentEl).transitionDuration) * 1000;
@@ -162,6 +182,11 @@ export class EndPage extends QuizzPage {
                             </article>
                         </div>
                     </div>
+
+                    <ul class="action-list">
+                    <li class="action-item"><button class="btn btn-replay">Chơi lại</button></li>
+                    <li class="action-item"><button class="btn btn-home">Về trang chủ Home</button></li>
+                    </ul>
                 </div>
         `;
         return el;
