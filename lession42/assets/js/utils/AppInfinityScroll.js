@@ -14,11 +14,12 @@ export class AppInfinityScroll extends HTMLElement {
     }
     addStyle() {
         this.style.cssText = `
-            width: 20px;
-            height: 20px;
-            background-color: red;
-            transform: translateY(-50px);
+            width: 50px;
+            height: 50px;
+            transform: translateY(-100px);
             cursor: none;
+            display:block;
+
         `;
     }
     connectedCallback() {
