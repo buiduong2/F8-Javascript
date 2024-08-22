@@ -22,9 +22,9 @@ export class TheNavBar extends HTMLElement {
             Router.getIntance().renderPageFromHash();
         });
         const clickOutside = (e) => {
-            if (!userDropDown.contains(e.target)) {
-                userDropDown.classList.remove("active-drop");
-            }
+            if (e.target === userDropDown)
+                return;
+            userDropDown.classList.remove("active-drop");
         };
         userInfo.addEventListener("click", e => {
             e.stopPropagation();

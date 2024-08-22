@@ -1,5 +1,6 @@
 import { httpClient } from "./index.js";
 import { Router } from "./utils/Router.js";
+import { HttpClient } from "./utils/HttpClient.js";
 const STORE_KEY_ACCESS_TOKEN = "ACCESS_TOKEN";
 const STORE_KEY_REFRESH_TOKEN = "REFRESH_TOKEN";
 export class Store {
@@ -14,32 +15,28 @@ export class Store {
         const accessToken = localStorage.getItem(STORE_KEY_ACCESS_TOKEN);
         if (!accessToken)
             return;
-        try {
-            const user = await httpClient.getAuthInfo(accessToken);
-            this.updateAuthFromAccessToken(user);
+        const res = await httpClient.getAuthInfo(accessToken);
+        if (HttpClient.isSuccessful(res)) {
+            this.updateAuthFromAccessToken(res.data);
+            return;
         }
-        catch (error) {
-            if (error instanceof Error) {
-                this.addNotification("error", error.message);
-            }
-            else {
-                throw error;
-            }
-        }
+        throw new Error("Error on retrive userInfo from AccessToken");
     }
     async refreshTokenToAcessToken() {
-        try {
-            const token = localStorage.getItem(STORE_KEY_REFRESH_TOKEN);
-            if (!token)
-                throw new Error("Refresh Token is misssing");
-            const res = await httpClient.refreshToken(token);
-            const { accessToken, refreshToken } = res.token;
+        const token = localStorage.getItem(STORE_KEY_REFRESH_TOKEN);
+        if (!token)
+            throw new Error("Refresh Token is misssing");
+        const res = await httpClient.refreshToken(token);
+        if (HttpClient.isSuccessful(res)) {
+            const { accessToken, refreshToken } = res.data.token;
             this.saveLocalToken(accessToken, refreshToken);
         }
-        catch (error) {
+        else if (HttpClient.isClientError(res)) {
             this.clearAuthInfo();
             this.addNotification("info", "Tài khoản đã đăng xuất do lâu không sử dụng");
-            throw new Error("Refresh Token error");
+        }
+        else {
+            throw new Error("Error on retrive userInfo from Refresh Token ");
         }
     }
     async loadUserInfoFromToken() {
@@ -47,13 +44,9 @@ export class Store {
             await this.accessTokenToUserInfo();
         }
         catch (error) {
-            try {
-                await this.refreshTokenToAcessToken();
-                this.accessTokenToUserInfo();
-            }
-            catch (error) {
-                console.log("error");
-            }
+            console.log(error);
+            await this.refreshTokenToAcessToken();
+            this.accessTokenToUserInfo();
         }
     }
     updateAuthFromAccessToken(userRes) {
@@ -84,57 +77,51 @@ export class Store {
         this.notifyAuthStateChange();
     }
     async register(registerReq) {
-        try {
-            const res = await httpClient.register(registerReq);
+        const res = await httpClient.register(registerReq);
+        if (HttpClient.isSuccessful(res)) {
             this.addNotification("success", res.message || "Register Sucessful");
+            return true;
         }
-        catch (error) {
-            if (error instanceof Response) {
-                this.addNotification("warning", (await error.json()).message);
-            }
-            else {
-                this.addNotification("error", "Error on fetching Resgister");
-            }
-            throw error;
+        else if (HttpClient.isClientError(res)) {
+            this.addNotification("warning", res.message || "Register Error On Client");
         }
+        else {
+            this.addNotification("error", res.message || "Register Error On Server");
+        }
+        return false;
     }
     async logout() {
         if (!this.user) {
             this.clearAuthInfo();
-            throw new Error("Bug");
+            throw new Error("Bug On Client");
         }
         ;
         const accessToken = this.user.accessToken;
-        try {
-            const res = await httpClient.logout(accessToken);
+        const res = await httpClient.logout(accessToken);
+        if (HttpClient.isSuccessful(res)) {
             this.clearAuthInfo();
             this.addNotification("success", res.message || "Logout Successful");
-            return res;
+            return true;
         }
-        catch (error) {
-            if (error instanceof Response) {
-                return error.json();
-            }
-            throw error;
+        else if (HttpClient.isClientError(res)) {
+            this.addNotification("warning", res.message || "Logout Failure may be you need refresh browser");
         }
+        else if (HttpClient.isServerError(res)) {
+            this.addNotification("error", res.message || "Server Error");
+        }
+        return false;
     }
     async getAuthInfo() {
-        if (this.user?.accessToken) {
-            try {
-                return await this.tryRefreshTokenOnFailure(() => httpClient.getAuthInfo(this.user?.accessToken || ""));
-            }
-            catch (error) {
-                if (error instanceof Response) {
-                    const data = await error.json();
-                    this.addNotification("error", data.message);
-                }
-                throw error;
-            }
-        }
-        else {
+        if (!this.user?.accessToken) {
             this.clearAuthInfo();
             throw new Error("AccessToken is not existed");
         }
+        const res = await this.tryRefreshTokenOnFailure(() => httpClient.getAuthInfo(this.user?.accessToken || ""));
+        if (HttpClient.isSuccessful(res)) {
+            return res.data;
+        }
+        this.addNotification("error", res.message || "Fialed From Fetching Auth Info");
+        throw new Error(res.message);
     }
     notifyAuthStateChange() {
         this.authListeners.forEach(fn => fn());
@@ -142,71 +129,55 @@ export class Store {
     // AUTH GROUP END
     // OTHER RESOURCE
     async getPosts(page) {
-        try {
-            return await httpClient.getBlogs(page);
+        const res = await httpClient.getBlogs(page);
+        if (HttpClient.isSuccessful(res)) {
+            return res.data;
         }
-        catch (error) {
-            this.addNotification("error", error.message);
-            throw error;
+        else {
+            this.addNotification("error", res.message || "Error On Fetching Posts");
         }
+        throw new Error("Error On Fetching Post");
     }
     async getUserInfo(userId) {
-        try {
-            return await httpClient.getProfile(userId);
+        const data = await httpClient.getProfile(userId);
+        if (HttpClient.isSuccessful(data)) {
+            return data.data;
         }
-        catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                if (data.code === 404) {
-                    Router.getIntance().push({ name: "Blog" });
-                    this.addNotification("warning", data.message);
-                }
-                else {
-                    this.addNotification("error", data.message);
-                }
-                throw new Error("Faild on Fetch");
-            }
-            else {
-                this.addNotification("error", error.message);
-                throw error;
-            }
+        else if (HttpClient.isClientError(data)) {
+            Router.getIntance().push({ name: "Blog" });
+            this.addNotification("warning", data.message || "Không tìm thấy người dùng");
         }
+        else {
+            this.addNotification("error", data.message || "Error On Server");
+        }
+        throw new Error("Failed From Fetching User Info");
     }
     async createPost(postReq) {
         if (!this.user?.accessToken) {
             this.clearAuthInfo();
             throw new Error("Error on Authenticate System");
         }
-        try {
-            const post = await this.tryRefreshTokenOnFailure(() => httpClient.createBlog(postReq, this.user?.accessToken || ""));
+        const res = await this.tryRefreshTokenOnFailure(() => httpClient.createBlog(postReq, this.user?.accessToken || ""));
+        if (HttpClient.isSuccessful(res)) {
             this.addNotification("info", "Create Post Successful");
-            return post;
+            return res.data;
         }
-        catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                this.addNotification("error", data.message);
-            }
-            throw error;
-        }
+        this.addNotification("error", res.message || "Failed Froming Create Post");
+        throw new Error(res.message);
     }
     // UTILS
     async tryRefreshTokenOnFailure(func) {
-        try {
-            return await func();
+        const res = await func();
+        if (HttpClient.isSuccessful(res)) {
+            return res;
         }
-        catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                console.log("refresh");
-                console.log(data.code);
-                if (data.code === 401) {
-                    await this.refreshTokenToAcessToken();
-                    return await func();
-                }
-            }
-            throw error;
+        else if (res.code === 401) {
+            await this.refreshTokenToAcessToken();
+            const res = await func();
+            return res;
         }
+        this.addNotification("error", res.message);
+        throw new Error(res.message);
     }
     saveLocalToken(accessToken, refreshToken) {
         localStorage.setItem(STORE_KEY_REFRESH_TOKEN, refreshToken);

@@ -55,12 +55,12 @@ export class Router {
         }
         this.decoratorHref(nextRoute, opt);
         await nextPage.beforeRender();
+        const parent = this.currentPage?.parentElement || this.appViewEl.parentElement;
         if (this.currentPage) {
-            this.currentPage.replaceWith(nextPage);
+            await this.currentPage.beforeDisconnected();
         }
-        else {
-            this.appViewEl.replaceWith(nextPage);
-        }
+        parent.removeChild(this.currentPage || this.appViewEl);
+        parent.appendChild(nextPage);
         this.currentPage = nextPage;
     }
     filterRoute(route, opt) {

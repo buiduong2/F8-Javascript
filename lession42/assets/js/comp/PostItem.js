@@ -1,3 +1,4 @@
+import { addInOutTrasition } from "../pages/PageAbstract.js";
 export class PostItem extends HTMLElement {
     renderData(collections, index) {
         const post = collections[Number(index)];
@@ -33,17 +34,6 @@ export class PostItem extends HTMLElement {
         `;
     }
     connectedCallback() {
-        this.classList.add("post-item");
-        this.classList.add("enter-from");
-        this.classList.add("enter-active");
-        const { transitionDelay, transitionDuration } = window.getComputedStyle(this);
-        setTimeout(() => {
-            this.classList.add("enter-to");
-            this.classList.remove("enter-from");
-        }, 100);
-        const trantitionTime = parseFloat(transitionDelay) + parseFloat(transitionDuration);
-        setTimeout(() => {
-            this.classList.remove("post-item", "enter-active", "enter-to");
-        }, trantitionTime * 1000);
+        addInOutTrasition(this, "post-item-enter");
     }
 }
