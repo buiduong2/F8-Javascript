@@ -1,7 +1,8 @@
-import type { AuthRes, PostReq, PostRes, RegisterReq, Res, UserRes } from "./types/type";
+import type { AuthRes, PostReq, PostRes, RefreshTokenRes, RegisterReq, Res, UserRes } from "./types/type";
 import { AppNotification } from "./utils/AppNotification.js";
 import { httpClient } from "./index.js";
 import { Router } from "./utils/Router.js";
+import { HttpClient } from "./utils/HttpClient.js";
 
 
 const STORE_KEY_ACCESS_TOKEN = "ACCESS_TOKEN";
@@ -22,35 +23,33 @@ export class Store {
     }
 
     // Auth GROUP BEGIN
-    async accessTokenToUserInfo() {
+    async accessTokenToUserInfo(): Promise<void> {
         const accessToken = localStorage.getItem(STORE_KEY_ACCESS_TOKEN);
         if (!accessToken) return;
-
-        try {
-            const user = await httpClient.getAuthInfo(accessToken);
-            this.updateAuthFromAccessToken(user);
-        } catch (error) {
-            if (error instanceof Error) {
-                this.addNotification("error", error.message);
-            } else {
-                throw error;
-            }
+        const res = await httpClient.getAuthInfo(accessToken);
+        if (HttpClient.isSuccessful(res)) {
+            this.updateAuthFromAccessToken(res.data as UserRes);
+            return;
         }
+        throw new Error("Error on retrive userInfo from AccessToken")
+
+
     }
 
-    async refreshTokenToAcessToken() {
+    async refreshTokenToAcessToken(): Promise<void> {
+        const token = localStorage.getItem(STORE_KEY_REFRESH_TOKEN);
+        if (!token) throw new Error("Refresh Token is misssing");
 
-        try {
-            const token = localStorage.getItem(STORE_KEY_REFRESH_TOKEN);
-            if (!token) throw new Error("Refresh Token is misssing");
+        const res = await httpClient.refreshToken(token);
 
-            const res = await httpClient.refreshToken(token);
-            const { accessToken, refreshToken } = res.token;
+        if (HttpClient.isSuccessful(res)) {
+            const { accessToken, refreshToken } = (res.data as RefreshTokenRes).token;
             this.saveLocalToken(accessToken, refreshToken);
-        } catch (error) {
+        } else if (HttpClient.isClientError(res)) {
             this.clearAuthInfo();
             this.addNotification("info", "Tài khoản đã đăng xuất do lâu không sử dụng");
-            throw new Error("Refresh Token error");
+        } else {
+            throw new Error("Error on retrive userInfo from Refresh Token ")
         }
     }
 
@@ -58,12 +57,9 @@ export class Store {
         try {
             await this.accessTokenToUserInfo();
         } catch (error) {
-            try {
-                await this.refreshTokenToAcessToken();
-                this.accessTokenToUserInfo();
-            } catch (error) {
-                console.log("error");
-            }
+            console.log(error);
+            await this.refreshTokenToAcessToken();
+            this.accessTokenToUserInfo();
         }
     }
 
@@ -101,61 +97,59 @@ export class Store {
         this.notifyAuthStateChange();
     }
 
-    async register(registerReq: RegisterReq): Promise<void> {
-        try {
-            const res = await httpClient.register(registerReq);
+    async register(registerReq: RegisterReq): Promise<boolean> {
+        const res = await httpClient.register(registerReq);
 
+        if (HttpClient.isSuccessful(res)) {
             this.addNotification("success", res.message || "Register Sucessful");
-
-        } catch (error) {
-            if (error instanceof Response) {
-                this.addNotification("warning", (await error.json()).message)
-            } else {
-                this.addNotification("error", "Error on fetching Resgister");
-            }
-            throw error;
+            return true;
+        } else if (HttpClient.isClientError(res)) {
+            this.addNotification("warning", res.message || "Register Error On Client");
+        } else {
+            this.addNotification("error", res.message || "Register Error On Server");
         }
 
+        return false;
     }
 
-    async logout(): Promise<Res> {
+    async logout(): Promise<boolean> {
         if (!this.user) {
             this.clearAuthInfo();
-            throw new Error("Bug");
+            throw new Error("Bug On Client");
         };
 
         const accessToken = this.user.accessToken;
-        try {
-            const res = await httpClient.logout(accessToken);
+
+        const res = await httpClient.logout(accessToken);
+
+        if (HttpClient.isSuccessful(res)) {
             this.clearAuthInfo();
             this.addNotification("success", res.message || "Logout Successful");
-            return res;
-        } catch (error) {
-            if (error instanceof Response) {
-                return error.json();
-            }
-            throw error;
+            return true;
+        } else if (HttpClient.isClientError(res)) {
+            this.addNotification("warning", res.message || "Logout Failure may be you need refresh browser");
+        } else if (HttpClient.isServerError(res)) {
+            this.addNotification("error", res.message || "Server Error");
         }
 
+        return false;
     }
 
 
     async getAuthInfo(): Promise<UserRes> {
-        if (this.user?.accessToken) {
-            try {
-                return await this.tryRefreshTokenOnFailure(() => httpClient.getAuthInfo(this.user?.accessToken || ""))
-
-            } catch (error) {
-                if (error instanceof Response) {
-                    const data = await error.json();
-                    this.addNotification("error", data.message);
-                }
-                throw error;
-            }
-        } else {
+        if (!this.user?.accessToken) {
             this.clearAuthInfo();
             throw new Error("AccessToken is not existed")
         }
+
+        const res = await this.tryRefreshTokenOnFailure(() => httpClient.getAuthInfo(this.user?.accessToken || ""))
+
+        if (HttpClient.isSuccessful(res)) {
+            return res.data as UserRes;
+        }
+
+        this.addNotification("error", res.message || "Fialed From Fetching Auth Info");
+        throw new Error(res.message);
     }
 
 
@@ -168,34 +162,28 @@ export class Store {
     // OTHER RESOURCE
 
     async getPosts(page: number): Promise<PostRes[]> {
-        try {
-            return await httpClient.getBlogs(page);
 
-        } catch (error) {
-            this.addNotification("error", (error as Error).message);
-            throw error;
+        const res = await httpClient.getBlogs(page);
+        if (HttpClient.isSuccessful(res)) {
+            return res.data as PostRes[];
+        } else {
+            this.addNotification("error", res.message || "Error On Fetching Posts");
         }
+
+        throw new Error("Error On Fetching Post");
     }
 
     async getUserInfo(userId: string): Promise<UserRes> {
-
-        try {
-            return await httpClient.getProfile(userId);
-        } catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                if (data.code === 404) {
-                    Router.getIntance().push({ name: "Blog" });
-                    this.addNotification("warning", data.message);
-                } else {
-                    this.addNotification("error", data.message);
-                }
-                throw new Error("Faild on Fetch")
-            } else {
-                this.addNotification("error", (error as Error).message);
-                throw error;
-            }
+        const data = await httpClient.getProfile(userId);
+        if (HttpClient.isSuccessful(data)) {
+            return data.data as UserRes
+        } else if (HttpClient.isClientError(data)) {
+            Router.getIntance().push({ name: "Blog" });
+            this.addNotification("warning", data.message || "Không tìm thấy người dùng");
+        } else {
+            this.addNotification("error", data.message || "Error On Server");
         }
+        throw new Error("Failed From Fetching User Info");
     }
 
 
@@ -205,39 +193,33 @@ export class Store {
             throw new Error("Error on Authenticate System");
         }
 
-        try {
-            const post = await this.tryRefreshTokenOnFailure(() => httpClient.createBlog(postReq, this.user?.accessToken || ""));
-
+        const res = await this.tryRefreshTokenOnFailure(() => httpClient.createBlog(postReq, this.user?.accessToken || ""));
+        if (HttpClient.isSuccessful(res)) {
             this.addNotification("info", "Create Post Successful")
-            return post;
-        } catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                this.addNotification("error", data.message);
-            }
-            throw error
+            return res.data as PostRes;
         }
+
+        this.addNotification("error", res.message || "Failed Froming Create Post");
+
+        throw new Error(res.message)
     }
 
 
 
 
     // UTILS
-    async tryRefreshTokenOnFailure<T>(func: (...args: any[]) => Promise<T>): Promise<T> {
-        try {
-            return await func();
-        } catch (error) {
-            if (error instanceof Response) {
-                const data = await error.json();
-                console.log("refresh");
-                console.log(data.code);
-                if (data.code === 401) {
-                    await this.refreshTokenToAcessToken();
-                    return await func();
-                }
-            }
-            throw error;
+    async tryRefreshTokenOnFailure(func: (...args: any[]) => Promise<Res>): Promise<Res> {
+
+        const res = await func();
+        if (HttpClient.isSuccessful(res)) {
+            return res;
+        } else if (res.code === 401) {
+            await this.refreshTokenToAcessToken();
+            const res = await func();
+            return res;
         }
+        this.addNotification("error", res.message);
+        throw new Error(res.message);
     }
 
     saveLocalToken(accessToken: string, refreshToken: string) {

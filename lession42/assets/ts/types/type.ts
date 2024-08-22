@@ -1,16 +1,12 @@
 import { PageAbstract } from "../pages/PageAbstract.js";
 
-export type Res = {
-    code: number;
-    status_code: string;
-    message?: string;
-    data?: any;
-}
 
-export type ErrorRes = {
+
+export type Res = {
     code: number,
     status_code: string,
     message: string
+    data: any;
 }
 
 export type PostReq = {
@@ -35,11 +31,11 @@ export type UserRes = {
     name: string,
     email: string,
     avatar: string,
-    role:string,
+    role: string,
     blogs: {
         _id: string,
         title: string,
-        content:string,
+        content: string,
         userId: string,
         createdAt: string,
 

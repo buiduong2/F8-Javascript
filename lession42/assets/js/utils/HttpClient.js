@@ -4,15 +4,7 @@ export class HttpClient {
     }
     async getBlogs(page = 1) {
         const res = await fetch(`${this.BASE_URL}/blogs?page=${page}`);
-        if (!res.ok)
-            throw res;
-        const data = await res.json();
-        if (data.code === 200) {
-            return data.data;
-        }
-        else {
-            throw new Error("Status !== 200");
-        }
+        return res.json();
     }
     async createBlog(body, accessToken) {
         const res = await fetch(`${this.BASE_URL}/blogs`, {
@@ -23,29 +15,13 @@ export class HttpClient {
             },
             body: JSON.stringify(body)
         });
-        if (!res.ok)
-            throw res;
-        const data = await res.json();
-        if (data.code === 200) {
-            return data.data;
-        }
-        else {
-            throw new Error("code !== 200");
-        }
+        return res.json();
     }
     async getProfile(id) {
         const res = await fetch(`${this.BASE_URL}/users/${id}`, {
             method: "GET"
         });
-        if (!res.ok)
-            throw res;
-        const data = await res.json();
-        if (data.code === 200) {
-            return data.data;
-        }
-        else {
-            throw new Error("Status !== 200 ");
-        }
+        return res.json();
     }
     async getAuthInfo(accessToken) {
         const res = await fetch(`${this.BASE_URL}/users/profile`, {
@@ -54,25 +30,17 @@ export class HttpClient {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        if (!res.ok)
-            throw res;
-        const data = await res.json();
-        return data.data;
+        return res.json();
     }
     async login(loginReq) {
-        try {
-            const res = await fetch(`${this.BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(loginReq)
-            });
-            return await res.json();
-        }
-        catch (error) {
-            throw new Error("Error On fetching Login");
-        }
+        const res = await fetch(`${this.BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(loginReq)
+        });
+        return await res.json();
     }
     async register(registerReq) {
         const res = await fetch(`${this.BASE_URL}/auth/register`, {
@@ -82,10 +50,8 @@ export class HttpClient {
             },
             body: JSON.stringify(registerReq)
         });
-        if (!res.ok)
-            throw res;
-        const data = await res.json();
-        return data;
+        return await res.json();
+        ;
     }
     async logout(accessToken) {
         const res = await fetch(`${this.BASE_URL}/auth/logout`, {
@@ -94,8 +60,6 @@ export class HttpClient {
                 "Authorization": `Bearer ${accessToken}`
             },
         });
-        if (!res.ok)
-            throw res;
         return res.json();
     }
     async refreshToken(refreshToken) {
@@ -106,14 +70,15 @@ export class HttpClient {
             },
             body: JSON.stringify({ refreshToken })
         });
-        if (!res.ok)
-            throw new Error("Fail To Fetch");
-        const data = await res.json();
-        if (data.code === 200) {
-            return data.data;
-        }
-        else {
-            throw new Error("Fail to Authenticated");
-        }
+        return res.json();
+    }
+    static isSuccessful(res) {
+        return res.code >= 200 && res.code <= 299;
+    }
+    static isClientError(res) {
+        return res.code >= 400 && res.code <= 499;
+    }
+    static isServerError(res) {
+        return res.code >= 500;
     }
 }

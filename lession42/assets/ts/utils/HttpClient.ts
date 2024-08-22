@@ -1,4 +1,4 @@
-import { AuthReq, PostReq, PostRes, RefreshTokenRes, RegisterReq, Res, UserRes } from "../types/type";
+import { AuthReq, PostReq, PostRes, RegisterReq, Res } from "../types/type";
 
 export class HttpClient {
 
@@ -8,18 +8,12 @@ export class HttpClient {
         this.BASE_URL = apiServer;
     }
 
-    public async getBlogs(page: number = 1): Promise<PostRes[]> {
+    public async getBlogs(page: number = 1): Promise<Res> {
         const res = await fetch(`${this.BASE_URL}/blogs?page=${page}`);
-        if (!res.ok) throw res;
-        const data = await res.json();
-        if (data.code === 200) {
-            return data.data as PostRes[];
-        } else {
-            throw new Error("Status !== 200");
-        }
+        return res.json();
     }
 
-    public async createBlog(body: PostReq, accessToken: string): Promise<PostRes> {
+    public async createBlog(body: PostReq, accessToken: string): Promise<Res> {
         const res = await fetch(`${this.BASE_URL}/blogs`, {
             method: "POST",
             headers: {
@@ -28,34 +22,18 @@ export class HttpClient {
             },
             body: JSON.stringify(body)
         })
-
-        if (!res.ok) throw res;
-
-        const data = await res.json();
-
-        if (data.code === 200) {
-            return data.data;
-        } else {
-            throw new Error("code !== 200");
-        }
+        return res.json();
     }
 
-    public async getProfile(id: string): Promise<UserRes> {
+    public async getProfile(id: string): Promise<Res> {
         const res = await fetch(`${this.BASE_URL}/users/${id}`, {
             method: "GET"
         })
 
-        if (!res.ok) throw res;
-        const data = await res.json();
-
-        if (data.code === 200) {
-            return data.data;
-        } else {
-            throw new Error("Status !== 200 ")
-        }
+        return res.json();
     }
 
-    public async getAuthInfo(accessToken: string): Promise<UserRes> {
+    public async getAuthInfo(accessToken: string): Promise<Res> {
         const res = await fetch(`${this.BASE_URL}/users/profile`, {
             method: "GET",
             headers: {
@@ -63,29 +41,22 @@ export class HttpClient {
             }
         })
 
-        if (!res.ok) throw res;
-
-        const data = await res.json();
-
-        return data.data;
+        return res.json();
     }
 
 
 
-    public async login(loginReq: AuthReq): Promise<any> {
-        try {
-            const res = await fetch(`${this.BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(loginReq)
-            })
-            return await res.json();
+    public async login(loginReq: AuthReq): Promise<Res> {
 
-        } catch (error) {
-            throw new Error("Error On fetching Login")
-        }
+        const res = await fetch(`${this.BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(loginReq)
+        })
+        return await res.json();
+
     }
 
     public async register(registerReq: RegisterReq): Promise<Res> {
@@ -96,10 +67,8 @@ export class HttpClient {
             },
             body: JSON.stringify(registerReq)
         })
-        if (!res.ok) throw res;
 
-        const data = await res.json();
-        return data;
+        return await res.json();;
     }
 
     public async logout(accessToken: string): Promise<Res> {
@@ -109,12 +78,11 @@ export class HttpClient {
                 "Authorization": `Bearer ${accessToken}`
             },
         })
-        if (!res.ok) throw res;
         return res.json();
 
     }
 
-    public async refreshToken(refreshToken: string): Promise<RefreshTokenRes> {
+    public async refreshToken(refreshToken: string): Promise<Res> {
         const res = await fetch(`${this.BASE_URL}/auth/refresh-token`, {
             method: "POST",
             headers: {
@@ -123,14 +91,16 @@ export class HttpClient {
             body: JSON.stringify({ refreshToken })
         })
 
-        if (!res.ok) throw new Error("Fail To Fetch");
+        return res.json();
+    }
 
-        const data = await res.json();
-
-        if (data.code === 200) {
-            return data.data;
-        } else {
-            throw new Error("Fail to Authenticated");
-        }
+    static isSuccessful(res: Res): boolean {
+        return res.code >= 200 && res.code <= 299;
+    }
+    static isClientError(res: Res): boolean {
+        return res.code >= 400 && res.code <= 499;
+    }
+    static isServerError(res: Res): boolean {
+        return res.code >= 500
     }
 }

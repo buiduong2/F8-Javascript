@@ -31,9 +31,8 @@ export class TheNavBar extends HTMLElement {
         })
 
         const clickOutside = (e: Event) => {
-            if (!userDropDown.contains(e.target as HTMLElement)) {
-                userDropDown.classList.remove("active-drop");
-            }
+            if (e.target === userDropDown) return;
+            userDropDown.classList.remove("active-drop");
         }
         userInfo.addEventListener("click", e => {
             e.stopPropagation();
