@@ -2971,24 +2971,24 @@ section.loaders .loader {
 }
 
 
-.post-item.enter-active {
+.post-item-enter-active {
     transition: opacity ease-in-out 500ms, transform ease-in-out 500ms;
     display: block;
 }
 
-.post-item.enter-from {
+.post-item-enter-from {
     opacity: 0;
     transform: translate(100%, 0)
 }
 
-.post-item.enter-to {
+.post-item-enter-to {
     opacity: 1;
     transform: translate(0, 0);
 }
 
 .view-enter-active,
 .view-leave-active {
-    transition: all 0.5s ease;
+    transition: all 0.25s ease;
     display: block;
 }
 

@@ -10,15 +10,19 @@ export class AppInfinityScroll extends HTMLElement {
                     this.dispatchEvent(interceptEvent);
                 }
             });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
         });
     }
     addStyle() {
         this.style.cssText = `
             width: 20px;
             height: 20px;
-            background-color: red;
-            transform: translateY(-50px);
+            transform: translateY(-100px);
             cursor: none;
+            display:block;
         `;
     }
     connectedCallback() {

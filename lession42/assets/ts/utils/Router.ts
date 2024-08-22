@@ -60,6 +60,7 @@ export class Router {
 
         let canGoToRoute = this.filterRoute(nextRoute, opt);
         if (!canGoToRoute || this.currentPage === nextPage) return;
+
         if (nextRoute.dynamic && opt.params?.id) {
             this.prop = { id: opt.params.id };
         } else {
@@ -69,11 +70,15 @@ export class Router {
         this.decoratorHref(nextRoute, opt);
         await nextPage.beforeRender();
 
+        const parent = this.currentPage?.parentElement || this.appViewEl.parentElement as HTMLElement;
+
         if (this.currentPage) {
-            this.currentPage.replaceWith(nextPage);
-        } else {
-            this.appViewEl.replaceWith(nextPage);
+            await this.currentPage.beforeDisconnected();
         }
+
+        parent.removeChild(this.currentPage || this.appViewEl);
+        parent.appendChild(nextPage);
+
         this.currentPage = nextPage;
     }
 

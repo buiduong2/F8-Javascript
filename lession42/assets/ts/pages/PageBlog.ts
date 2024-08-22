@@ -38,7 +38,7 @@ export class PageBlog extends PageAbstract {
     }
 
     async fetchPosts() {
-        const posts = await httpClient.getBlogs(this.currentPage);
+        const posts = await store.getPosts(this.currentPage);
         if (posts.length === 0) {
             this.appInfinityEl.remove();
             return;
@@ -46,14 +46,16 @@ export class PageBlog extends PageAbstract {
         const oldLength = store.posts.length;
         store.posts.push(...posts);
 
-        const fragment = document.createDocumentFragment();
+        let delay = 0;
 
         for (let i = oldLength; i < store.posts.length; i++) {
-            const postItemEl = document.createElement("post-item") as PostItem;
-            postItemEl.renderData(store.posts, i);
-            fragment.appendChild(postItemEl);
+            setTimeout(() => {
+                const postItemEl = document.createElement("post-item") as PostItem;
+                postItemEl.renderData(store.posts, i);
+                this.postListEl.insertBefore(postItemEl, this.indicatorEl);
+            }, delay);
+            delay += 300;
         }
-        this.postListEl.insertBefore(fragment, this.indicatorEl);
 
     }
 

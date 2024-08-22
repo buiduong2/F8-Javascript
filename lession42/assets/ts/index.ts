@@ -22,11 +22,6 @@ export const API_SERVER = 'https://api-auth-two.vercel.app';
 export const httpClient = new HttpClient(API_SERVER);
 export const store = new Store();
 
-
-
-
-
-
 const routes: Route[] = [
     {
         name: "Blog",
