@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./assets/js/",
+        "lib": [
+            "ES2023",
+            "dom"
+        ]
+    },
+    "include": [
+        "assets/ts/*",
+        "assets/ts/utils/AppLink.ts",
+        "assets/ts/pages/PageAbstract.ts",
+        "assets/ts/pages/PageBlog.ts",
+        "assets/ts/pages/PageLogin.ts",
+        "assets/ts/pages/PageProfile.ts",
+        "assets/ts/pages/PageRegister.ts",
+        "assets/ts/utils/Router.ts"
+    ],
+    "exclude": [
+        "assets/js/**",
+        "assets/ts/types/*",
+        "assets/ts/type.ts"
+    ]
+}
