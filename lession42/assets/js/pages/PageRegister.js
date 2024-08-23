@@ -21,17 +21,17 @@ const innerHTML = `
 
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input id="name" name="name" type="text" class="form-input" required>
+                        <input id="name" name="name" type="text" placeholder="Example User"  class="form-input" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input id="email" name="email" type="email" class="form-input" required>
+                        <input id="email" name="email" type="email" placeholder="example@example.com"  class="form-input" required>
                     </div>
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input id="password" name="password" type="password" class="form-input" required>
+                        <input id="password" name="password" type="password" class="form-input" placeholder="Set a strong password (e.g., P@ssw0rd123)..."  required>
                     </div>
 
 
@@ -43,9 +43,6 @@ const innerHTML = `
                     </div>
 
                 </form>
-                <div class="text-center push-top">
-                    <button class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign up with Google</button>
-                </div>
           </div>
       </div>
 `;

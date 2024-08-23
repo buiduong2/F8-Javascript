@@ -1,3 +1,4 @@
+import { store } from "../index.js";
 import { PageAbstract } from "./PageAbstract.js";
 export class PageAuthForm extends PageAbstract {
     constructor() {
@@ -22,7 +23,19 @@ export class PageAuthForm extends PageAbstract {
                 this.btnSubmitEl.style.display = "none";
                 const authReq = Object.fromEntries(new FormData(this.formEl));
                 try {
-                    await this.handleFormSubmit(authReq);
+                    let isValidData = true;
+                    for (const element of Object.values(authReq)) {
+                        if (element.trim().length === 0) {
+                            isValidData = false;
+                            break;
+                        }
+                    }
+                    if (isValidData) {
+                        await this.handleFormSubmit(authReq);
+                    }
+                    else {
+                        store.addNotification("info", "All input are required");
+                    }
                 }
                 catch (error) {
                     console.warn("Error on Submit form");

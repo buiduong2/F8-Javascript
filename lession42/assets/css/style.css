@@ -1510,11 +1510,11 @@ form {
     background-color: white;
 }
 
-.form-input:invalid {
+.form-input:not(:placeholder-shown):invalid {
     border-color: #C82543;
 }
 
-.form-input:invalid~.form-error {
+.form-input:not(:placeholder-shown):invalid~.form-error {
     display: block;
 }
 
