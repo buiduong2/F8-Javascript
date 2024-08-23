@@ -1,3 +1,5 @@
+import { store } from "../index.js";
+import { AuthReq } from "../types/type.js";
 import { PageAbstract } from "./PageAbstract.js"
 
 export abstract class PageAuthForm extends PageAbstract {
@@ -33,10 +35,22 @@ export abstract class PageAuthForm extends PageAbstract {
                 isFetching = true;
                 this.btnLoadEl.style.display = "";
                 this.btnSubmitEl.style.display = "none";
-                const authReq = Object.fromEntries(new FormData(this.formEl) as any);
+                const authReq = Object.fromEntries(new FormData(this.formEl) as any) as AuthReq;
+
 
                 try {
-                    await this.handleFormSubmit(authReq);
+                    let isValidData = true;
+                    for (const element of Object.values(authReq)) {
+                        if (element.trim().length === 0) {
+                            isValidData = false;
+                            break;
+                        }
+                    }
+                    if (isValidData) {
+                        await this.handleFormSubmit(authReq);
+                    } else {
+                        store.addNotification("info", "All input are required");
+                    }
                 } catch (error) {
                     console.warn("Error on Submit form");
                 } finally {

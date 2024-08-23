@@ -7,22 +7,10 @@ export class PostItem extends HTMLElement {
         const intervalInSeconds = (new Date().getTime() - new Date(dateStr).getTime()) / 1000;
 
         const dateNames = [
-            {
-                name: "seconds ago",
-                max: 60
-            },
-            {
-                name: "mins ago",
-                max: 60
-            },
-            {
-                name: "hours ago",
-                max: 24
-            },
-            {
-                name: "days ago",
-                max: 30
-            }
+            { name: "seconds ago", max: 60 },
+            { name: "mins ago", max: 60 },
+            { name: "hours ago", max: 24 },
+            { name: "days ago", max: 30 }
         ]
 
         let currentTimeRes = intervalInSeconds;
@@ -60,7 +48,13 @@ export class PostItem extends HTMLElement {
                 </div>
                 <div class="post-content">
                     <div class="col-full">
-                        <p>${post.content}</p>
+                        <div>
+                            <h3>
+                                ${post.title}
+                            </h3>
+                            <hr>
+                            <p>${post.content}</p>
+                        </div>
                     </div>
                     <a href="#" class="link-unstyled" title="Make a change" style="margin-left: auto; padding-left: 10px;">
                         <svg class="svg-inline--fa fa-pencil"

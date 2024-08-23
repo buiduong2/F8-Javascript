@@ -36,11 +36,11 @@ const innerHTML = `
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" class="form-input" required>
+                    <input id="email" name="email" type="email" class="form-input" placeholder="example@domain.com" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input id="password" type="password" name="password" class="form-input" required>
+                    <input id="password" type="password" name="password" class="form-input" placeholder="******" required>
                 </div>
 
                 <div class="push-top">
@@ -54,11 +54,6 @@ const innerHTML = `
                     <app-link v-to="{name: 'Register', meta:{redirect: 'Login'} }">Create an account?</app-link>
                 </div>
             </form>
-
-            <div class="push-top text-center">
-                <button class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign in with Google</button>
-
-            </div>
         </div>
     </div>
 `;

@@ -67,7 +67,7 @@ export class AppNotification extends HTMLElement {
         styleEl.textContent = `    
             .notifications {
                 position: fixed;
-                top: 20px;
+                top: 50px;
                 right: 0;
             }
             .notification {
@@ -114,7 +114,7 @@ export class AppNotification extends HTMLElement {
 
         this.style.cssText = `
             position: fixed;
-            top: 20px;
+            top: 100px;
             right: 0;
         `
 
