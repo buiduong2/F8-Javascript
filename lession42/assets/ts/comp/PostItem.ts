@@ -3,6 +3,44 @@ import { addInOutTrasition } from "../pages/PageAbstract.js";
 
 export class PostItem extends HTMLElement {
 
+    private toFriendlyDate(dateStr: string): string {
+        const intervalInSeconds = (new Date().getTime() - new Date(dateStr).getTime()) / 1000;
+
+        const dateNames = [
+            {
+                name: "seconds ago",
+                max: 60
+            },
+            {
+                name: "mins ago",
+                max: 60
+            },
+            {
+                name: "hours ago",
+                max: 24
+            },
+            {
+                name: "days ago",
+                max: 30
+            }
+        ]
+
+        let currentTimeRes = intervalInSeconds;
+        let max = 60;
+
+        for (let i = 0; i < dateNames.length; i++) {
+
+            if (intervalInSeconds < max) {
+                return Math.floor(currentTimeRes) + " " + dateNames[i].name;
+
+            } else {
+                max *= dateNames[i].max;
+                currentTimeRes /= dateNames[i].max;
+            }
+        }
+
+        return Math.floor(currentTimeRes) + " " + "days ago"
+    }
 
     public renderData(collections: PostRes[], index: number): void {
 
@@ -34,7 +72,7 @@ export class PostItem extends HTMLElement {
                         </svg>
                     </a>
                 </div>
-                <div class="post-date text-faded"><span title="Wed, Aug 21, 2024 8:14 PM">${post.createdAt}</span></div>
+                <div class="post-date text-faded"><span title="${new Date(post.createdAt).toString()}">${this.toFriendlyDate(post.createdAt)}</span></div>
             </div>
         `
     }
