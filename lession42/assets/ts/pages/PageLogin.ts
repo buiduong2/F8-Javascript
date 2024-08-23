@@ -23,6 +23,7 @@ export class PageLogin extends PageAuthForm {
             } else {
                 throw new Error("Some Type Of Response doesn't implemted Yet");
             }
+
         } catch (error) {
             store.addNotification("error", (error as Error).message);
         }

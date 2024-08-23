@@ -6,7 +6,8 @@ export class PageRegister extends PageAuthForm {
 
 
     async handleFormSubmit(registerReq: RegisterReq): Promise<void> {
-        await store.register(registerReq);
+        const successful = await store.register(registerReq)
+        if (!successful) throw new Error("Error");
         Router.getIntance().push({ name: "Login" });
     }
 
