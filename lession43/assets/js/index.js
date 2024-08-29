@@ -5,10 +5,12 @@ import { PageBlog } from "./pages/PageBlog.js";
 import { PageLogin } from "./pages/PageLogin.js";
 import { PageProfile } from "./pages/PageProfile.js";
 import { PageRegister } from "./pages/PageRegister.js";
+import { PageBlogDetail } from "./pages/PageBlogDetail.js";
 import { AppAuth } from "./utils/AppAuth.js";
 import { AppInfinityScroll } from "./utils/AppInfinityScroll.js";
 import { AppLink } from "./utils/AppLink.js";
 import { AppNotification } from "./utils/AppNotification.js";
+import { AppAvatarImg } from "./utils/AppAvatarImg.js";
 import { Router } from "./utils/Router.js";
 import { Store } from "./app.js";
 import { HttpClient } from "./utils/HttpClient.js";
@@ -23,6 +25,13 @@ const routes = [
         ctor: PageBlog,
         props: false,
         meta: {}
+    },
+    {
+        name: "BlogDetail",
+        path: "/blog",
+        ctor: PageBlogDetail,
+        props: true,
+        dynamic: true
     },
     {
         name: "Register",
@@ -70,4 +79,5 @@ customElements.define('app-auth', AppAuth);
 customElements.define('post-item', PostItem);
 customElements.define('post-editor', PostEditor);
 customElements.define('app-notification', AppNotification);
+customElements.define('app-avatar-img', AppAvatarImg);
 loadUserInfo();

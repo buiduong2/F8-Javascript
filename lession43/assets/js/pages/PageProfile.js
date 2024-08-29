@@ -16,7 +16,7 @@ export class PageProfile extends PageAbstract {
                 <div class="profile-card">
 
                     <p class="text-center">
-                        <img  src="./assets/img/default-avatar.jpg" alt="" class="avatar-xlarge">
+                        <app-avatar-img  v-src="${user.avatar} " v-userName="${user.name}" class="avatar-xlarge">
                     </p>
 
                     <h1 class="title">${user.name}</h1>

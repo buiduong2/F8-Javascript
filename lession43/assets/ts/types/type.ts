@@ -15,6 +15,7 @@ export type Res = {
 export type PostReq = {
     title: string,
     content: string,
+    publishedAt?: string
 }
 
 export type PostRes = {

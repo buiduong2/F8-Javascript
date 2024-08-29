@@ -19,14 +19,16 @@ export function applyTransitionClasses(el: HTMLElement, prefix: string): Promise
     })
 }
 
-export function fromNow(dateStr: string): string {
+export function showFromNow(dateStr: string): string {
     const intervalInSeconds = (new Date().getTime() - new Date(dateStr).getTime()) / 1000;
 
     const dateNames = [
-        { name: "seconds ago", max: 60 },
-        { name: "mins ago", max: 60 },
-        { name: "hours ago", max: 24 },
-        { name: "days ago", max: 30 }
+        { name: "seconds", max: 60 },
+        { name: "mins", max: 60 },
+        { name: "hours", max: 24 },
+        { name: "days", max: 30 },
+        { name: "months", max: 30 },
+        { name: "years", max: 30 },
     ]
 
     let currentTimeRes = intervalInSeconds;
@@ -35,7 +37,7 @@ export function fromNow(dateStr: string): string {
     for (let i = 0; i < dateNames.length; i++) {
 
         if (intervalInSeconds < max) {
-            return Math.floor(currentTimeRes) + " " + dateNames[i].name;
+            return Math.floor(currentTimeRes) + " " + dateNames[i].name + " ago";
 
         } else {
             max *= dateNames[i].max;
@@ -44,6 +46,36 @@ export function fromNow(dateStr: string): string {
     }
 
     return Math.floor(currentTimeRes) + " " + "days ago"
+}
+
+type DateGetterMethods = 'getFullYear' | 'getMonth' | 'getDate' | 'getDay' | 'getHours' | 'getMinutes' | 'getSeconds' | 'getMilliseconds' | 'getTime';
+type DateGetterEntry = [DateGetterMethods, any];
+
+
+export function detailedFromNow(str: string): string {
+    const diffDate = new Date(new Date(str).getTime() - Date.now());
+    const entry: DateGetterEntry[] = [
+        ['getFullYear', 'year'],
+        ['getMonth', 'month'],
+        ['getDate', 'day'],
+        ['getHours', 'hours'],
+        ['getMinutes', 'minutes'],
+        ['getSeconds', 'seconds']
+    ]
+
+
+    const timeFormat = [];
+    const startDate = new Date(0);
+    for (const [getter, name] of entry) {
+        const diff = diffDate[getter]() - startDate[getter]();
+        timeFormat.push([diff, name]);
+    }
+
+    while (timeFormat.length > 0 && timeFormat[0][0] <= 0) {
+        timeFormat.shift();
+    }
+
+    return timeFormat.map(entry => entry.join(" ")).join(",");
 }
 
 export function escapeHTML(str: string): string {

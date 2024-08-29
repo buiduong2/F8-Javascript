@@ -1,5 +1,6 @@
 import { PostRes } from "../types/type.js";
-import { applyTransitionClasses, fromNow, escapeHTML } from "../utils/utils.js";
+import { Router } from "../utils/Router.js";
+import { applyTransitionClasses, showFromNow, escapeHTML } from "../utils/utils.js";
 
 export class PostItem extends HTMLElement {
 
@@ -10,26 +11,27 @@ export class PostItem extends HTMLElement {
         const post = collections[Number(index)];
         post.userId.name = escapeHTML(post.userId.name);
         this.innerHTML = `
-            <div class="post" data-id='${post._id}'>
+            <div class="post">
                 <div class="user-info">
                     <app-link v-to="{name: 'Profile', params: {id: '${post.userId._id}'}}" href="#" class="user-name">
                         ${post.userId.name}
                     </app-link>
-                    <app-link v-to="{name: 'Profile', params: {id: '${post.userId._id}'}}" ><img
-                            src="./assets/img/default-avatar.jpg"
-                            class="avatar-large">
+                    <app-link v-to="{name: 'Profile', params: {id: '${post.userId._id}'}}" >
+                        <app-avatar-img v-src=" " v-userName="${post.userId.name}" class="avatar-large">    
                     </app-link >
-                    <p class="desktop-only text-small">1 posts </p>
-                    <p class="desktop-only text-small">0 threads </p>
                 </div>
                 <div class="post-content">
                     <div class="col-full">
                         <div>
-                            <h3>
-                                ${post.title}
-                            </h3>
+                            <app-link v-to="{name: 'BlogDetail', params: {id: '${post._id}'}}">
+                                <h3>
+                                    ${post.title}
+                                </h3>
+                            </app-link>
                             <hr>
                             <p>${post.content}</p>
+
+                            
                         </div>
                     </div>
                     <a href="#" class="link-unstyled" title="Make a change" style="margin-left: auto; padding-left: 10px;">
@@ -42,12 +44,25 @@ export class PostItem extends HTMLElement {
                         </svg>
                     </a>
                 </div>
-                <div class="post-date text-faded"><span title="${new Date(post.createdAt).toString()}">${fromNow(post.createdAt)}</span></div>
+                <div class="post-date text-faded">
+                    <app-link 
+                        v-to="{name: 'BlogDetail', params: {id: '${post._id}'}}"
+                        class="read-more-btn"
+                        style="margin-right:20px"
+                     >Read More</app-link>
+                    <span class="ml-5" title="${new Date(post.createdAt).toString()}">${showFromNow(post.createdAt)}</span>
+                </div>
             </div>
         `
     }
 
     connectedCallback() {
         applyTransitionClasses(this, "post-item-enter");
+        const readMore = this.querySelector(".read-more-btn") as HTMLElement;
+        if (!Router.getIntance().prop.id) {
+            readMore.style.display = ""
+        } else {
+            readMore.style.display = "none"
+        }
     }
 }

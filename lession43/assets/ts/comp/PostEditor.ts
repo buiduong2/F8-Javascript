@@ -9,6 +9,7 @@ export class PostEditor extends HTMLElement {
     btnLoadingEl: HTMLButtonElement;
     cancelBtnEl: HTMLButtonElement;
     openFormBtnEl: HTMLButtonElement;
+    inputDateEl: HTMLInputElement;
     onPostEditorSubmit?: (postReq: PostReq) => Promise<void>;
 
     constructor() {
@@ -19,14 +20,29 @@ export class PostEditor extends HTMLElement {
         this.btnSubmitEl = this as any;
         this.cancelBtnEl = this as any;
         this.openFormBtnEl = this as any;
+        this.inputDateEl = this as any;
     }
 
 
     addEventHandle() {
         let isFetching = false;
+        this.inputDateEl.addEventListener("blur", e => {
+            const value = this.inputDateEl.value;
+            const pickedDate = new Date(value);
+            console.log(new Date(this.inputDateEl.min as string))
+            if (pickedDate < new Date(this.inputDateEl.min as string)) {
+                this.inputDateEl.value = this.inputDateEl.min;
+                store.addNotification("warn", "Published Date not valid.\n Choose current Date by default")
+            }
+        })
+
+
 
         this.formEl.onsubmit = async e => {
             e.preventDefault();
+            if (isFetching) {
+                return;
+            }
             isFetching = true;
             this.btnLoadingEl.style.display = "";
             this.btnSubmitEl.style.display = "none";
@@ -56,6 +72,7 @@ export class PostEditor extends HTMLElement {
             }
         }
 
+
         this.openFormBtnEl.addEventListener("click", e => {
             e.preventDefault();
             this.formEl.style.display = "";
@@ -68,6 +85,7 @@ export class PostEditor extends HTMLElement {
             this.formEl.reset();
         })
 
+
     }
 
     connectedCallback() {
@@ -78,12 +96,20 @@ export class PostEditor extends HTMLElement {
             this.btnSubmitEl = this.querySelector(".btn-submit") as HTMLButtonElement;
             this.cancelBtnEl = this.querySelector(".btn-cancel") as HTMLButtonElement;
             this.openFormBtnEl = this.querySelector(".btn-open") as HTMLButtonElement;
+            this.inputDateEl = this.querySelector(".input-date") as HTMLInputElement;
             this.formEl.style.display = "none";
             this.addEventHandle();
             this.isFirstRender = false;
         }
     }
 }
+
+const currentDate = new Date();
+const maxDate = new Date();
+maxDate.setFullYear(maxDate.getFullYear() + 1);
+currentDate.setHours(currentDate.getHours() + 7);
+maxDate.setHours(currentDate.getHours() + 7);
+
 
 const innerHTML = `
     <div class="col-full push-top" >
@@ -98,6 +124,18 @@ const innerHTML = `
             <div class="form-group">
                 <label for="email">Content</label>
                 <textarea id="text" rows="10" class="form-input" name="content" placeholder="Enter the content of your post...." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="email">Set Time To Post</label>
+                <br>
+                <input type="datetime-local"
+                    style="max-width:400px"
+                    class="form-input input-date" 
+                    name='publishedAt' 
+                    value="${currentDate.toISOString().substring(0, 16)}"
+                    min="${currentDate.toISOString().substring(0, 16)}"
+                    max="${maxDate.toISOString().substring(0, 16)}" 
+                />
             </div>
             <div class="form-actions">
                 <button class='btn-ghost btn-cancel'>Cancel</button>

@@ -9,6 +9,7 @@ const STORE_KEY_ACCESS_TOKEN = "ACCESS_TOKEN";
 const STORE_KEY_REFRESH_TOKEN = "REFRESH_TOKEN";
 
 export class Store {
+
     isAuth: boolean;
     authListeners: (() => void)[];
     user?: AuthRes
@@ -152,6 +153,18 @@ export class Store {
     async getPosts(page: number): Promise<PostRes[]> {
         const res = await this.httpClient.get("/blogs", { params: { page } });
         return res.data.data as PostRes[];
+    }
+
+    async getPostById(id: string): Promise<PostRes> {
+        try {
+            const res = await this.httpClient.get("/blogs/" + id);
+
+
+            return res.data.data as PostRes
+        } catch (error) {
+            Router.getIntance().push({ name: "Blog" })
+            throw error;
+        }
     }
 
     async getUserInfo(userId: string): Promise<UserRes> {

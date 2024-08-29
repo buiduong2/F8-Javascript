@@ -1,5 +1,6 @@
 import { PageAbstract } from "./PageAbstract.js";
 import { store } from "../index.js";
+import { detailedFromNow } from "../utils/utils.js";
 export class PageBlog extends PageAbstract {
     constructor() {
         super();
@@ -11,12 +12,29 @@ export class PageBlog extends PageAbstract {
         this.postEditorEl = this;
     }
     async addCreatePostHandler() {
-        this.postEditorEl.onPostEditorSubmit = async (postReq) => {
+        const addPost = async (postReq) => {
             const post = await store.createPost(postReq);
             store.posts.unshift(post);
             const postItemEl = document.createElement("post-item");
             postItemEl.renderData(store.posts, 0);
             this.postListEl.insertAdjacentElement("afterbegin", postItemEl);
+            return postItemEl;
+        };
+        this.postEditorEl.onPostEditorSubmit = async (postReq) => {
+            const publishedAt = postReq.publishedAt;
+            delete postReq.publishedAt;
+            if (publishedAt && new Date(publishedAt).getTime() > Date.now()) {
+                const publishedAtDate = new Date(publishedAt);
+                const dateDetailedFromNow = detailedFromNow(publishedAt);
+                const localDateTimeStr = publishedAtDate.toLocaleDateString() + " at " + publishedAtDate.toLocaleTimeString();
+                store.addNotification("info", `Your post will be published on ${localDateTimeStr} \n (In ${dateDetailedFromNow})`);
+                const delay = Date.parse(publishedAt) - Date.now();
+                setTimeout(async () => {
+                    addPost(postReq);
+                }, Math.max(0, delay));
+                return;
+            }
+            const postItemEl = await addPost(postReq);
             window.scrollTo({
                 behavior: "smooth",
                 top: postItemEl.offsetTop - 100
@@ -77,9 +95,7 @@ export class PageBlog extends PageAbstract {
 const innerHTML = `
     <div class="col-large push-top">
         <ul class="breadcrumbs">
-            <li><a href="#"><i class="fa fa-home fa-btn"></i>Home</a></li>
-            <li><a href="category.html">Discussions</a></li>
-            <li class="active"><a href="#">Cooking</a></li>
+            <li><app-link v-to="{name: 'Blog'}" ><i class="fa fa-home fa-btn"></i>Home</app-link></li>
         </ul>
 
         <h1>Blog Của Dương</h1>

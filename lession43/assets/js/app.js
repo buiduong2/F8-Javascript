@@ -118,6 +118,16 @@ export class Store {
         const res = await this.httpClient.get("/blogs", { params: { page } });
         return res.data.data;
     }
+    async getPostById(id) {
+        try {
+            const res = await this.httpClient.get("/blogs/" + id);
+            return res.data.data;
+        }
+        catch (error) {
+            Router.getIntance().push({ name: "Blog" });
+            throw error;
+        }
+    }
     async getUserInfo(userId) {
         try {
             const res = await this.httpClient.get("/users/" + userId);
