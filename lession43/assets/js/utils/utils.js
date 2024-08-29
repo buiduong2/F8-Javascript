@@ -49,6 +49,9 @@ export function detailedFromNow(str) {
     ];
     const timeFormat = [];
     const startDate = new Date(0);
+	const offSet = startDate.getTimezoneOffset() / 60
+	startDate.setHours(startDate.getHours() + offSet)
+	diffDate.setHours(diffDate.getHours() + offSet)
     for (const [getter, name] of entry) {
         const diff = diffDate[getter]() - startDate[getter]();
         timeFormat.push([diff, name]);
