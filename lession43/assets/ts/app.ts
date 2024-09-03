@@ -99,7 +99,7 @@ export class Store {
     }
 
     async loadUserInfoFromToken() {
-        this.accessTokenToUserInfo();
+        await this.accessTokenToUserInfo();
     }
 
 

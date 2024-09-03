@@ -17,6 +17,13 @@ export class TheNavBar extends HTMLElement {
         const userDropDown = this.querySelector("#user-dropdown") as HTMLElement;
         const userInfo = this.userEl.querySelector(".user-link") as HTMLElement;
         const logOutBtnEl = this.querySelector(".logout-btn") as HTMLElement;
+        const btnHumberger = this.querySelector(".btn-hamburger") as HTMLElement;
+        const navBarEl = this.querySelector(".navbar") as HTMLElement;
+
+        btnHumberger.addEventListener("click", e => {
+            e.preventDefault();
+            navBarEl.classList.toggle("navbar-open")
+        })
 
         let isFetching = false;
         logOutBtnEl.addEventListener("click", async e => {
@@ -76,7 +83,7 @@ const innerHTML = `
                 <img src="./assets/img/vueschool-logo.svg">
             </app-link>
 
-            <div class="btn-hamburger ">
+            <div class="btn-hamburger">
                 <!-- use .btn-humburger-active to open the menu -->
                 <div class="top bar"></div>
                 <div class="middle bar"></div>

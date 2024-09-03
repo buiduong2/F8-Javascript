@@ -31,7 +31,7 @@ export class PostEditor extends HTMLElement {
             const pickedDate = new Date(value);
             console.log(new Date(this.inputDateEl.min as string))
             if (pickedDate < new Date(this.inputDateEl.min as string)) {
-                this.inputDateEl.value = this.inputDateEl.min;
+                setTimeout(() => this.inputDateEl.value = this.inputDateEl.min, 1000);
                 store.addNotification("warn", "Published Date not valid.\n Choose current Date by default")
             }
         })
@@ -127,6 +127,8 @@ const innerHTML = `
             </div>
             <div class="form-group">
                 <label for="email">Set Time To Post</label>
+                <br>
+                <span class="text-small text-faded">If you try to select a time before the current time then the post will be sent immediately</span>
                 <br>
                 <input type="datetime-local"
                     style="max-width:400px"

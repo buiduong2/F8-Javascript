@@ -1,22 +1,20 @@
+import { Store } from "./app.js";
 import { PostEditor } from "./comp/PostEditor.js";
 import { PostItem } from "./comp/PostItem.js";
 import { TheNavBar } from "./comp/TheNavBar.js";
 import { PageBlog } from "./pages/PageBlog.js";
+import { PageBlogDetail } from "./pages/PageBlogDetail.js";
 import { PageLogin } from "./pages/PageLogin.js";
 import { PageProfile } from "./pages/PageProfile.js";
 import { PageRegister } from "./pages/PageRegister.js";
-import { PageBlogDetail } from "./pages/PageBlogDetail.js";
 import { AppAuth } from "./utils/AppAuth.js";
+import { AppAvatarImg } from "./utils/AppAvatarImg.js";
 import { AppInfinityScroll } from "./utils/AppInfinityScroll.js";
 import { AppLink } from "./utils/AppLink.js";
 import { AppNotification } from "./utils/AppNotification.js";
-import { AppAvatarImg } from "./utils/AppAvatarImg.js";
 import { Router } from "./utils/Router.js";
-import { Store } from "./app.js";
-import { HttpClient } from "./utils/HttpClient.js";
 const appEl = document.querySelector("#app");
 export const API_SERVER = 'https://api-auth-two.vercel.app';
-export const httpClient = new HttpClient(API_SERVER);
 export const store = new Store();
 const routes = [
     {

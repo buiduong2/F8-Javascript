@@ -49,6 +49,9 @@ export function detailedFromNow(str) {
     ];
     const timeFormat = [];
     const startDate = new Date(0);
+    const offset = startDate.getTimezoneOffset();
+    startDate.setMinutes(startDate.getMinutes() - offset);
+    diffDate.setMinutes(diffDate.getMinutes() - offset);
     for (const [getter, name] of entry) {
         const diff = diffDate[getter]() - startDate[getter]();
         timeFormat.push([diff, name]);
@@ -71,4 +74,97 @@ export function escapeHTML(str) {
         .split("")
         .map(char => char in escapeDictionary ? escapeDictionary[char] : char)
         .join("");
+}
+class FilterManager {
+    constructor() {
+        this.map = new Map();
+        this.providers = [
+            new FilterProvider("P", /(0|\+84)\d{9}/g, embedPhoneLink),
+            new FilterProvider("M", /\w(?=[^@]{3,29}@)((\.|-)\w+|\w+)*@[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])+(\.[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])+){1,2}/g, embedEmailLink),
+            new FilterProvider("YL", /https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})[^\s]*/g, embedYoutubeLink),
+            new FilterProvider("YS", /https:\/\/youtu\.be\/([\w-]{11})[^\s]*/g, embedYoutubeLink),
+            new FilterProvider("L", /https?:\/\/(www\.|ww2\.)?([\w-]+(\.[\w-]+)+)[^\s]*/g, embedLink),
+            new FilterProvider("S", /(?:[^\S\n ]|(\n)|( )){2,}/g, removeTrailingSpace),
+        ];
+    }
+    apply(content) {
+        this.map = new Map();
+        content = this.applyProviders(content);
+        content = this.replaceAllContent(content);
+        return content;
+    }
+    applyProviders(content) {
+        return this.providers.reduce((c, provider) => {
+            const changedDetail = provider.applyReplaceAll(c);
+            changedDetail.changedContent.forEach(({ id, target }) => {
+                this.map.set(id, target);
+            });
+            return changedDetail.content;
+        }, content);
+    }
+    replaceAllContent(content) {
+        const regexp = /\$\$(\w+)\$\$/g;
+        return content.replaceAll(regexp, (match, g1) => {
+            if (g1) {
+                return this.map.get(g1);
+            }
+            return match;
+        });
+    }
+}
+class FilterProvider {
+    constructor(id, regexp, replacer) {
+        this.id = id;
+        this.regexp = regexp;
+        this.replacer = replacer;
+        if (!this.regexp.global) {
+            throw new Error("Regexp must be Global");
+        }
+    }
+    applyReplaceAll(content) {
+        let count = 0;
+        const changedContent = [];
+        content = content.replaceAll(this.regexp, (...args) => {
+            const id = this.id + "_" + String(count);
+            changedContent.push({ id, target: this.replacer(...args) });
+            return `$$${id}$$`;
+        });
+        return {
+            content,
+            changedContent
+        };
+    }
+}
+export const embedManager = new FilterManager();
+function embedPhoneLink(match) {
+    return `<a href="tel:${match}">${match}</a>`;
+}
+function embedEmailLink(match) {
+    const aEl = document.createElement("a");
+    aEl.href = `mailto:${match}`;
+    aEl.textContent = match;
+    return aEl.outerHTML;
+}
+function embedYoutubeLink(match, id) {
+    return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}?si=CjtCwkca7pYIMeQ4"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+}
+function embedLink(match) {
+    const aEl = document.createElement("a");
+    aEl.href = match;
+    aEl.target = "_blank";
+    aEl.textContent = match;
+    return aEl.outerHTML;
+}
+// Caution: Server has auto trim() content. Don't Need to trim() again
+function removeTrailingSpace(match, g1, g2) {
+    if (g1) {
+        return "\n";
+    }
+    if (g2) {
+        return " ";
+    }
+    return " ";
 }

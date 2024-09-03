@@ -69,6 +69,7 @@ export class AppNotification extends HTMLElement {
                 position: fixed;
                 top: 50px;
                 right: 0;
+                z-index:999999;
             }
             .notification {
                 background: white;
@@ -116,6 +117,7 @@ export class AppNotification extends HTMLElement {
             position: fixed;
             top: 100px;
             right: 0;
+            z-index:999999;
         `
 
     }

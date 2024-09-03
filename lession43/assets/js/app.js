@@ -75,7 +75,7 @@ export class Store {
         }
     }
     async loadUserInfoFromToken() {
-        this.accessTokenToUserInfo();
+        await this.accessTokenToUserInfo();
     }
     async register(registerReq) {
         const res = await this.httpClient.post("/auth/register", { data: registerReq });
