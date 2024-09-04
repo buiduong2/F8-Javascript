@@ -463,7 +463,7 @@ figcaption {
 
 .post-content p {
 	margin-bottom: 20px;
-	white-space: pre-line;
+	white-space: pre-wrap;
 }
 
 .post-content pre {

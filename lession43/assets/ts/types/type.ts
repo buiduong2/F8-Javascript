@@ -102,3 +102,18 @@ export type RouteOption = {
 }
 
 export type SubClassType<T extends PageAbstract> = new (...args: any[]) => T;
+
+
+export type EmbedFn = (word: string) => ({
+    content: string,
+    changedContent: {
+        id: string,
+        target: string,
+    }[]
+});
+
+export type ProviderConKeys = {
+    id: string,
+    regexp: RegExp,
+    replacer: (...args: any[]) => string
+}
