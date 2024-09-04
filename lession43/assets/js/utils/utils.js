@@ -28,14 +28,14 @@ export function showFromNow(dateStr) {
     let max = 60;
     for (let i = 0; i < dateNames.length; i++) {
         if (intervalInSeconds < max) {
-            return Math.floor(currentTimeRes) + " " + dateNames[i].name + " ago";
+            return Math.floor(Math.max(0, currentTimeRes)) + " " + dateNames[i].name + " ago";
         }
         else {
             max *= dateNames[i].max;
             currentTimeRes /= dateNames[i].max;
         }
     }
-    return Math.floor(currentTimeRes) + " " + "days ago";
+    return Math.floor(Math.max(0, currentTimeRes)) + " " + "days ago";
 }
 export function detailedFromNow(str) {
     const diffDate = new Date(new Date(str).getTime() - Date.now());
@@ -49,9 +49,9 @@ export function detailedFromNow(str) {
     ];
     const timeFormat = [];
     const startDate = new Date(0);
-	const offSet = startDate.getTimezoneOffset() / 60
-	startDate.setHours(startDate.getHours() + offSet)
-	diffDate.setHours(diffDate.getHours() + offSet)
+    const offset = startDate.getTimezoneOffset();
+    startDate.setMinutes(startDate.getMinutes() - offset);
+    diffDate.setMinutes(diffDate.getMinutes() - offset);
     for (const [getter, name] of entry) {
         const diff = diffDate[getter]() - startDate[getter]();
         timeFormat.push([diff, name]);

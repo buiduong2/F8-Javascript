@@ -1,9 +1,11 @@
 import { Router } from "../utils/Router.js";
 import { applyTransitionClasses, showFromNow, escapeHTML } from "../utils/utils.js";
+import { embedManager } from "../utils/FilterManager.js";
 export class PostItem extends HTMLElement {
     renderData(collections, index) {
         const post = collections[Number(index)];
         post.userId.name = escapeHTML(post.userId.name);
+        const postContent = embedManager.applyFilter(post.content);
         this.innerHTML = `
             <div class="post">
                 <div class="user-info">
@@ -23,7 +25,7 @@ export class PostItem extends HTMLElement {
                                 </h3>
                             </app-link>
                             <hr>
-                            <p>${post.content}</p>
+                            <p>${postContent}</p>
 
                             
                         </div>

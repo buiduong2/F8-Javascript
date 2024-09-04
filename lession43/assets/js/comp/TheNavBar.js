@@ -3,12 +3,19 @@ import { Router } from "../utils/Router.js";
 export class TheNavBar extends HTMLElement {
     constructor() {
         super();
+        this.userEl = document.createElement("div");
         this.isConnectedHtml = true;
     }
     addEventHandler() {
         const userDropDown = this.querySelector("#user-dropdown");
         const userInfo = this.userEl.querySelector(".user-link");
         const logOutBtnEl = this.querySelector(".logout-btn");
+        const btnHumberger = this.querySelector(".btn-hamburger");
+        const navBarEl = this.querySelector(".navbar");
+        btnHumberger.addEventListener("click", e => {
+            e.preventDefault();
+            navBarEl.classList.toggle("navbar-open");
+        });
         let isFetching = false;
         logOutBtnEl.addEventListener("click", async (e) => {
             e.preventDefault();
@@ -62,7 +69,7 @@ const innerHTML = `
                 <img src="./assets/img/vueschool-logo.svg">
             </app-link>
 
-            <div class="btn-hamburger ">
+            <div class="btn-hamburger">
                 <!-- use .btn-humburger-active to open the menu -->
                 <div class="top bar"></div>
                 <div class="middle bar"></div>

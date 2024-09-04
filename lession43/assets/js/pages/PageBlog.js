@@ -6,11 +6,18 @@ export class PageBlog extends PageAbstract {
         super();
         this.isFirstRender = true;
         this.currentPage = 1;
+        this.indicatorEl = this;
+        this.postListEl = this;
+        this.appInfinityEl = this;
+        this.postEditorEl = this;
     }
     async addCreatePostHandler() {
         const addPost = async (postReq) => {
             const post = await store.createPost(postReq);
             store.posts.unshift(post);
+            if (post.content.length > 100) {
+                post.content = post.content.slice(0, 100) + " ...";
+            }
             const postItemEl = document.createElement("post-item");
             postItemEl.renderData(store.posts, 0);
             this.postListEl.insertAdjacentElement("afterbegin", postItemEl);
@@ -43,6 +50,11 @@ export class PageBlog extends PageAbstract {
             this.appInfinityEl.remove();
             return;
         }
+        posts.forEach(post => {
+            if (post.content.length > 100) {
+                post.content = post.content.slice(0, 100) + " ...";
+            }
+        });
         const oldLength = store.posts.length;
         store.posts.push(...posts);
         let delay = 0;

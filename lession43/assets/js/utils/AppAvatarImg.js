@@ -41,7 +41,7 @@ export class AppAvatarImg extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content:center;
-            font-size: 50px;
+            font-size: 3vw;
             font-weight: 400;
             vertical-align: middle;
             text-transform: uppercase;

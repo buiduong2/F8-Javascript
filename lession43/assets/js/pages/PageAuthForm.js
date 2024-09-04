@@ -4,6 +4,10 @@ export class PageAuthForm extends PageAbstract {
     constructor() {
         super();
         this.isFirstRender = true;
+        const dummyEl = document.createElement("div");
+        this.formEl = dummyEl;
+        this.btnLoadEl = dummyEl;
+        this.btnSubmitEl = dummyEl;
     }
     async beforeRender() {
         if (this.isFirstRender) {
