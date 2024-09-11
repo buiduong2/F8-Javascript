@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+</head>
+
+<body class="bg-gray-200">
+
+    <div id="app" class="min-h-[100vh] flex flex-col">
+        <header class="bg-slate-950 text-gray-400  flex justify-between px-5 mb-10">
+            <ul class="flex gap-2 ">
+                <li><a class="hover:text-blue-600 text-lg px-3 py-3 block" href="">Home</a></li>
+                <li><a class="hover:text-blue-600 text-lg px-3 py-3 block" href="">Sản phẩm</a></li>
+                <li><a class="hover:text-blue-600 text-lg px-3 py-3 block" href="">About</a></li>
+            </ul>
+            <div class="cart p-3 pl-5 hover:text-blue-600 cursor-pointer relative border-l-gray-400 border-l">
+                <div
+                    class="quantity bg-blue-500 text-white text-center rounded absolute px-0.5 top-0 right-0 -translate-x-1/2  font-bold text-sm">
+                    0</div>
+                <i class="fa-solid fa-cart-shopping text-lg align-middle"></i>
+            </div>
+
+        </header>
+
+
+        <main class="container flex gap-5 grow items-start">
+            <div class="img-list w-3/5 flex justify-center">
+                <img src="/item1.jpg" class="max-w-[400px]">
+            </div>
+            <div class="detail w-2/5 min-h-[400px] bg-white rounded-sm p-5">
+                <h2 class="product-title text-xl font-semibold">Đĩa game Spiderman</h2>
+                <p class="price my-5 text-2xl font-bold">1,499,000 đ</p>
+                <div class="quantity">
+                    <div class="flex border w-fit font-semibold">
+                        <span class="p-1 px-3 hover:border-r cursor-pointer">+</span>
+                        <input
+                            class="text-center w-20 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            type="number" value="1">
+                        <span class="p-1 px-3 hover:border-l cursor-pointer">-</span>
+                    </div>
+                </div>
+                <p class="action">
+                    <button class="bg-orange-500 p-3 w-4/5 mt-5 text-white hover:bg-orange-600">Thêm vào giỏ
+                        hàng</button>
+                </p>
+            </div>
+        </main>
+
+        <footer class="bg-slate-950 p-3 mt-10">
+            <h2 class="text-white text-lg">Footer</h2>
+        </footer>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+
+</html>
