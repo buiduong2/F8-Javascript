@@ -21,7 +21,7 @@ export const ProductDetail = route => {
 	}
 	return `
         <div class="img-list w-3/5 flex justify-center">
-            <img src="/item1.jpg" class="max-w-[400px]">
+            <img src="${product.imgUrl}" class="max-w-[400px]">
         </div>
         <div class="detail w-2/5 min-h-[400px] bg-white rounded-sm p-5">
             <h2 class="product-title text-xl font-semibold">${product.title}</h2>

@@ -83,7 +83,7 @@
         <h1 class="text-bold text-8xl m-auto">Page About</h1>
     `,Ua=t=>{const e=Oa(Number(t.data.id));if(!e)return bt(void 0,{code:404,message:"Product Not found"});const n={...e,url:"/san-pham/"+e.id,newPrice:(e.price-e.price*e.discount/100).toLocaleString("en"),price:e.price.toLocaleString("en")};return`
         <div class="img-list w-3/5 flex justify-center">
-            <img src="/item1.jpg" class="max-w-[400px]">
+            <img src="${n.imgUrl}" class="max-w-[400px]">
         </div>
         <div class="detail w-2/5 min-h-[400px] bg-white rounded-sm p-5">
             <h2 class="product-title text-xl font-semibold">${n.title}</h2>
