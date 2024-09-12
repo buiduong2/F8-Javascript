@@ -7,7 +7,7 @@ const notFoundMsg =
 const errorMsg = 'The Server encounterd an internal Error'
 
 const app = document.querySelector('#app')
-export const _router = new Navigo(import.meta.env.VITE_ROOT_URL, { hash: true })
+export const _router = new Navigo('/', { hash: true })
 export function router(routes, layout) {
 	let innerHTML = layout()
 	innerHTML = innerHTML.replace(
