@@ -184,6 +184,7 @@ export function updateProduct(match) {
 	const productListEl = document.querySelector('.product-list')
 	const products = getProducts(match.params)
 	productListEl.innerHTML = products.map(item => ProductItem(item)).join('')
+	_router.updatePageLinks();
 }
 
 function changeStage() {
