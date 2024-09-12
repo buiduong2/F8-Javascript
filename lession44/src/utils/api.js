@@ -51,12 +51,6 @@ const productItems = [
 	}
 ]
 
-const ROOT_URL = import.meta.env.VITE_ROOT_URL || '/'
-if (ROOT_URL) {
-	productItems.forEach(
-		product => (product.imgUrl = ROOT_URL + product.imgUrl)
-	)
-}
 const filters = [
 	{
 		title: 'GIÁ GỐC',

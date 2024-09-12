@@ -7,7 +7,7 @@ const notFoundMsg =
 const errorMsg = 'The Server encounterd an internal Error'
 
 const app = document.querySelector('#app')
-export const _router = new Navigo('/', { hash: true })
+export const _router = new Navigo('/', { hash: false })
 export function router(routes, layout) {
 	let innerHTML = layout()
 	innerHTML = innerHTML.replace(
