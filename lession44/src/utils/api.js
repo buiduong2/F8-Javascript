@@ -3,7 +3,7 @@ import { toComparator, toPredicate } from './util'
 const productItems = [
 	{
 		id: 1,
-		imgUrl: 'item1.jpg',
+		imgUrl: '/item1.jpg',
 		title: 'Đĩa game Spider-Man: Miles Morales',
 		price: 550000,
 		category: 'rpg',
@@ -11,7 +11,7 @@ const productItems = [
 	},
 	{
 		id: 2,
-		imgUrl: 'item2.jpg',
+		imgUrl: '/item2.jpg',
 		title: 'Đĩa game Jackboy',
 		price: 650000,
 		category: 'action',
@@ -19,7 +19,7 @@ const productItems = [
 	},
 	{
 		id: 3,
-		imgUrl: 'item3.jpg',
+		imgUrl: '/item3.jpg',
 		title: 'Đĩa game Crash Bandicoot 4',
 		category: 'fps',
 		price: 750000,
@@ -27,7 +27,7 @@ const productItems = [
 	},
 	{
 		id: 4,
-		imgUrl: 'item4.jpg',
+		imgUrl: '/item4.jpg',
 		title: 'Đĩa game Dreams',
 		category: 'sport',
 		price: 850000,
@@ -35,7 +35,7 @@ const productItems = [
 	},
 	{
 		id: 5,
-		imgUrl: 'item5.jpg',
+		imgUrl: '/item5.jpg',
 		title: 'Đĩa game Samurai Showdown',
 		category: 'action',
 		price: 950000,
@@ -43,7 +43,7 @@ const productItems = [
 	},
 	{
 		id: 6,
-		imgUrl: 'item6.jpg',
+		imgUrl: '/item6.jpg',
 		title: 'Đĩa game Nioh2',
 		category: 'rpg',
 		price: 1000000,
