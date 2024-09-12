@@ -51,7 +51,7 @@ const productItems = [
 	}
 ]
 
-const ROOT_URL = import.meta.env.ROOT_URL || '/'
+const ROOT_URL = import.meta.env.VITE_ROOT_URL || '/'
 if (ROOT_URL) {
 	productItems.forEach(
 		product => (product.imgUrl = ROOT_URL + product.imgUrl)
