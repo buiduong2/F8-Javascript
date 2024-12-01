@@ -38,8 +38,8 @@
 - Từ `lesson-26 -> cho đến hết`
 - Một số bài tập nổi bật
   - Bài 40:  Quizz Game hấp dẫn
-    - [Demo](https://buiduong2.github.io/F8-Javascript/lession40/) 
-    - [Source Code](./lession40/)
+    - [Demo](https://buiduong2.github.io/F8-Javascript/lession41/) 
+    - [Source Code](./lession41/)
 
   - Bài 43: học tập xử lý Authentication + REGEX (API Backend được cung cấp bởi F8)
     - [Demo](https://buiduong2.github.io/F8-Javascript/lession43/) 
