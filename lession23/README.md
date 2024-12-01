@@ -1,3 +1,8 @@
+
+## Link demo: 
+
+- Link Demo: [DEMO](https://buiduong2.github.io/F8-Javascript/lession23/)
+
 ## Bài 1 :
 
 ```js
@@ -103,3 +108,5 @@ if (authResult.type === 'Accept') {
     console.log(message)
 }
 ```
+
+## 

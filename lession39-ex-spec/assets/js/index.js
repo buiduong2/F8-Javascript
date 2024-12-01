@@ -1,4 +1,5 @@
 import { Vue } from "./Vue.js";
+const TODO_API = 'https://rv6ny5-8080.csb.app/todos';
 Vue.create({
     selector: "#app",
     data() {
@@ -109,7 +110,7 @@ Vue.create({
         const loader = document.querySelector(".global-loader");
         loader.classList.add("loading");
         this.modalTextEl = document.querySelector(".modal-form .form-input");
-        const res = await fetch('https://stvp8n-8080.csb.app/todos');
+        const res = await fetch(TODO_API);
         if (!res.ok)
             return;
         const todos = await res.json();
@@ -119,7 +120,7 @@ Vue.create({
         loader.classList.remove("loading");
     },
 });
-const TODO_API = 'https://stvp8n-8080.csb.app/todos';
+
 async function fetchAddTodo(content, loadingEl) {
     return await fetchTodoGeneric({ method: "POST", data: { content } }, loadingEl);
 }

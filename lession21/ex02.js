@@ -1,6 +1,7 @@
 function flat(arr) {
 	var stackIndex = [0]
 	var stackArr = [arr]
+	var n = arr.length;
 	var flatedArr = []
 
 	while (stackArr.length !== 0) {

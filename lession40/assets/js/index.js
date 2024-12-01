@@ -1,4 +1,6 @@
 'use strict'
+const API_URL = 'https://rv6ny5-8080.csb.app/posts?'
+
 const postListEl = document.querySelector('.post-list')
 const postListEnd = document.querySelector('.post-list-end')
 const loaderEl = document.querySelector('.loader')
@@ -53,7 +55,7 @@ function addInfinityScrollEvent() {
 async function fetchPosts(query) {
 	const searchParam = new URLSearchParams(query)
 	const res = await fetch(
-		'https://stvp8n-8080.csb.app/posts?' + searchParam.toString()
+		API_URL + searchParam.toString()
 	)
 	if (!res.ok) {
 		throw new Error('Server Error')

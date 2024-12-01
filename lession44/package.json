@@ -17,6 +17,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
-    "navigo": "^8.11.1"
+    "navigo": "^8.11.1",
+    "vite-project": "file:"
   }
 }

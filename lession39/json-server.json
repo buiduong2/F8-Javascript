@@ -1,0 +1,18 @@
+{
+  "todos": [
+    {
+      "content": "Hello World",
+      "id": 1,
+      "completed": true
+    },
+    {
+      "content": "Học HTML",
+      "id": 2,
+      "completed": true
+    },
+    {
+      "content": "Học JS",
+      "id": 3
+    }
+  ]
+}
