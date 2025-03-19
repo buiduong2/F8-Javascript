@@ -1,5 +1,5 @@
 'use strict'
-const API_URL = 'https://rv6ny5-8080.csb.app/posts?'
+const API_URL = 'https://c6phfn-8080.csb.app/posts?'
 
 const postListEl = document.querySelector('.post-list')
 const postListEnd = document.querySelector('.post-list-end')

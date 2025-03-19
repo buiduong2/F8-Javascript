@@ -3,7 +3,7 @@ import { EndPage } from "./PageEnd.js";
 import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
 import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js";
 import { PreparePage } from "./PagePrepare.js";
-const SERVER_API = `https://rv6ny5-8080.csb.app/questions/`;
+const SERVER_API = `https://c6phfn-8080.csb.app/questions/`;
 export class PlayPage extends QuizzPage {
     constructor(app, prop) {
         super(app, prop);
