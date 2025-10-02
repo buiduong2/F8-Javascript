@@ -3,6 +3,7 @@ import { EndPage } from "./PageEnd.js";
 import { QuestionInput, QuestionPick } from "./PagePlayQuestion.js";
 import { checkArrayStringEqual, counterUp, shuffleArray, sleep } from "./util.js";
 import { PreparePage } from "./PagePrepare.js";
+import { fetchOffline } from "./fetchQuestion.js";
 const SERVER_API = `https://c6phfn-8080.csb.app/questions/`;
 export class PlayPage extends QuizzPage {
     constructor(app, prop) {
@@ -146,7 +147,8 @@ export class PlayPage extends QuizzPage {
             this.questions.push(question);
         }
         catch (error) {
-            alert(error);
+            const question = fetchOffline(nextQuestionsId);
+            this.questions.push(question);
         }
     }
     finishGameSession() {
