@@ -1,3 +1,4 @@
+import "./mockTodoApi.js";
 import { Vue } from "./Vue.js";
 const TODO_API = 'https://c6phfn-8080.csb.app/todos';
 Vue.create({
@@ -64,9 +65,25 @@ Vue.create({
             this.pendingTodos.push(todo);
         },
         async editTodo(newContent, loadingEl) {
-            await fetchEditContentTodoById(this.currentEditTodoId, newContent, loadingEl);
-            const editingTodo = this.todos.find((todo) => todo.id === this.currentEditTodoId);
-            editingTodo.content = newContent;
+            const editedTodo = await fetchEditContentTodoById(
+                this.currentEditTodoId,
+                newContent,
+                loadingEl
+            );
+
+            const todoIndex = this.todos.findIndex(todo => todo.id === editedTodo.id);
+            if (todoIndex !== -1) {
+                this.todos[todoIndex] = editedTodo;
+            }
+
+            const renderList = editedTodo.completed
+                ? this.completedTodos
+                : this.pendingTodos;
+
+            const renderIndex = renderList.findIndex(todo => todo.id === editedTodo.id);
+            if (renderIndex !== -1) {
+                renderList[renderIndex] = editedTodo;
+            }
         },
         async toggleTodo(todo, loadingEl) {
             const editedTodo = await fetchToggleCompletedTodoById(todo.id || 0, !todo.completed, loadingEl);
